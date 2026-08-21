@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="options.css" />
+    <title data-i18n="optionsTitle"></title>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <div class="brand">
+          <span class="logo"></span>
+          <h1 data-i18n="optionsTitle"></h1>
+        </div>
+      </header>
+
+      <section id="section-break" class="card">
+        <h2 data-i18n="breakSection"></h2>
+        <div id="pausedStatus" class="paused-status" hidden></div>
+        <div class="field">
+          <label for="breakMinutes" data-i18n="breakMinutesLabel"></label>
+          <input id="breakMinutes" type="number" min="1" max="180" value="10" />
+          <button id="btnSaveBreak" class="btn primary" type="button" data-i18n="save"></button>
+        </div>
+      </section>
+
+      <section id="section-limits" class="card">
+        <h2 data-i18n="limitsSection"></h2>
+        <p class="hint" data-i18n="limitsHint"></p>
+        <div id="limitList" class="rule-list"></div>
+        <div id="noLimits" class="empty" hidden data-i18n="noLimitsYet"></div>
+        <form id="limitForm" class="add-form">
+          <input id="limitDomain" type="text" data-i18n-placeholder="domainPlaceholder" />
+          <input id="limitDaily" type="number" min="1" data-i18n-placeholder="limitDaily" />
+          <input id="limitRemind" type="number" min="0" data-i18n-placeholder="remindAt" />
+          <button class="btn primary" type="submit" data-i18n="addLimit"></button>
+        </form>
+      </section>
+
+      <section id="section-blacklist" class="card">
+        <h2 data-i18n="blacklistSection"></h2>
+        <p class="hint" data-i18n="blacklistHint"></p>
+        <div id="blacklistList" class="rule-list"></div>
+        <div id="noBlacklist" class="empty" hidden data-i18n="noBlacklistYet"></div>
+        <form id="blacklistForm" class="add-form">
+          <input id="blacklistDomain" type="text" data-i18n-placeholder="domainPlaceholder" />
+          <button class="btn primary" type="submit" data-i18n="addBlacklist"></button>
+        </form>
+      </section>
+
+      <section id="section-data" class="card">
+        <h2 data-i18n="dataSection"></h2>
+        <p class="hint" data-i18n="dataHint"></p>
+        <div id="todayBlock" class="day-block"></div>
+        <div id="historyBlock"></div>
+        <div class="danger-actions">
+          <button id="btnClearToday" class="btn danger" type="button" data-i18n="clearToday"></button>
+          <button id="btnClearAll" class="btn danger" type="button" data-i18n="clearAll"></button>
+        </div>
+      </section>
+    </div>
+
+    <script src="../shared/tldts.min.js"></script>
+    <script src="../shared/hostname.js"></script>
+    <script src="../shared/storage.js"></script>
+    <script src="../shared/i18n.js"></script>
+    <script src="options.js"></script>
+  </body>
+</html>

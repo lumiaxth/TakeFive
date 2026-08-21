@@ -1,0 +1,269 @@
+{
+  "extName": {
+    "message": "Healthy Explorer",
+    "description": "Extension name"
+  },
+  "extDescription": {
+    "message": "Track your daily time on websites, set per-domain time limits and block distracting domains.",
+    "description": "Extension description"
+  },
+  "todayTotal": {
+    "message": "Today",
+    "description": "Popup section header for today's usage"
+  },
+  "totalLabel": {
+    "message": "Total time today",
+    "description": "Label for total time today"
+  },
+  "domainsTitle": {
+    "message": "Domain usage",
+    "description": "Header of the domain usage list"
+  },
+  "noDataYet": {
+    "message": "No data yet. Start browsing to track time.",
+    "description": "Empty state in popup"
+  },
+  "limitReached": {
+    "message": "Limit reached",
+    "description": "Badge shown when a domain has exceeded its daily limit"
+  },
+  "remindNear": {
+    "message": "nearing limit",
+    "description": "Badge shown when a domain is close to its limit"
+  },
+  "setLimit": {
+    "message": "Set limit",
+    "description": "Button label to set/edit a daily limit for a domain"
+  },
+  "blockDomain": {
+    "message": "Block domain",
+    "description": "Button label to add a domain to the blacklist"
+  },
+  "unblockDomain": {
+    "message": "Unblock",
+    "description": "Button label to remove a domain from the blacklist"
+  },
+  "removeLimit": {
+    "message": "Remove limit",
+    "description": "Button label to remove a limit"
+  },
+  "pause": {
+    "message": "Pause timer",
+    "description": "Button label to pause tracking and blocking"
+  },
+  "resume": {
+    "message": "Resume",
+    "description": "Button label to resume tracking"
+  },
+  "pausedFor": {
+    "message": "Paused for $MIN$ min",
+    "description": "Status text while paused. $MIN$ is minutes remaining",
+    "placeholders": {
+      "MIN": {
+        "content": "$1"
+      }
+    }
+  },
+  "openSettings": {
+    "message": "Open settings",
+    "description": "Link to the options page"
+  },
+  "minutesUnit": {
+    "message": "min",
+    "description": "Short minutes unit"
+  },
+  "hoursShort": {
+    "message": "h",
+    "description": "Short hours unit"
+  },
+  "blockedTitle": {
+    "message": "This site is blocked",
+    "description": "Blocked page title"
+  },
+  "blockedReasonBlacklist": {
+    "message": "$HOST$ is on your block list.",
+    "description": "Blocked page explanation for blacklisted domain",
+    "placeholders": {
+      "HOST": {
+        "content": "$1"
+      }
+    }
+  },
+  "blockedReasonLimit": {
+    "message": "You have reached the daily time limit for $HOST$ ($TIME$ today).",
+    "description": "Blocked page explanation for time limit reached",
+    "placeholders": {
+      "HOST": {
+        "content": "$1"
+      },
+      "TIME": {
+        "content": "$2"
+      }
+    }
+  },
+  "breakFor": {
+    "message": "Take a break for $MIN$ minutes",
+    "description": "Button on blocked page to pause for a while",
+    "placeholders": {
+      "MIN": {
+        "content": "$1"
+      }
+    }
+  },
+  "goBack": {
+    "message": "Go back",
+    "description": "Button to navigate back on blocked page"
+  },
+  "optionsTitle": {
+    "message": "Healthy Explorer Settings",
+    "description": "Options page title"
+  },
+  "limitsSection": {
+    "message": "Daily time limits",
+    "description": "Options section header"
+  },
+  "limitsHint": {
+    "message": "Set how long you may spend on a domain each day. When the reminder threshold is crossed you get a notification; when the limit is reached the domain is blocked.",
+    "description": "Helper text for limits section"
+  },
+  "domainPlaceholder": {
+    "message": "e.g. youtube.com",
+    "description": "Placeholder for domain input"
+  },
+  "limitDaily": {
+    "message": "Limit (minutes)",
+    "description": "Input label for daily limit in minutes"
+  },
+  "remindAt": {
+    "message": "Remind at (minutes)",
+    "description": "Input label for reminder threshold in minutes"
+  },
+  "addLimit": {
+    "message": "Add limit",
+    "description": "Button to add a limit rule"
+  },
+  "save": {
+    "message": "Save",
+    "description": "Generic save button"
+  },
+  "cancel": {
+    "message": "Cancel",
+    "description": "Generic cancel button"
+  },
+  "edit": {
+    "message": "Edit",
+    "description": "Generic edit button"
+  },
+  "delete": {
+    "message": "Delete",
+    "description": "Generic delete button"
+  },
+  "blacklistSection": {
+    "message": "Blocked domains",
+    "description": "Options section header"
+  },
+  "blacklistHint": {
+    "message": "Domains in this list are always blocked from being visited.",
+    "description": "Helper text for blacklist section"
+  },
+  "addBlacklist": {
+    "message": "Add to block list",
+    "description": "Button to add a domain to blacklist"
+  },
+  "dataSection": {
+    "message": "Data",
+    "description": "Options section header for data"
+  },
+  "dataHint": {
+    "message": "View today's usage and the last 7 days.",
+    "description": "Helper text for data section"
+  },
+  "clearToday": {
+    "message": "Reset today's data",
+    "description": "Button to clear today's data"
+  },
+  "clearAll": {
+    "message": "Clear all data",
+    "description": "Button to clear all stored data"
+  },
+  "breakSection": {
+    "message": "Break",
+    "description": "Options section header for pause settings"
+  },
+  "breakMinutesLabel": {
+    "message": "Default break length (minutes)",
+    "description": "Label for default break minutes input"
+  },
+  "currentPaused": {
+    "message": "Tracking is currently paused. Resume to start tracking again.",
+    "description": "Status shown in options when paused"
+  },
+  "todayDate": {
+    "message": "Today ($DATE$)",
+    "description": "Options data header with date. $DATE$ is the date",
+    "placeholders": {
+      "DATE": {
+        "content": "$1"
+      }
+    }
+  },
+  "totalForDay": {
+    "message": "Total: $TIME$",
+    "description": "Total time for a given day in data section",
+    "placeholders": {
+      "TIME": {
+        "content": "$1"
+      }
+    }
+  },
+  "invalidDomain": {
+    "message": "Please enter a valid domain.",
+    "description": "Validation error for domain input"
+  },
+  "invalidNumber": {
+    "message": "Please enter valid numbers (limit >= 1, reminder >= 0).",
+    "description": "Validation error for numeric inputs"
+  },
+  "noLimitsYet": {
+    "message": "No limits configured yet.",
+    "description": "Empty state for limits list"
+  },
+  "noBlacklistYet": {
+    "message": "Block list is empty.",
+    "description": "Empty state for blacklist list"
+  },
+  "notifyLimitNear": {
+    "message": "$HOST$: you are nearing your daily limit",
+    "description": "Notification title when approaching limit",
+    "placeholders": {
+      "HOST": {
+        "content": "$1"
+      }
+    }
+  },
+  "notifyLimitNearBody": {
+    "message": "Used $TIME$ out of $LIMIT$. The domain will be blocked when the limit is reached.",
+    "description": "Notification body when approaching limit",
+    "placeholders": {
+      "TIME": {
+        "content": "$1"
+      },
+      "LIMIT": {
+        "content": "$2"
+      }
+    }
+  },
+  "notifyLimitReachedTitle": {
+    "message": "$HOST$: daily limit reached",
+    "description": "Notification title when limit reached",
+    "placeholders": {
+      "HOST": {
+        "content": "$1"
+      }
+    }
+  },
+  "notifyLimitReachedBody": {
+    "message": "The domain has been blocked for today. Take a break or use the pause feature.",
+    "description": "Notification body when limit reached"
+  }
+}

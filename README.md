@@ -1,0 +1,105 @@
+# 健康上网助手 (Healthy Explorer)
+
+一款基于 Manifest V3 的浏览器插件（Chrome / Edge），帮助你统计每日各网站的使用时长，为域名设置时间限制、提醒，以及屏蔽干扰网站。
+
+## 功能
+
+- **时长统计**：自动记录每个注册级域名今日累计使用时长（如 `mail.google.com`、`www.google.com` 统一计为 `google.com`），按天归档并保留最近 7 天。
+- **时间限制**：为单个域名设置每日限额与提醒阈值。接近限额时推送桌面通知，达到限额后禁止继续访问。
+- **访问屏蔽**：将域名加入黑名单后，访问即被重定向到阻断页，且不受"休息"暂停影响。
+- **暂停机制**：一键"休息 N 分钟"，期间不计时、不限额（黑名单除外），休息时长可在设置中调整。
+- **多语言**：根据浏览器系统语言自动切换中文 / English。
+
+## 安装（开发模式加载）
+
+1. 打开浏览器扩展管理页：Chrome 访问 `chrome://extensions`，Edge 访问 `edge://extensions`。
+2. 打开右上角「开发者模式」。
+3. 点击「加载已解压的扩展程序」，选择本仓库目录（含 `manifest.json` 的根目录）。
+4. 工具栏出现图标后即可使用。
+
+> 每次代码更新后，回到扩展管理页点击「重新加载」即可生效。
+
+## 使用方法
+
+- **查看统计**：点击工具栏图标，弹窗展示今日总时长与各域名使用时长，每行可设置限额 / 加入黑名单。
+- **设置限制与黑名单**：右键图标「选项」（或设置页入口），管理限额规则、黑名单与休息时长。
+- **被阻断时**：达到限额的域名会跳转到阻断页，可点击「休息 N 分钟」临时放行；黑名单域名不提供放行入口。
+
+## 项目结构
+
+```
+healthy_explorer/
+├── manifest.json          # MV3 配置（权限、入口、默认语言）
+├── background.js          # Service Worker：计时、限额/提醒检查、阻断、暂停
+├── popup/                 # 工具栏弹窗：今日概览 + 快捷操作
+├── options/               # 设置页：限额 / 黑名单 / 数据 / 休息设置
+├── blocked/               # 阻断落地页
+├── shared/
+│   ├── storage.js         # 数据读写、每日重置、限额判断
+│   ├── hostname.js        # 注册级域名解析（基于 tldts）
+│   ├── i18n.js            # 界面多语言辅助
+│   └── tldts.min.js       # 公共后缀列表解析库（第三方，UMD 单文件）
+├── _locales/              # 多语言文案（en / zh_CN）
+└── icons/                 # 插件图标
+```
+
+## 权限说明
+
+| 权限 | 用途 |
+|---|---|
+| `tabs` | 读取活动标签页 URL，识别当前域名 |
+| `storage` | 保存统计数据与设置（仅本地） |
+| `alarms` | 定时提交计时数据，保证准确 |
+| `notifications` | 限额接近/达成的桌面提醒 |
+| `webNavigation` | 监听导航并重定向到阻断页 |
+| `windows` | 感知窗口聚焦，仅在前台时计时 |
+| `host_permissions: <all_urls>` | 允许 `webNavigation` 观察到任意站点的导航（用于屏蔽） |
+
+## 计时说明
+
+- 仅当 **浏览器窗口在前台 + 目标标签页为活动页 + 未暂停** 时计时，不依赖鼠标键盘操作。
+- 数据每 30 秒落盘一次；Service Worker 被系统回收后重启，会从存储锚点续算，避免漏计。
+- 浏览器关闭或系统睡眠超过 2 分钟视为离开，不计入时长。
+- 所有数据存储在 `chrome.storage.local`，卸载扩展即清除。
+
+## 数据存储结构
+
+```json
+{
+  "date": "2026-08-21",
+  "domains": { "google.com": { "timeMs": 1234000 } },
+  "notifications": { "youtube.com": { "near": true, "reached": true } },
+  "tracking": { "host": "google.com", "since": 1787232000000 },
+  "settings": {
+    "limits": { "youtube.com": { "dailyMs": 3600000, "remindAtMs": 3000000 } },
+    "blacklist": ["bad.com"],
+    "pauseUntil": 0,
+    "breakMinutes": 10
+  },
+  "history": [ { "date": "2026-08-20", "domains": { "google.com": { "timeMs": 999000 } } } ]
+}
+```
+
+## 开发与自测
+
+本项目的共享层与后台逻辑可在 Node.js 下用 mock 的 `chrome` API 进行单元自测：
+
+```bash
+# 共享层（域名解析 / 存储 / 每日重置 / 暂停）
+node D:/Data/Temp/opencode/test_shared.js
+
+# 后台逻辑（消息流转 / 限额 / 提醒 / 阻断 / 暂停）
+node D:/Data/Temp/opencode/test_background.js
+
+# 计时准确度（暂停不计时 / SW 重启续算 / GET_DATA 补记）
+node D:/Data/Temp/opencode/test_timing.js
+
+# 界面多语言渲染（jsdom）
+node D:/Data/Temp/opencode/test_i18n_dom.js
+```
+
+> 测试脚本位于 `D:/Data/Temp/opencode/`，仅为开发辅助，未纳入本仓库。
+
+## License
+
+MIT

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="popup.css" />
+    <title data-i18n="extName"></title>
+  </head>
+  <body>
+    <header>
+      <div class="brand">
+        <span class="logo"></span>
+        <span id="brandName" data-i18n="extName"></span>
+      </div>
+      <div id="activeHost" class="active-host" hidden></div>
+    </header>
+
+    <div id="pausedBanner" class="paused-banner" hidden></div>
+
+    <main>
+      <section class="summary">
+        <div class="total">
+          <div id="totalValue" class="total-value">0m</div>
+          <div class="total-label" data-i18n="totalLabel"></div>
+        </div>
+        <div class="actions">
+          <button id="btnPause" class="btn primary" type="button" data-i18n="pause"></button>
+          <button id="btnResume" class="btn" type="button" hidden data-i18n="resume"></button>
+        </div>
+      </section>
+
+      <section class="list">
+        <h2 data-i18n="domainsTitle"></h2>
+        <div id="domainList"></div>
+        <div id="empty" class="empty" hidden data-i18n="noDataYet"></div>
+      </section>
+    </main>
+
+    <footer>
+      <a id="linkSettings" href="#" data-i18n="openSettings"></a>
+    </footer>
+
+    <script src="../shared/tldts.min.js"></script>
+    <script src="../shared/hostname.js"></script>
+    <script src="../shared/storage.js"></script>
+    <script src="../shared/i18n.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>

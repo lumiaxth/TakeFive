@@ -1,0 +1,269 @@
+{
+  "extName": {
+    "message": "健康上网助手",
+    "description": "扩展名称"
+  },
+  "extDescription": {
+    "message": "统计每日各网站使用时长，为域名设置时间限制，屏蔽干扰网站。",
+    "description": "扩展描述"
+  },
+  "todayTotal": {
+    "message": "今日",
+    "description": "弹窗今日概览标题"
+  },
+  "totalLabel": {
+    "message": "今日总时长",
+    "description": "今日总时长标签"
+  },
+  "domainsTitle": {
+    "message": "各域名使用情况",
+    "description": "域名列表标题"
+  },
+  "noDataYet": {
+    "message": "暂无数据，开始浏览后会自动计时。",
+    "description": "弹窗空状态提示"
+  },
+  "limitReached": {
+    "message": "已达限额",
+    "description": "域名超出每日限额时的徽标"
+  },
+  "remindNear": {
+    "message": "接近限额",
+    "description": "域名接近限额时的徽标"
+  },
+  "setLimit": {
+    "message": "设置限额",
+    "description": "设置/修改每日限额按钮"
+  },
+  "blockDomain": {
+    "message": "加入黑名单",
+    "description": "将域名加入黑名单按钮"
+  },
+  "unblockDomain": {
+    "message": "解除屏蔽",
+    "description": "将域名移出黑名单按钮"
+  },
+  "removeLimit": {
+    "message": "移除限额",
+    "description": "移除限额按钮"
+  },
+  "pause": {
+    "message": "暂停计时",
+    "description": "暂停计时与屏蔽按钮"
+  },
+  "resume": {
+    "message": "恢复",
+    "description": "恢复计时按钮"
+  },
+  "pausedFor": {
+    "message": "已暂停 $MIN$ 分钟",
+    "description": "暂停中的状态文案，$MIN$ 为剩余分钟",
+    "placeholders": {
+      "MIN": {
+        "content": "$1"
+      }
+    }
+  },
+  "openSettings": {
+    "message": "打开设置",
+    "description": "跳转到设置页的链接"
+  },
+  "minutesUnit": {
+    "message": "分钟",
+    "description": "分钟单位"
+  },
+  "hoursShort": {
+    "message": "时",
+    "description": "小时简写"
+  },
+  "blockedTitle": {
+    "message": "该网站已被屏蔽",
+    "description": "阻断页标题"
+  },
+  "blockedReasonBlacklist": {
+    "message": "$HOST$ 已被你加入黑名单。",
+    "description": "黑名单域名的阻断说明",
+    "placeholders": {
+      "HOST": {
+        "content": "$1"
+      }
+    }
+  },
+  "blockedReasonLimit": {
+    "message": "你今天在 $HOST$ 上的使用时长已达每日限额（今日 $TIME$）。",
+    "description": "达到限额的阻断说明",
+    "placeholders": {
+      "HOST": {
+        "content": "$1"
+      },
+      "TIME": {
+        "content": "$2"
+      }
+    }
+  },
+  "breakFor": {
+    "message": "休息 $MIN$ 分钟",
+    "description": "阻断页的休息按钮",
+    "placeholders": {
+      "MIN": {
+        "content": "$1"
+      }
+    }
+  },
+  "goBack": {
+    "message": "返回",
+    "description": "阻断页返回按钮"
+  },
+  "optionsTitle": {
+    "message": "健康上网助手设置",
+    "description": "设置页标题"
+  },
+  "limitsSection": {
+    "message": "每日时间限制",
+    "description": "设置页-限额分区标题"
+  },
+  "limitsHint": {
+    "message": "设置每天可在某个域名上花费的时间。达到提醒阈值时你会收到通知，达到限额后该域名将被屏蔽。",
+    "description": "限额分区的说明文字"
+  },
+  "domainPlaceholder": {
+    "message": "例如 youtube.com",
+    "description": "域名输入框占位符"
+  },
+  "limitDaily": {
+    "message": "限额（分钟）",
+    "description": "每日限额输入标签"
+  },
+  "remindAt": {
+    "message": "提醒阈值（分钟）",
+    "description": "提醒阈值输入标签"
+  },
+  "addLimit": {
+    "message": "添加限额",
+    "description": "添加限额规则按钮"
+  },
+  "save": {
+    "message": "保存",
+    "description": "通用保存按钮"
+  },
+  "cancel": {
+    "message": "取消",
+    "description": "通用取消按钮"
+  },
+  "edit": {
+    "message": "编辑",
+    "description": "通用编辑按钮"
+  },
+  "delete": {
+    "message": "删除",
+    "description": "通用删除按钮"
+  },
+  "blacklistSection": {
+    "message": "屏蔽域名（黑名单）",
+    "description": "设置页-黑名单分区标题"
+  },
+  "blacklistHint": {
+    "message": "列表中的域名将被禁止访问。",
+    "description": "黑名单分区的说明文字"
+  },
+  "addBlacklist": {
+    "message": "加入黑名单",
+    "description": "添加黑名单按钮"
+  },
+  "dataSection": {
+    "message": "数据",
+    "description": "设置页-数据分区标题"
+  },
+  "dataHint": {
+    "message": "查看今日使用情况与最近 7 天记录。",
+    "description": "数据分区的说明文字"
+  },
+  "clearToday": {
+    "message": "重置今日数据",
+    "description": "清空今日数据按钮"
+  },
+  "clearAll": {
+    "message": "清空全部数据",
+    "description": "清空所有数据按钮"
+  },
+  "breakSection": {
+    "message": "休息设置",
+    "description": "设置页-休息分区标题"
+  },
+  "breakMinutesLabel": {
+    "message": "默认休息时长（分钟）",
+    "description": "默认休息时长输入标签"
+  },
+  "currentPaused": {
+    "message": "当前处于暂停状态，恢复后可继续计时。",
+    "description": "暂停时的状态提示"
+  },
+  "todayDate": {
+    "message": "今日（$DATE$）",
+    "description": "数据分区今日标题，$DATE$ 为日期",
+    "placeholders": {
+      "DATE": {
+        "content": "$1"
+      }
+    }
+  },
+  "totalForDay": {
+    "message": "合计：$TIME$",
+    "description": "某一天的总时长",
+    "placeholders": {
+      "TIME": {
+        "content": "$1"
+      }
+    }
+  },
+  "invalidDomain": {
+    "message": "请输入有效的域名。",
+    "description": "域名输入校验错误提示"
+  },
+  "invalidNumber": {
+    "message": "请输入有效的数字（限额 >= 1，提醒 >= 0）。",
+    "description": "数字输入校验错误提示"
+  },
+  "noLimitsYet": {
+    "message": "还没有配置限额。",
+    "description": "限额列表空状态"
+  },
+  "noBlacklistYet": {
+    "message": "黑名单为空。",
+    "description": "黑名单列表空状态"
+  },
+  "notifyLimitNear": {
+    "message": "$HOST$：接近每日限额",
+    "description": "接近限额时的通知标题",
+    "placeholders": {
+      "HOST": {
+        "content": "$1"
+      }
+    }
+  },
+  "notifyLimitNearBody": {
+    "message": "已使用 $TIME$，限额 $LIMIT$。达到限额后该域名将被屏蔽。",
+    "description": "接近限额时的通知正文",
+    "placeholders": {
+      "TIME": {
+        "content": "$1"
+      },
+      "LIMIT": {
+        "content": "$2"
+      }
+    }
+  },
+  "notifyLimitReachedTitle": {
+    "message": "$HOST$：已达每日限额",
+    "description": "达到限额时的通知标题",
+    "placeholders": {
+      "HOST": {
+        "content": "$1"
+      }
+    }
+  },
+  "notifyLimitReachedBody": {
+    "message": "该域名今天已被屏蔽，休息一下，或使用暂停功能。",
+    "description": "达到限额时的通知正文"
+  }
+}

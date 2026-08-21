@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="blocked.css" />
+    <title data-i18n="blockedTitle"></title>
+  </head>
+  <body>
+    <div class="card">
+      <div class="icon"></div>
+      <h1 data-i18n="blockedTitle"></h1>
+      <p id="reason" class="reason"></p>
+      <div class="buttons">
+        <button id="btnBreak" class="btn primary" type="button" hidden data-i18n="breakFor"></button>
+        <button id="btnBack" class="btn" type="button" data-i18n="goBack"></button>
+      </div>
+    </div>
+
+    <script src="../shared/storage.js"></script>
+    <script src="../shared/i18n.js"></script>
+    <script src="blocked.js"></script>
+  </body>
+</html>

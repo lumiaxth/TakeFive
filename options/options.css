@@ -1,0 +1,289 @@
+:root {
+  --bg: #f7faf7;
+  --card: #ffffff;
+  --text: #1f2937;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --green: #16a34a;
+  --green-dark: #15803d;
+  --green-light: #dcfce7;
+  --amber: #d97706;
+  --amber-light: #fef3c7;
+  --red: #dc2626;
+  --red-light: #fee2e2;
+  --radius: 12px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+    "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-size: 14px;
+}
+
+.wrap {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+}
+
+header {
+  margin-bottom: 20px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #22c55e, #15803d);
+  position: relative;
+  flex-shrink: 0;
+}
+
+.logo::after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 17px;
+  width: 11px;
+  height: 5px;
+  background: #fff;
+  border-radius: 3px;
+  transform: rotate(45deg);
+}
+
+.logo::before {
+  content: "";
+  position: absolute;
+  left: 10px;
+  top: 14px;
+  width: 18px;
+  height: 5px;
+  background: #fff;
+  border-radius: 3px;
+  transform: rotate(-45deg);
+}
+
+h1 {
+  font-size: 20px;
+  margin: 0;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.card h2 {
+  font-size: 16px;
+  margin: 0 0 6px;
+}
+
+.hint {
+  color: var(--muted);
+  font-size: 13px;
+  margin: 0 0 16px;
+  line-height: 1.6;
+}
+
+.paused-status {
+  background: var(--amber-light);
+  color: var(--amber);
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.field label {
+  color: var(--muted);
+}
+
+.field input {
+  width: 90px;
+}
+
+.rule-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.rule {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 14px;
+  flex-wrap: wrap;
+}
+
+.rule .rule-host {
+  font-weight: 600;
+  min-width: 140px;
+}
+
+.rule .rule-meta {
+  color: var(--muted);
+  font-size: 12px;
+  flex: 1;
+}
+
+.rule .rule-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.add-form {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.add-form input {
+  flex: 1;
+  min-width: 120px;
+}
+
+.add-form input#limitDomain,
+.add-form input#blacklistDomain {
+  flex: 1 1 200px;
+}
+
+input,
+button {
+  font-family: inherit;
+  font-size: 13px;
+}
+
+input[type="text"],
+input[type="number"] {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+
+input:focus {
+  outline: 2px solid var(--green);
+  outline-offset: -1px;
+  border-color: transparent;
+}
+
+.btn {
+  border: 1px solid var(--border);
+  background: #fff;
+  color: var(--text);
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background: #f3f4f6;
+}
+
+.btn.primary {
+  background: var(--green);
+  border-color: var(--green);
+  color: #fff;
+  font-weight: 600;
+}
+
+.btn.primary:hover {
+  background: var(--green-dark);
+}
+
+.btn.danger {
+  color: var(--red);
+}
+
+.btn.small {
+  padding: 5px 10px;
+  font-size: 12px;
+}
+
+.empty {
+  color: var(--muted);
+  font-size: 13px;
+  margin-bottom: 14px;
+}
+
+.day-block {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+}
+
+.day-block h3 {
+  margin: 0 0 8px;
+  font-size: 14px;
+}
+
+.day-block .day-total {
+  color: var(--muted);
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+
+.day-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.day-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+}
+
+.day-row .rhost {
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.day-row .rtime {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  margin-left: 12px;
+}
+
+.danger-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+}
