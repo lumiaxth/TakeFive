@@ -130,6 +130,16 @@ h1 {
   width: 90px;
 }
 
+.field select {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-family: inherit;
+  font-size: 13px;
+  background: #fff;
+  color: var(--text);
+}
+
 .field label.check {
   display: inline-flex;
   align-items: center;

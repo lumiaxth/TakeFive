@@ -15,13 +15,22 @@
         </div>
       </header>
 
-      <section id="section-break" class="card">
-        <h2 data-i18n="breakSection"></h2>
+      <section id="section-pause" class="card">
+        <h2 data-i18n="pauseSection"></h2>
         <div id="pausedStatus" class="paused-status" hidden></div>
+      </section>
+
+      <section id="section-badge" class="card">
+        <h2 data-i18n="badgeSection"></h2>
+        <p class="hint" data-i18n="badgeHint"></p>
         <div class="field">
-          <label for="breakMinutes" data-i18n="breakMinutesLabel"></label>
-          <input id="breakMinutes" type="number" min="1" max="180" value="10" />
-          <button id="btnSaveBreak" class="btn primary" type="button" data-i18n="save"></button>
+          <select id="badgeMode">
+            <option value="auto" data-i18n="badgeModeAuto"></option>
+            <option value="total" data-i18n="badgeModeTotal"></option>
+            <option value="domain" data-i18n="badgeModeDomain"></option>
+            <option value="pomodoro" data-i18n="badgeModePomodoro"></option>
+          </select>
+          <button id="btnSaveBadgeMode" class="btn primary" type="button" data-i18n="saveBadgeMode"></button>
         </div>
       </section>
 

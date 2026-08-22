@@ -8,7 +8,6 @@
   const reason = params.get('reason') || 'limit';
   const domain = params.get('domain') || '';
   const url = params.get('url') || '';
-  const minutes = Math.max(1, Number(params.get('break')) || 10);
 
   document.title = t('blockedTitle');
 
@@ -23,15 +22,11 @@
     HE.storage.load().then((data) => {
       const timeMs = (data.domains[domain] && data.domains[domain].timeMs) || 0;
       reasonEl.textContent = t('blockedReasonLimit', [domain, fmt(timeMs)]);
-      const m = Math.max(1, data.settings.breakMinutes || minutes);
-      btnBreak.textContent = t('breakFor', [String(m)]);
-      btnBreak.dataset.minutes = String(m);
     });
   }
 
   btnBreak.addEventListener('click', async () => {
-    const m = Number(btnBreak.dataset.minutes) || minutes;
-    await chrome.runtime.sendMessage({ type: 'PAUSE', minutes: m });
+    await chrome.runtime.sendMessage({ type: 'PAUSE' });
     if (url && /^https?:/i.test(url)) {
       location.href = url;
     } else if (history.length > 1) {

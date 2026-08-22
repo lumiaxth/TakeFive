@@ -55,14 +55,13 @@
     "message": "恢复",
     "description": "恢复计时按钮"
   },
-  "pausedFor": {
-    "message": "已暂停 $MIN$ 分钟",
-    "description": "暂停中的状态文案，$MIN$ 为剩余分钟",
-    "placeholders": {
-      "MIN": {
-        "content": "$1"
-      }
-    }
+  "paused": {
+    "message": "已暂停计时",
+    "description": "暂停中的状态文案"
+  },
+  "pauseSection": {
+    "message": "暂停 / 恢复",
+    "description": "选项页暂停状态分区标题"
   },
   "openSettings": {
     "message": "打开设置",
@@ -102,13 +101,8 @@
     }
   },
   "breakFor": {
-    "message": "休息 $MIN$ 分钟",
-    "description": "阻断页的休息按钮",
-    "placeholders": {
-      "MIN": {
-        "content": "$1"
-      }
-    }
+    "message": "暂停并继续访问",
+    "description": "阻断页暂停计时并继续访问的按钮"
   },
   "goBack": {
     "message": "返回",
@@ -186,13 +180,37 @@
     "message": "清空全部数据",
     "description": "清空所有数据按钮"
   },
-  "breakSection": {
-    "message": "休息设置",
-    "description": "设置页-休息分区标题"
+  "badgeSection": {
+    "message": "图标角标",
+    "description": "选项页图标角标分区标题"
   },
-  "breakMinutesLabel": {
-    "message": "默认休息时长（分钟）",
-    "description": "默认休息时长输入标签"
+  "badgeHint": {
+    "message": "选择插件图标显示的内容。自动：开启番茄钟时显示剩余时长，否则普通网页显示当前域名时长，空白/系统页面显示今日总时长。",
+    "description": "图标角标分区的说明文字"
+  },
+  "badgeModeAuto": {
+    "message": "自动（推荐）",
+    "description": "角标模式选项"
+  },
+  "badgeModeTotal": {
+    "message": "今日总时长",
+    "description": "角标模式选项"
+  },
+  "badgeModeDomain": {
+    "message": "当前域名时长",
+    "description": "角标模式选项"
+  },
+  "badgeModePomodoro": {
+    "message": "番茄钟剩余时长",
+    "description": "角标模式选项"
+  },
+  "saveBadgeMode": {
+    "message": "保存",
+    "description": "保存角标模式的按钮"
+  },
+  "badgePaused": {
+    "message": "停",
+    "description": "暂停时图标角标标记"
   },
   "currentPaused": {
     "message": "当前处于暂停状态，恢复后可继续计时。",

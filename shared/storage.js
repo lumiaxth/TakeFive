@@ -12,8 +12,8 @@
     settings: {
       limits: {},
       blacklist: [],
-      pauseUntil: 0,
-      breakMinutes: 10,
+      paused: false,
+      badgeMode: 'auto',
       usageReminder: { enabled: false, minutes: 45 },
       pomodoro: { enabled: false, focusMinutes: 25, breakMinutes: 5, whitelist: [] }
     },
@@ -48,6 +48,11 @@
       ? data.pomodoroState
       : { phase: 'idle', remainingMs: 0 };
     data.settings = Object.assign({}, base.settings, data.settings || {});
+    const legacyPaused =
+      typeof data.settings.pauseUntil === 'number' && data.settings.pauseUntil > Date.now();
+    data.settings.paused = !!data.settings.paused || legacyPaused;
+    delete data.settings.pauseUntil;
+    delete data.settings.breakMinutes;
     data.settings.usageReminder = Object.assign({ enabled: false, minutes: 45 }, data.settings.usageReminder || {});
     data.settings.pomodoro = Object.assign(
       { enabled: false, focusMinutes: 25, breakMinutes: 5, whitelist: [] },
@@ -130,12 +135,7 @@
   }
 
   function isPaused(data) {
-    return !!(data.settings.pauseUntil && data.settings.pauseUntil > Date.now());
-  }
-
-  function minutesRemaining(data) {
-    const rem = Math.ceil((data.settings.pauseUntil - Date.now()) / 60000);
-    return rem > 0 ? rem : 0;
+    return !!data.settings.paused;
   }
 
   HE.storage = {
@@ -151,7 +151,6 @@
     sortedDomains,
     formatDuration,
     normalizeLimitEntry,
-    isPaused,
-    minutesRemaining
+    isPaused
   };
 })();

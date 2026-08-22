@@ -55,14 +55,13 @@
     "message": "Resume",
     "description": "Button label to resume tracking"
   },
-  "pausedFor": {
-    "message": "Paused for $MIN$ min",
-    "description": "Status text while paused. $MIN$ is minutes remaining",
-    "placeholders": {
-      "MIN": {
-        "content": "$1"
-      }
-    }
+  "paused": {
+    "message": "Tracking paused",
+    "description": "Status text while paused"
+  },
+  "pauseSection": {
+    "message": "Pause / Resume",
+    "description": "Options section header for pause status"
   },
   "openSettings": {
     "message": "Open settings",
@@ -102,13 +101,8 @@
     }
   },
   "breakFor": {
-    "message": "Take a break for $MIN$ minutes",
-    "description": "Button on blocked page to pause for a while",
-    "placeholders": {
-      "MIN": {
-        "content": "$1"
-      }
-    }
+    "message": "Pause and continue",
+    "description": "Button on blocked page to pause tracking and continue"
   },
   "goBack": {
     "message": "Go back",
@@ -186,13 +180,37 @@
     "message": "Clear all data",
     "description": "Button to clear all stored data"
   },
-  "breakSection": {
-    "message": "Break",
-    "description": "Options section header for pause settings"
+  "badgeSection": {
+    "message": "Icon badge",
+    "description": "Options section header for icon badge"
   },
-  "breakMinutesLabel": {
-    "message": "Default break length (minutes)",
-    "description": "Label for default break minutes input"
+  "badgeHint": {
+    "message": "Choose what the extension icon shows. Auto: pomodoro remaining while it runs, otherwise the current domain's usage, or today's total on blank/system pages.",
+    "description": "Helper text for badge section"
+  },
+  "badgeModeAuto": {
+    "message": "Auto (recommended)",
+    "description": "Badge mode option"
+  },
+  "badgeModeTotal": {
+    "message": "Today's total",
+    "description": "Badge mode option"
+  },
+  "badgeModeDomain": {
+    "message": "Current domain",
+    "description": "Badge mode option"
+  },
+  "badgeModePomodoro": {
+    "message": "Pomodoro remaining",
+    "description": "Badge mode option"
+  },
+  "saveBadgeMode": {
+    "message": "Save",
+    "description": "Button to save badge mode"
+  },
+  "badgePaused": {
+    "message": "P",
+    "description": "Icon badge marker while paused"
   },
   "currentPaused": {
     "message": "Tracking is currently paused. Resume to start tracking again.",

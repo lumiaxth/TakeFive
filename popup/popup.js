@@ -40,9 +40,8 @@
     $('btnPause').hidden = paused;
     $('btnResume').hidden = !paused;
     if (paused) {
-      const rem = HE.storage.minutesRemaining(data);
       pausedBanner.hidden = false;
-      pausedBanner.textContent = t('pausedFor', [String(rem)]);
+      pausedBanner.textContent = t('paused');
     } else {
       pausedBanner.hidden = true;
     }
@@ -101,9 +100,12 @@
 
     const hasLimit = !!data.settings.limits[host];
     const isBlocked = st.kind === 'blocked';
+    const limitBtn = hasLimit
+      ? ''
+      : `<button class="btn small" data-action="edit" data-host="${esc(host)}">${t('setLimit')}</button>`;
     const actions = `
       <div class="domain-actions">
-        <button class="btn small" data-action="edit" data-host="${esc(host)}">${t(hasLimit ? 'edit' : 'setLimit')}</button>
+        ${limitBtn}
         <button class="btn small" data-action="block" data-host="${esc(host)}">${t(isBlocked ? 'unblockDomain' : 'blockDomain')}</button>
       </div>`;
 
@@ -218,8 +220,7 @@
   }
 
   $('btnPause').addEventListener('click', async () => {
-    const minutes = data.settings.breakMinutes || 10;
-    await send({ type: 'PAUSE', minutes });
+    await send({ type: 'PAUSE' });
     await refresh();
   });
 

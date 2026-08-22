@@ -29,7 +29,8 @@
   }
 
   function render() {
-    renderBreak();
+    renderPause();
+    renderBadge();
     renderUsageReminder();
     renderPomodoro();
     renderLimits();
@@ -37,15 +38,13 @@
     renderData();
   }
 
-  function renderBreak() {
-    $('breakMinutes').value = data.settings.breakMinutes || 10;
+  function renderPause() {
     const paused = HE.storage.isPaused(data);
     const status = $('pausedStatus');
     if (paused) {
-      const rem = HE.storage.minutesRemaining(data);
       status.hidden = false;
       status.innerHTML =
-        '<span>' + esc(t('pausedFor', [String(rem)])) + '</span>' +
+        '<span>' + esc(t('paused')) + '</span>' +
         '<button class="btn small" id="btnResumeOptions" type="button">' + esc(t('resume')) + '</button>';
       $('btnResumeOptions').addEventListener('click', async () => {
         await send({ type: 'RESUME' });
@@ -54,6 +53,10 @@
     } else {
       status.hidden = true;
     }
+  }
+
+  function renderBadge() {
+    $('badgeMode').value = data.settings.badgeMode || 'auto';
   }
 
   function renderUsageReminder() {
@@ -256,13 +259,8 @@
     await refresh();
   });
 
-  $('btnSaveBreak').addEventListener('click', async () => {
-    const minutes = Number($('breakMinutes').value);
-    if (!minutes || minutes < 1) {
-      alert(t('invalidNumber'));
-      return;
-    }
-    await send({ type: 'SET_BREAK_MINUTES', minutes });
+  $('btnSaveBadgeMode').addEventListener('click', async () => {
+    await send({ type: 'SET_BADGE_MODE', mode: $('badgeMode').value });
     await refresh();
   });
 

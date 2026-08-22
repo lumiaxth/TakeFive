@@ -112,6 +112,64 @@ function notifyAndBanner(id, title, message, bannerText) {
   if (bannerText) showBanner(bannerText);
 }
 
+function fmtHm(ms) {
+  const totalMin = Math.max(0, Math.floor((ms || 0) / 60000));
+  const h = Math.floor(totalMin / 60);
+  const m = totalMin % 60;
+  return h + ':' + (m < 10 ? '0' + m : m);
+}
+
+async function currentHost() {
+  try {
+    const tabs = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+    if (tabs && tabs.length && tabs[0].url) {
+      return HE.hostname.getRegistrableDomain(tabs[0].url);
+    }
+  } catch (e) {
+    /* ignore */
+  }
+  return state.activeHost || null;
+}
+
+async function updateBadge() {
+  try {
+    const data = await HE.storage.load();
+    if (HE.storage.isPaused(data)) {
+      chrome.action.setBadgeBackgroundColor({ color: '#d97706' });
+      chrome.action.setBadgeText({ text: chrome.i18n.getMessage('badgePaused') });
+      return;
+    }
+    const mode = data.settings.badgeMode || 'auto';
+    const pomodoroActive = data.settings.pomodoro.enabled && data.pomodoroState.phase !== 'idle';
+    const total = HE.storage.totalForDomains(data.domains);
+    let text;
+    if (mode === 'total') {
+      text = fmtHm(total);
+    } else if (mode === 'domain') {
+      const host = await currentHost();
+      text = host
+        ? fmtHm((data.domains[host] && data.domains[host].timeMs) || 0)
+        : fmtHm(total);
+    } else if (mode === 'pomodoro') {
+      text = pomodoroActive ? fmtHm(Math.max(0, data.pomodoroState.remainingMs)) : fmtHm(total);
+    } else {
+      // auto: pomodoro > current domain > total
+      if (pomodoroActive) {
+        text = fmtHm(Math.max(0, data.pomodoroState.remainingMs));
+      } else {
+        const host = await currentHost();
+        text = host
+          ? fmtHm((data.domains[host] && data.domains[host].timeMs) || 0)
+          : fmtHm(total);
+      }
+    }
+    chrome.action.setBadgeBackgroundColor({ color: '#16a34a' });
+    chrome.action.setBadgeText({ text });
+  } catch (e) {
+    /* ignore */
+  }
+}
+
 async function commitTime() {
   if (!state.activeHost || !state.counting) {
     state.sessionStart = Date.now();
@@ -155,6 +213,7 @@ async function commitTime() {
 
     if (pomodoroCrossed) await switchPomodoroPhase(data);
     if (reachedFirstTime) await enforceBlocks(data);
+    await updateBadge();
   } catch (e) {
     console.error('[Healthy Explorer] commitTime error', e);
   }
@@ -308,43 +367,28 @@ async function syncActiveTab() {
     } else {
       await stopSession();
     }
+    await updateBadge();
   } catch (e) {
     /* window closed mid-query */
   }
 }
 
-async function pauseTemporarily(minutes) {
+async function setPaused(paused) {
   await commitTime();
-  state.counting = false;
-  const data = await HE.storage.load();
-  data.settings.pauseUntil = Date.now() + minutes * 60000;
-  data.tracking = { host: state.activeHost, since: 0 };
-  await HE.storage.save(data);
-}
-
-async function resumeTracking() {
-  await commitTime();
-  const data = await HE.storage.load();
-  data.settings.pauseUntil = 0;
-  state.counting = !!state.activeHost;
+  state.counting = !paused && !!state.activeHost;
   state.sessionStart = Date.now();
-  data.tracking = { host: state.activeHost, since: state.sessionStart };
+  const data = await HE.storage.load();
+  data.settings.paused = !!paused;
+  data.tracking = { host: state.activeHost, since: paused ? 0 : state.sessionStart };
   await HE.storage.save(data);
+  await updateBadge();
 }
 
 async function onTick() {
   await commitTime();
-  const data = await HE.storage.load();
-  const paused = data.settings.pauseUntil > 0;
-  if (paused && data.settings.pauseUntil <= Date.now()) {
-    data.settings.pauseUntil = 0;
-    state.counting = !!state.activeHost;
-    state.sessionStart = Date.now();
-    data.tracking = { host: state.activeHost, since: state.sessionStart };
-    await HE.storage.save(data);
-  }
   await syncActiveTab();
   await enforceBlocks();
+  await updateBadge();
 }
 
 async function handleMessage(msg) {
@@ -355,13 +399,11 @@ async function handleMessage(msg) {
       const data = await HE.storage.load();
       return { data, activeHost: state.activeHost, counting: state.counting };
     }
-    case 'PAUSE': {
-      const minutes = Math.max(1, Math.floor(Number(msg.minutes) || 0));
-      await pauseTemporarily(minutes);
+    case 'PAUSE':
+      await setPaused(true);
       return {};
-    }
     case 'RESUME':
-      await resumeTracking();
+      await setPaused(false);
       return {};
     case 'SET_LIMIT': {
       const host = HE.hostname.normalizeDomain(msg.host);
@@ -438,6 +480,15 @@ async function handleMessage(msg) {
         data.pomodoroState.remainingMs = 0;
       }
       await HE.storage.save(data);
+      await updateBadge();
+      return {};
+    }
+    case 'SET_BADGE_MODE': {
+      const mode = ['auto', 'total', 'domain', 'pomodoro'].indexOf(msg.mode) !== -1 ? msg.mode : 'auto';
+      const data = await HE.storage.load();
+      data.settings.badgeMode = mode;
+      await HE.storage.save(data);
+      await updateBadge();
       return {};
     }
     case 'ADD_POMODORO_WHITELIST': {
@@ -459,23 +510,18 @@ async function handleMessage(msg) {
       await HE.storage.save(data);
       return {};
     }
-    case 'SET_BREAK_MINUTES': {
-      const minutes = Math.max(1, Math.floor(Number(msg.minutes) || 0));
-      const data = await HE.storage.load();
-      data.settings.breakMinutes = minutes;
-      await HE.storage.save(data);
-      return {};
-    }
     case 'CLEAR_TODAY': {
       const data = await HE.storage.load();
       data.domains = {};
       data.notifications = {};
       await HE.storage.save(data);
+      await updateBadge();
       return {};
     }
     case 'CLEAR_ALL': {
       await chrome.storage.local.clear();
       await HE.storage.load();
+      await updateBadge();
       return {};
     }
     default:
@@ -581,6 +627,7 @@ function init() {
     await HE.storage.load();
     await syncActiveTab();
     await enforceBlocks();
+    await updateBadge();
   });
 }
 
