@@ -11,6 +11,8 @@
   const $ = (id) => document.getElementById(id);
   const limitList = $('limitList');
   const blacklistList = $('blacklistList');
+  const pomodoroWhitelistList = $('pomodoroWhitelistList');
+  const pomodoroStatus = $('pomodoroStatus');
   const todayBlock = $('todayBlock');
   const historyBlock = $('historyBlock');
 
@@ -28,6 +30,8 @@
 
   function render() {
     renderBreak();
+    renderUsageReminder();
+    renderPomodoro();
     renderLimits();
     renderBlacklist();
     renderData();
@@ -50,6 +54,50 @@
     } else {
       status.hidden = true;
     }
+  }
+
+  function renderUsageReminder() {
+    const ur = data.settings.usageReminder;
+    $('usageReminderEnabled').checked = !!ur.enabled;
+    $('usageReminderMinutes').value = ur.minutes || 45;
+  }
+
+  function renderPomodoro() {
+    const p = data.settings.pomodoro;
+    $('pomodoroEnabled').checked = !!p.enabled;
+    $('pomodoroFocusMinutes').value = p.focusMinutes || 25;
+    $('pomodoroBreakMinutes').value = p.breakMinutes || 5;
+
+    const st = data.pomodoroState;
+    if (p.enabled) {
+      const phaseText =
+        st.phase === 'break'
+          ? esc(t('pomodoroPhaseBreak'))
+          : esc(t('pomodoroPhaseFocus'));
+      const rem = Math.max(0, Math.ceil(st.remainingMs / 60000));
+      pomodoroStatus.textContent =
+        t('pomodoroStatusLabel') + ': ' + phaseText + ' · ' + t('pomodoroRemaining', [String(rem)]);
+    } else {
+      pomodoroStatus.textContent = t('pomodoroIdle');
+    }
+
+    const wl = p.whitelist;
+    $('noPomodoroWhitelist').hidden = wl.length > 0;
+    pomodoroWhitelistList.textContent = '';
+    wl.forEach((host) => {
+      const row = document.createElement('div');
+      row.className = 'rule';
+      row.innerHTML =
+        '<span class="rule-host">' + esc(host) + '</span>' +
+        '<span class="rule-actions">' +
+        '<button class="btn small danger" type="button">' + esc(t('delete')) + '</button>' +
+        '</span>';
+      pomodoroWhitelistList.appendChild(row);
+      row.querySelector('button').addEventListener('click', async () => {
+        await send({ type: 'REMOVE_POMODORO_WHITELIST', host });
+        await refresh();
+      });
+    });
   }
 
   function renderLimits() {
@@ -230,6 +278,44 @@
       await send({ type: 'CLEAR_ALL' });
       await refresh();
     }
+  });
+
+  $('btnSaveUsageReminder').addEventListener('click', async () => {
+    const minutes = Number($('usageReminderMinutes').value);
+    if (!minutes || minutes < 1) {
+      alert(t('invalidNumber'));
+      return;
+    }
+    await send({ type: 'SET_USAGE_REMINDER', enabled: $('usageReminderEnabled').checked, minutes });
+    await refresh();
+  });
+
+  $('btnSavePomodoro').addEventListener('click', async () => {
+    const focus = Number($('pomodoroFocusMinutes').value);
+    const brk = Number($('pomodoroBreakMinutes').value);
+    if (!focus || focus < 1 || !brk || brk < 1) {
+      alert(t('invalidNumber'));
+      return;
+    }
+    await send({
+      type: 'SET_POMODORO',
+      enabled: $('pomodoroEnabled').checked,
+      focusMinutes: focus,
+      breakMinutes: brk
+    });
+    await refresh();
+  });
+
+  $('pomodoroWhitelistForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const host = HE.hostname.normalizeDomain($('pomodoroWhitelistDomain').value);
+    if (!host) {
+      alert(t('invalidDomain'));
+      return;
+    }
+    await send({ type: 'ADD_POMODORO_WHITELIST', host });
+    $('pomodoroWhitelistDomain').value = '';
+    await refresh();
   });
 
   refresh();

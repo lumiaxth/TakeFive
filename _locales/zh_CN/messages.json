@@ -265,5 +265,186 @@
   "notifyLimitReachedBody": {
     "message": "该域名今天已被屏蔽，休息一下，或使用暂停功能。",
     "description": "达到限额时的通知正文"
+  },
+  "notifyUsageTitle": {
+    "message": "连续使用提醒",
+    "description": "连续使用提醒的通知标题"
+  },
+  "notifyUsageBody": {
+    "message": "你已连续使用浏览器 $MIN$ 分钟，建议休息一下。",
+    "description": "连续使用提醒的通知正文",
+    "placeholders": {
+      "MIN": {
+        "content": "$1"
+      }
+    }
+  },
+  "bannerUsage": {
+    "message": "已连续使用浏览器 $TIME$，建议休息",
+    "description": "连续使用提醒的页面横幅文案",
+    "placeholders": {
+      "TIME": {
+        "content": "$1"
+      }
+    }
+  },
+  "notifyPomodoroFocusTitle": {
+    "message": "专注结束",
+    "description": "番茄钟专注阶段结束的通知标题"
+  },
+  "notifyPomodoroFocusBody": {
+    "message": "休息 $MIN$ 分钟吧。",
+    "description": "番茄钟专注阶段结束的通知正文",
+    "placeholders": {
+      "MIN": {
+        "content": "$1"
+      }
+    }
+  },
+  "bannerPomodoroFocus": {
+    "message": "休息时间：$MIN$ 分钟",
+    "description": "番茄钟专注阶段结束的页面横幅文案",
+    "placeholders": {
+      "MIN": {
+        "content": "$1"
+      }
+    }
+  },
+  "notifyPomodoroBreakTitle": {
+    "message": "休息结束",
+    "description": "番茄钟休息阶段结束的通知标题"
+  },
+  "notifyPomodoroBreakBody": {
+    "message": "休息结束，专注 $MIN$ 分钟。",
+    "description": "番茄钟休息阶段结束的通知正文",
+    "placeholders": {
+      "MIN": {
+        "content": "$1"
+      }
+    }
+  },
+  "bannerPomodoroBreak": {
+    "message": "专注时间：$MIN$ 分钟",
+    "description": "番茄钟休息阶段结束的页面横幅文案",
+    "placeholders": {
+      "MIN": {
+        "content": "$1"
+      }
+    }
+  },
+  "notifyPomodoroWarnTitle": {
+    "message": "番茄钟专注中",
+    "description": "番茄钟白名单外切换的通知标题"
+  },
+  "notifyPomodoroWarnBody": {
+    "message": "$HOST$ 不在番茄钟白名单内。",
+    "description": "番茄钟白名单外切换的通知正文",
+    "placeholders": {
+      "HOST": {
+        "content": "$1"
+      }
+    }
+  },
+  "bannerPomodoroWarn": {
+    "message": "番茄钟：$HOST$ 不在白名单",
+    "description": "番茄钟白名单外切换的页面横幅文案",
+    "placeholders": {
+      "HOST": {
+        "content": "$1"
+      }
+    }
+  },
+  "usageReminderSection": {
+    "message": "连续使用提醒",
+    "description": "选项页分区标题"
+  },
+  "usageReminderHint": {
+    "message": "连续使用浏览器达到设定时长时提醒。离开浏览器超过 2 分钟会重置计时。",
+    "description": "连续使用提醒分区的说明文字"
+  },
+  "usageReminderEnabled": {
+    "message": "启用连续使用提醒",
+    "description": "复选框标签"
+  },
+  "usageReminderMinutes": {
+    "message": "提醒间隔（分钟）",
+    "description": "提醒间隔输入标签"
+  },
+  "saveUsageReminder": {
+    "message": "保存提醒设置",
+    "description": "保存连续使用提醒设置的按钮"
+  },
+  "pomodoroSection": {
+    "message": "番茄钟",
+    "description": "选项页分区标题"
+  },
+  "pomodoroHint": {
+    "message": "专注阶段切到白名单以外的标签页会提醒；浏览器在前台时按专注/休息周期倒计时。",
+    "description": "番茄钟分区的说明文字"
+  },
+  "pomodoroEnabled": {
+    "message": "启用番茄钟",
+    "description": "复选框标签"
+  },
+  "pomodoroFocusMinutes": {
+    "message": "专注时长（分钟）",
+    "description": "专注时长输入标签"
+  },
+  "pomodoroBreakMinutes": {
+    "message": "休息时长（分钟）",
+    "description": "休息时长输入标签"
+  },
+  "savePomodoro": {
+    "message": "保存番茄钟设置",
+    "description": "保存番茄钟设置的按钮"
+  },
+  "pomodoroWhitelistSection": {
+    "message": "番茄钟白名单",
+    "description": "选项页子分区标题"
+  },
+  "pomodoroWhitelistHint": {
+    "message": "白名单内的网站在专注阶段可正常切换。",
+    "description": "番茄钟白名单的说明文字"
+  },
+  "addPomodoroWhitelist": {
+    "message": "加入白名单",
+    "description": "加入番茄钟白名单的按钮"
+  },
+  "noPomodoroWhitelistYet": {
+    "message": "白名单为空。",
+    "description": "番茄钟白名单空状态"
+  },
+  "pomodoroStatusLabel": {
+    "message": "当前状态",
+    "description": "当前番茄钟阶段标签"
+  },
+  "pomodoroPhaseFocus": {
+    "message": "专注中",
+    "description": "番茄钟阶段名称"
+  },
+  "pomodoroPhaseBreak": {
+    "message": "休息中",
+    "description": "番茄钟阶段名称"
+  },
+  "pomodoroIdle": {
+    "message": "番茄钟未开启",
+    "description": "番茄钟闲置状态"
+  },
+  "pomodoroRemaining": {
+    "message": "剩余 $MIN$ 分钟",
+    "description": "番茄钟倒计时文案",
+    "placeholders": {
+      "MIN": {
+        "content": "$1"
+      }
+    }
+  },
+  "pomodoroToggleOn": {
+    "message": "开启番茄钟",
+    "description": "弹窗开启番茄钟按钮"
+  },
+  "pomodoroToggleOff": {
+    "message": "关闭番茄钟",
+    "description": "弹窗关闭番茄钟按钮"
   }
 }

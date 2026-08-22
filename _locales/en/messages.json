@@ -265,5 +265,186 @@
   "notifyLimitReachedBody": {
     "message": "The domain has been blocked for today. Take a break or use the pause feature.",
     "description": "Notification body when limit reached"
+  },
+  "notifyUsageTitle": {
+    "message": "Continuous use reminder",
+    "description": "Notification title for continuous usage reminder"
+  },
+  "notifyUsageBody": {
+    "message": "You have been using the browser continuously for $MIN$ minutes. Take a break.",
+    "description": "Notification body for continuous usage reminder",
+    "placeholders": {
+      "MIN": {
+        "content": "$1"
+      }
+    }
+  },
+  "bannerUsage": {
+    "message": "Used the browser for $TIME$ without a break",
+    "description": "Banner text for continuous usage reminder",
+    "placeholders": {
+      "TIME": {
+        "content": "$1"
+      }
+    }
+  },
+  "notifyPomodoroFocusTitle": {
+    "message": "Focus session over",
+    "description": "Notification title when pomodoro focus ends"
+  },
+  "notifyPomodoroFocusBody": {
+    "message": "Time for a break of $MIN$ minutes.",
+    "description": "Notification body when pomodoro focus ends",
+    "placeholders": {
+      "MIN": {
+        "content": "$1"
+      }
+    }
+  },
+  "bannerPomodoroFocus": {
+    "message": "Break time: $MIN$ minutes",
+    "description": "Banner text when pomodoro focus ends",
+    "placeholders": {
+      "MIN": {
+        "content": "$1"
+      }
+    }
+  },
+  "notifyPomodoroBreakTitle": {
+    "message": "Break over",
+    "description": "Notification title when pomodoro break ends"
+  },
+  "notifyPomodoroBreakBody": {
+    "message": "Break finished. Back to focus for $MIN$ minutes.",
+    "description": "Notification body when pomodoro break ends",
+    "placeholders": {
+      "MIN": {
+        "content": "$1"
+      }
+    }
+  },
+  "bannerPomodoroBreak": {
+    "message": "Focus time: $MIN$ minutes",
+    "description": "Banner text when pomodoro break ends",
+    "placeholders": {
+      "MIN": {
+        "content": "$1"
+      }
+    }
+  },
+  "notifyPomodoroWarnTitle": {
+    "message": "Pomodoro focus",
+    "description": "Notification title when switching to a non-whitelisted tab during focus"
+  },
+  "notifyPomodoroWarnBody": {
+    "message": "$HOST$ is not in your pomodoro whitelist.",
+    "description": "Notification body for pomodoro whitelist warning",
+    "placeholders": {
+      "HOST": {
+        "content": "$1"
+      }
+    }
+  },
+  "bannerPomodoroWarn": {
+    "message": "Pomodoro: $HOST$ is not whitelisted",
+    "description": "Banner text for pomodoro whitelist warning",
+    "placeholders": {
+      "HOST": {
+        "content": "$1"
+      }
+    }
+  },
+  "usageReminderSection": {
+    "message": "Continuous use reminder",
+    "description": "Options section header"
+  },
+  "usageReminderHint": {
+    "message": "Remind you when the browser has been used continuously for a set time. A break of more than 2 minutes away from the browser resets the counter.",
+    "description": "Helper text for continuous usage reminder section"
+  },
+  "usageReminderEnabled": {
+    "message": "Enable continuous-use reminder",
+    "description": "Checkbox label"
+  },
+  "usageReminderMinutes": {
+    "message": "Remind every (minutes)",
+    "description": "Input label for reminder interval"
+  },
+  "saveUsageReminder": {
+    "message": "Save reminder",
+    "description": "Button to save usage reminder settings"
+  },
+  "pomodoroSection": {
+    "message": "Pomodoro",
+    "description": "Options section header"
+  },
+  "pomodoroHint": {
+    "message": "While a focus session is active, switching to a tab outside the whitelist triggers a reminder. A focus/break cycle runs while the browser is in the foreground.",
+    "description": "Helper text for pomodoro section"
+  },
+  "pomodoroEnabled": {
+    "message": "Enable pomodoro",
+    "description": "Checkbox label"
+  },
+  "pomodoroFocusMinutes": {
+    "message": "Focus (minutes)",
+    "description": "Input label for focus duration"
+  },
+  "pomodoroBreakMinutes": {
+    "message": "Break (minutes)",
+    "description": "Input label for break duration"
+  },
+  "savePomodoro": {
+    "message": "Save pomodoro",
+    "description": "Button to save pomodoro settings"
+  },
+  "pomodoroWhitelistSection": {
+    "message": "Pomodoro whitelist",
+    "description": "Options sub-section header"
+  },
+  "pomodoroWhitelistHint": {
+    "message": "Tabs in this list are allowed during a focus session.",
+    "description": "Helper text for pomodoro whitelist"
+  },
+  "addPomodoroWhitelist": {
+    "message": "Add to whitelist",
+    "description": "Button to add a domain to pomodoro whitelist"
+  },
+  "noPomodoroWhitelistYet": {
+    "message": "Whitelist is empty.",
+    "description": "Empty state for pomodoro whitelist"
+  },
+  "pomodoroStatusLabel": {
+    "message": "Current session",
+    "description": "Label showing current pomodoro phase"
+  },
+  "pomodoroPhaseFocus": {
+    "message": "Focusing",
+    "description": "Pomodoro phase name"
+  },
+  "pomodoroPhaseBreak": {
+    "message": "On break",
+    "description": "Pomodoro phase name"
+  },
+  "pomodoroIdle": {
+    "message": "Pomodoro off",
+    "description": "Pomodoro idle state"
+  },
+  "pomodoroRemaining": {
+    "message": "$MIN$ min left",
+    "description": "Pomodoro countdown text",
+    "placeholders": {
+      "MIN": {
+        "content": "$1"
+      }
+    }
+  },
+  "pomodoroToggleOn": {
+    "message": "Start pomodoro",
+    "description": "Popup button to enable pomodoro"
+  },
+  "pomodoroToggleOff": {
+    "message": "Stop pomodoro",
+    "description": "Popup button to disable pomodoro"
   }
 }

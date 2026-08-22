@@ -25,6 +25,45 @@
         </div>
       </section>
 
+      <section id="section-usage-reminder" class="card">
+        <h2 data-i18n="usageReminderSection"></h2>
+        <p class="hint" data-i18n="usageReminderHint"></p>
+        <div class="field">
+          <label class="check">
+            <input id="usageReminderEnabled" type="checkbox" />
+            <span data-i18n="usageReminderEnabled"></span>
+          </label>
+          <label for="usageReminderMinutes" data-i18n="usageReminderMinutes"></label>
+          <input id="usageReminderMinutes" type="number" min="1" max="600" value="45" />
+          <button id="btnSaveUsageReminder" class="btn primary" type="button" data-i18n="saveUsageReminder"></button>
+        </div>
+      </section>
+
+      <section id="section-pomodoro" class="card">
+        <h2 data-i18n="pomodoroSection"></h2>
+        <p class="hint" data-i18n="pomodoroHint"></p>
+        <div class="field">
+          <label class="check">
+            <input id="pomodoroEnabled" type="checkbox" />
+            <span data-i18n="pomodoroEnabled"></span>
+          </label>
+          <label for="pomodoroFocusMinutes" data-i18n="pomodoroFocusMinutes"></label>
+          <input id="pomodoroFocusMinutes" type="number" min="1" max="180" value="25" />
+          <label for="pomodoroBreakMinutes" data-i18n="pomodoroBreakMinutes"></label>
+          <input id="pomodoroBreakMinutes" type="number" min="1" max="120" value="5" />
+          <button id="btnSavePomodoro" class="btn primary" type="button" data-i18n="savePomodoro"></button>
+        </div>
+        <div id="pomodoroStatus" class="pomodoro-status"></div>
+        <h3 data-i18n="pomodoroWhitelistSection"></h3>
+        <p class="hint" data-i18n="pomodoroWhitelistHint"></p>
+        <div id="pomodoroWhitelistList" class="rule-list"></div>
+        <div id="noPomodoroWhitelist" class="empty" hidden data-i18n="noPomodoroWhitelistYet"></div>
+        <form id="pomodoroWhitelistForm" class="add-form">
+          <input id="pomodoroWhitelistDomain" type="text" data-i18n-placeholder="domainPlaceholder" />
+          <button class="btn primary" type="submit" data-i18n="addPomodoroWhitelist"></button>
+        </form>
+      </section>
+
       <section id="section-limits" class="card">
         <h2 data-i18n="limitsSection"></h2>
         <p class="hint" data-i18n="limitsHint"></p>

@@ -126,8 +126,37 @@ h1 {
   color: var(--muted);
 }
 
-.field input {
+.field input[type="number"] {
   width: 90px;
+}
+
+.field label.check {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.field label.check input {
+  width: auto;
+  accent-color: var(--green);
+}
+
+.pomodoro-status {
+  margin: 14px 0;
+  padding: 10px 14px;
+  background: var(--green-light);
+  color: var(--green-dark);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.card h3 {
+  font-size: 14px;
+  margin: 18px 0 6px;
 }
 
 .rule-list {

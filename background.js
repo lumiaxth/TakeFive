@@ -1,6 +1,8 @@
 importScripts('shared/tldts.min.js', 'shared/hostname.js', 'shared/storage.js');
 
 const RESUME_TOLERANCE_MS = 2 * 60 * 1000;
+const USAGE_RESET_AFTER_MS = 2 * 60 * 1000;
+const POMODORO_WARN_COOLDOWN_MS = 60 * 1000;
 
 function createTickAlarm() {
   try {
@@ -26,7 +28,8 @@ let state = {
   sessionStart: 0,
   activeTabId: -1,
   activeWindowId: -1,
-  counting: false
+  counting: false,
+  lastPomodoroWarnAt: 0
 };
 
 function i18nUnits() {
@@ -37,15 +40,76 @@ function i18nUnits() {
   };
 }
 
+function limitReached(data, host) {
+  const limit = data.settings.limits[host];
+  if (!limit || !limit.dailyMs) return false;
+  const t = (data.domains[host] && data.domains[host].timeMs) || 0;
+  return t >= limit.dailyMs;
+}
+
 function blockedReasonFor(data, host) {
   if (data.settings.blacklist.indexOf(host) !== -1) return 'blacklist';
   if (HE.storage.isPaused(data)) return null;
-  const limit = data.settings.limits[host];
-  if (limit && limit.dailyMs > 0) {
-    const t = (data.domains[host] && data.domains[host].timeMs) || 0;
-    if (t >= limit.dailyMs) return 'limit';
-  }
+  if (limitReached(data, host)) return 'limit';
   return null;
+}
+
+function blockedUrl(reason, host, url) {
+  return (
+    chrome.runtime.getURL('blocked/blocked.html') +
+    '?reason=' +
+    encodeURIComponent(reason) +
+    '&domain=' +
+    encodeURIComponent(host) +
+    '&url=' +
+    encodeURIComponent(url || '')
+  );
+}
+
+async function enforceBlocks(data) {
+  data = data || (await HE.storage.load());
+  const paused = HE.storage.isPaused(data);
+  const extPrefix = chrome.runtime.getURL('');
+  let tabs;
+  try {
+    tabs = await chrome.tabs.query({});
+  } catch (e) {
+    return;
+  }
+  for (const tab of tabs) {
+    if (!tab.id || !tab.url) continue;
+    if (tab.url.indexOf(extPrefix) === 0) continue;
+    const host = HE.hostname.getRegistrableDomain(tab.url);
+    if (!host) continue;
+    let reason = null;
+    if (data.settings.blacklist.indexOf(host) !== -1) reason = 'blacklist';
+    else if (!paused && limitReached(data, host)) reason = 'limit';
+    if (!reason) continue;
+    try {
+      await chrome.tabs.update(tab.id, { url: blockedUrl(reason, host, tab.url) });
+    } catch (e) {
+      /* tab closed concurrently */
+    }
+  }
+}
+
+async function showBanner(text) {
+  if (!text || !state.activeTabId) return;
+  try {
+    await chrome.tabs.sendMessage(state.activeTabId, { type: 'HE_BANNER', text });
+  } catch (e) {
+    /* no content script on that tab (e.g. chrome://) */
+  }
+}
+
+function notifyAndBanner(id, title, message, bannerText) {
+  chrome.notifications.create(id, {
+    type: 'basic',
+    iconUrl: chrome.runtime.getURL('icons/icon48.png'),
+    title: title,
+    message: message
+  });
+  if (bannerText) showBanner(bannerText);
 }
 
 async function commitTime() {
@@ -63,8 +127,34 @@ async function commitTime() {
     data.domains[host] = data.domains[host] || { timeMs: 0 };
     data.domains[host].timeMs += delta;
     data.tracking = { host, since: now };
+
+    const ur = data.settings.usageReminder;
+    if (ur.enabled && ur.minutes > 0) data.usage.accumulatedMs += delta;
+
+    let pomodoroCrossed = false;
+    const pomodoro = data.settings.pomodoro;
+    if (pomodoro.enabled && data.pomodoroState.phase !== 'idle') {
+      data.pomodoroState.remainingMs -= delta;
+      if (data.pomodoroState.remainingMs <= 0) pomodoroCrossed = true;
+    }
+
+    const reachedFirstTime = await checkLimits(data, host);
+
+    if (ur.enabled && ur.minutes > 0 && data.usage.accumulatedMs >= ur.minutes * 60000) {
+      data.usage.accumulatedMs = 0;
+      const dur = HE.storage.formatDuration(ur.minutes * 60000, i18nUnits());
+      notifyAndBanner(
+        'he-usage',
+        chrome.i18n.getMessage('notifyUsageTitle'),
+        chrome.i18n.getMessage('notifyUsageBody', [String(ur.minutes)]),
+        chrome.i18n.getMessage('bannerUsage', [dur])
+      );
+    }
+
     await HE.storage.save(data);
-    await checkLimits(data, host);
+
+    if (pomodoroCrossed) await switchPomodoroPhase(data);
+    if (reachedFirstTime) await enforceBlocks(data);
   } catch (e) {
     console.error('[Healthy Explorer] commitTime error', e);
   }
@@ -72,7 +162,7 @@ async function commitTime() {
 
 async function checkLimits(data, host) {
   const limit = data.settings.limits[host];
-  if (!limit) return;
+  if (!limit) return false;
   const timeMs = (data.domains[host] && data.domains[host].timeMs) || 0;
   const notified = data.notifications[host] || (data.notifications[host] = {});
   let changed = false;
@@ -94,9 +184,11 @@ async function checkLimits(data, host) {
       ])
     });
   }
+  let reachedFirstTime = false;
   if (limit.dailyMs > 0 && timeMs >= limit.dailyMs && !notified.reached) {
     notified.reached = true;
     changed = true;
+    reachedFirstTime = true;
     chrome.notifications.create('he-reached-' + host, {
       type: 'basic',
       iconUrl: chrome.runtime.getURL('icons/icon48.png'),
@@ -105,6 +197,53 @@ async function checkLimits(data, host) {
     });
   }
   if (changed) await HE.storage.save(data);
+  return reachedFirstTime;
+}
+
+async function switchPomodoroPhase(data) {
+  const pomodoro = data.settings.pomodoro;
+  if (data.pomodoroState.phase === 'focus') {
+    data.pomodoroState.phase = 'break';
+    data.pomodoroState.remainingMs = pomodoro.breakMinutes * 60000;
+    notifyAndBanner(
+      'he-pomodoro-break',
+      chrome.i18n.getMessage('notifyPomodoroBreakTitle'),
+      chrome.i18n.getMessage('notifyPomodoroBreakBody', [String(pomodoro.breakMinutes)]),
+      chrome.i18n.getMessage('bannerPomodoroBreak', [String(pomodoro.breakMinutes)])
+    );
+  } else {
+    data.pomodoroState.phase = 'focus';
+    data.pomodoroState.remainingMs = pomodoro.focusMinutes * 60000;
+    notifyAndBanner(
+      'he-pomodoro-focus',
+      chrome.i18n.getMessage('notifyPomodoroFocusTitle'),
+      chrome.i18n.getMessage('notifyPomodoroFocusBody', [String(pomodoro.focusMinutes)]),
+      chrome.i18n.getMessage('bannerPomodoroFocus', [String(pomodoro.focusMinutes)])
+    );
+  }
+  await HE.storage.save(data);
+}
+
+async function maybeWarnPomodoro(host) {
+  if (!host) return;
+  try {
+    const data = await HE.storage.load();
+    const pomodoro = data.settings.pomodoro;
+    if (!pomodoro.enabled || data.pomodoroState.phase !== 'focus') return;
+    if (HE.storage.isPaused(data)) return;
+    if (pomodoro.whitelist.indexOf(host) !== -1) return;
+    const now = Date.now();
+    if (state.lastPomodoroWarnAt && now - state.lastPomodoroWarnAt < POMODORO_WARN_COOLDOWN_MS) return;
+    state.lastPomodoroWarnAt = now;
+    notifyAndBanner(
+      'he-pomodoro-warn',
+      chrome.i18n.getMessage('notifyPomodoroWarnTitle'),
+      chrome.i18n.getMessage('notifyPomodoroWarnBody', [host]),
+      chrome.i18n.getMessage('bannerPomodoroWarn', [host])
+    );
+  } catch (e) {
+    /* ignore */
+  }
 }
 
 async function startSession(host) {
@@ -112,12 +251,17 @@ async function startSession(host) {
   await commitTime();
   state.activeHost = host;
   const data = await HE.storage.load();
+  const now = Date.now();
+  if (now - data.usage.lastStopAt > USAGE_RESET_AFTER_MS) {
+    data.usage.accumulatedMs = 0;
+  }
+  data.usage.lastStopAt = 0;
   const paused = HE.storage.isPaused(data);
   state.counting = !paused;
-  let since = Date.now();
+  let since = now;
   if (!paused) {
     const tr = data.tracking;
-    if (tr && tr.host === host && Date.now() - tr.since <= RESUME_TOLERANCE_MS) {
+    if (tr && tr.host === host && now - tr.since <= RESUME_TOLERANCE_MS) {
       since = tr.since;
     }
     state.sessionStart = since;
@@ -134,7 +278,10 @@ async function stopSession() {
   await commitTime();
   state.activeHost = null;
   state.counting = false;
-  await chrome.storage.local.set({ tracking: { host: null, since: 0 } });
+  const data = await HE.storage.load();
+  data.tracking = { host: null, since: 0 };
+  data.usage.lastStopAt = Date.now();
+  await HE.storage.save(data);
 }
 
 async function syncActiveTab() {
@@ -155,8 +302,12 @@ async function syncActiveTab() {
     state.activeWindowId = win.id;
     state.activeTabId = tab.id;
     const host = HE.hostname.getRegistrableDomain(tab.url || '');
-    if (host) await startSession(host);
-    else await stopSession();
+    if (host) {
+      await startSession(host);
+      await maybeWarnPomodoro(host);
+    } else {
+      await stopSession();
+    }
   } catch (e) {
     /* window closed mid-query */
   }
@@ -193,6 +344,7 @@ async function onTick() {
     await HE.storage.save(data);
   }
   await syncActiveTab();
+  await enforceBlocks();
 }
 
 async function handleMessage(msg) {
@@ -225,6 +377,7 @@ async function handleMessage(msg) {
       }
       delete data.notifications[host];
       await HE.storage.save(data);
+      await enforceBlocks(data);
       return {};
     }
     case 'REMOVE_LIMIT': {
@@ -243,6 +396,7 @@ async function handleMessage(msg) {
         data.settings.blacklist.push(host);
       }
       await HE.storage.save(data);
+      await enforceBlocks(data);
       return {};
     }
     case 'REMOVE_BLACKLIST': {
@@ -250,6 +404,57 @@ async function handleMessage(msg) {
       const data = await HE.storage.load();
       if (host) {
         data.settings.blacklist = data.settings.blacklist.filter((h) => h !== host);
+      }
+      await HE.storage.save(data);
+      return {};
+    }
+    case 'SET_USAGE_REMINDER': {
+      const data = await HE.storage.load();
+      data.settings.usageReminder.enabled = !!msg.enabled;
+      data.settings.usageReminder.minutes = Math.max(1, Math.floor(Number(msg.minutes) || 0));
+      if (!data.settings.usageReminder.enabled) {
+        data.usage.accumulatedMs = 0;
+      }
+      await HE.storage.save(data);
+      return {};
+    }
+    case 'SET_POMODORO': {
+      const data = await HE.storage.load();
+      const prevEnabled = data.settings.pomodoro.enabled;
+      data.settings.pomodoro.enabled = !!msg.enabled;
+      data.settings.pomodoro.focusMinutes = Math.max(1, Math.floor(Number(msg.focusMinutes) || 0));
+      data.settings.pomodoro.breakMinutes = Math.max(1, Math.floor(Number(msg.breakMinutes) || 0));
+      if (data.settings.pomodoro.enabled) {
+        if (!prevEnabled || data.pomodoroState.phase === 'idle') {
+          data.pomodoroState.phase = 'focus';
+          data.pomodoroState.remainingMs = data.settings.pomodoro.focusMinutes * 60000;
+        } else if (data.pomodoroState.phase === 'focus') {
+          data.pomodoroState.remainingMs = data.settings.pomodoro.focusMinutes * 60000;
+        } else {
+          data.pomodoroState.remainingMs = data.settings.pomodoro.breakMinutes * 60000;
+        }
+      } else {
+        data.pomodoroState.phase = 'idle';
+        data.pomodoroState.remainingMs = 0;
+      }
+      await HE.storage.save(data);
+      return {};
+    }
+    case 'ADD_POMODORO_WHITELIST': {
+      const host = HE.hostname.normalizeDomain(msg.host);
+      if (!host) return { error: 'invalidDomain' };
+      const data = await HE.storage.load();
+      if (data.settings.pomodoro.whitelist.indexOf(host) === -1) {
+        data.settings.pomodoro.whitelist.push(host);
+      }
+      await HE.storage.save(data);
+      return {};
+    }
+    case 'REMOVE_POMODORO_WHITELIST': {
+      const host = HE.hostname.normalizeDomain(msg.host);
+      const data = await HE.storage.load();
+      if (host) {
+        data.settings.pomodoro.whitelist = data.settings.pomodoro.whitelist.filter((h) => h !== host);
       }
       await HE.storage.save(data);
       return {};
@@ -307,8 +512,12 @@ chrome.tabs.onActivated.addListener((info) => {
       const tab = await chrome.tabs.get(info.tabId);
       state.activeWindowId = tab.windowId;
       const host = HE.hostname.getRegistrableDomain(tab.url || '');
-      if (host) await startSession(host);
-      else await stopSession();
+      if (host) {
+        await startSession(host);
+        await maybeWarnPomodoro(host);
+      } else {
+        await stopSession();
+      }
     } catch (e) {
       /* tab closed */
     }
@@ -354,15 +563,7 @@ chrome.webNavigation.onBeforeNavigate.addListener((details) => {
     const reason = blockedReasonFor(data, host);
     if (!reason) return;
     try {
-      const url =
-        chrome.runtime.getURL('blocked/blocked.html') +
-        '?reason=' +
-        encodeURIComponent(reason) +
-        '&domain=' +
-        encodeURIComponent(host) +
-        '&url=' +
-        encodeURIComponent(details.url);
-      await chrome.tabs.update(details.tabId, { url });
+      await chrome.tabs.update(details.tabId, { url: blockedUrl(reason, host, details.url) });
     } catch (e) {
       /* tab may already be gone */
     }
@@ -379,6 +580,7 @@ function init() {
   serialized(async () => {
     await HE.storage.load();
     await syncActiveTab();
+    await enforceBlocks();
   });
 }
 

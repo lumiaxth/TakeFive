@@ -99,6 +99,25 @@ header {
   text-align: center;
 }
 
+.pomodoro-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0 14px 8px;
+  padding: 7px 12px;
+  background: var(--green-light);
+  color: var(--green-dark);
+  border-radius: var(--radius);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.pomodoro-bar.break {
+  background: var(--amber-light);
+  color: var(--amber);
+}
+
 .summary {
   display: flex;
   align-items: center;

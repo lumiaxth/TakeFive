@@ -7,11 +7,15 @@
     domains: {},
     notifications: {},
     tracking: { host: null, since: 0 },
+    usage: { accumulatedMs: 0, lastStopAt: 0 },
+    pomodoroState: { phase: 'idle', remainingMs: 0 },
     settings: {
       limits: {},
       blacklist: [],
       pauseUntil: 0,
-      breakMinutes: 10
+      breakMinutes: 10,
+      usageReminder: { enabled: false, minutes: 45 },
+      pomodoro: { enabled: false, focusMinutes: 25, breakMinutes: 5, whitelist: [] }
     },
     history: []
   };
@@ -39,7 +43,19 @@
     data.domains = data.domains || {};
     data.notifications = data.notifications || {};
     data.tracking = data.tracking && typeof data.tracking === 'object' ? data.tracking : { host: null, since: 0 };
+    data.usage = data.usage && typeof data.usage === 'object' ? data.usage : { accumulatedMs: 0, lastStopAt: 0 };
+    data.pomodoroState = data.pomodoroState && typeof data.pomodoroState === 'object'
+      ? data.pomodoroState
+      : { phase: 'idle', remainingMs: 0 };
     data.settings = Object.assign({}, base.settings, data.settings || {});
+    data.settings.usageReminder = Object.assign({ enabled: false, minutes: 45 }, data.settings.usageReminder || {});
+    data.settings.pomodoro = Object.assign(
+      { enabled: false, focusMinutes: 25, breakMinutes: 5, whitelist: [] },
+      data.settings.pomodoro || {}
+    );
+    data.settings.pomodoro.whitelist = Array.isArray(data.settings.pomodoro.whitelist)
+      ? data.settings.pomodoro.whitelist
+      : [];
     data.settings.limits = data.settings.limits || {};
     data.settings.blacklist = Array.isArray(data.settings.blacklist) ? data.settings.blacklist : [];
     data.history = Array.isArray(data.history) ? data.history : [];

@@ -19,5 +19,12 @@
     "default_popup": "popup/popup.html",
     "default_title": "__MSG_extName__"
   },
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["content/banner.js"],
+      "run_at": "document_idle"
+    }
+  ],
   "options_page": "options/options.html"
 }

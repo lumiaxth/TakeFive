@@ -54,10 +54,31 @@
       activeHostEl.hidden = true;
     }
 
+    renderPomodoro();
+
     const domains = HE.storage.sortedDomains(data.domains);
     emptyEl.hidden = domains.length > 0;
     list.textContent = '';
     domains.forEach((d) => list.appendChild(renderDomain(d.host, d.timeMs)));
+  }
+
+  function renderPomodoro() {
+    const bar = $('pomodoroBar');
+    const info = $('pomodoroInfo');
+    const btn = $('btnPomodoro');
+    const p = data.settings.pomodoro;
+    const st = data.pomodoroState;
+    if (p.enabled) {
+      const phase = st.phase === 'break' ? t('pomodoroPhaseBreak') : t('pomodoroPhaseFocus');
+      const rem = Math.max(0, Math.ceil(st.remainingMs / 60000));
+      info.textContent = phase + ' · ' + t('pomodoroRemaining', [String(rem)]);
+      btn.textContent = t('pomodoroToggleOff');
+      bar.classList.toggle('break', st.phase === 'break');
+    } else {
+      info.textContent = t('pomodoroIdle');
+      btn.textContent = t('pomodoroToggleOn');
+      bar.classList.remove('break');
+    }
   }
 
   function renderDomain(host, timeMs) {
@@ -204,6 +225,17 @@
 
   $('btnResume').addEventListener('click', async () => {
     await send({ type: 'RESUME' });
+    await refresh();
+  });
+
+  $('btnPomodoro').addEventListener('click', async () => {
+    const p = data.settings.pomodoro;
+    await send({
+      type: 'SET_POMODORO',
+      enabled: !p.enabled,
+      focusMinutes: p.focusMinutes || 25,
+      breakMinutes: p.breakMinutes || 5
+    });
     await refresh();
   });
 
