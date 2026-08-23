@@ -436,6 +436,22 @@
     "message": "休息中",
     "description": "番茄钟阶段名称"
   },
+  "pomodoroPhaseIdle": {
+    "message": "未开始",
+    "description": "番茄钟已启用但未开始计时时的阶段名称"
+  },
+  "pomodoroReady": {
+    "message": "准备开始专注",
+    "description": "弹窗中番茄钟功能开启但未开始计时时的文案"
+  },
+  "pomodoroStartFocus": {
+    "message": "开始专注",
+    "description": "弹窗开始专注按钮"
+  },
+  "pomodoroEndFocus": {
+    "message": "结束",
+    "description": "弹窗结束当前专注/休息按钮"
+  },
   "pomodoroIdle": {
     "message": "番茄钟未开启",
     "description": "番茄钟闲置状态"
@@ -448,13 +464,5 @@
         "content": "$1"
       }
     }
-  },
-  "pomodoroToggleOn": {
-    "message": "开启番茄钟",
-    "description": "弹窗开启番茄钟按钮"
-  },
-  "pomodoroToggleOff": {
-    "message": "关闭番茄钟",
-    "description": "弹窗关闭番茄钟按钮"
   }
 }

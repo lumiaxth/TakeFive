@@ -68,11 +68,17 @@
     const p = data.settings.pomodoro;
     const st = data.pomodoroState;
     if (p.enabled) {
-      const phase = st.phase === 'break' ? t('pomodoroPhaseBreak') : t('pomodoroPhaseFocus');
-      const rem = Math.max(0, Math.ceil(st.remainingMs / 60000));
-      info.textContent = '\uD83C\uDF45 ' + phase + ' \u00B7 ' + t('pomodoroRemaining', [String(rem)]);
-      btn.textContent = t('pomodoroToggleOff');
-      bar.classList.toggle('break', st.phase === 'break');
+      if (st.phase === 'idle') {
+        info.textContent = '\uD83C\uDF45 ' + t('pomodoroReady');
+        btn.textContent = t('pomodoroStartFocus');
+        bar.classList.remove('break');
+      } else {
+        const phase = st.phase === 'break' ? t('pomodoroPhaseBreak') : t('pomodoroPhaseFocus');
+        const rem = Math.max(0, Math.ceil(st.remainingMs / 60000));
+        info.textContent = '\uD83C\uDF45 ' + phase + ' \u00B7 ' + t('pomodoroRemaining', [String(rem)]);
+        btn.textContent = t('pomodoroEndFocus');
+        bar.classList.toggle('break', st.phase === 'break');
+      }
       bar.hidden = false;
       document.body.classList.add('has-pomodoro');
     } else {
@@ -231,13 +237,12 @@
   });
 
   $('btnPomodoro').addEventListener('click', async () => {
-    const p = data.settings.pomodoro;
-    await send({
-      type: 'SET_POMODORO',
-      enabled: !p.enabled,
-      focusMinutes: p.focusMinutes || 25,
-      breakMinutes: p.breakMinutes || 5
-    });
+    const st = data.pomodoroState;
+    if (st.phase === 'idle') {
+      await send({ type: 'START_POMODORO' });
+    } else {
+      await send({ type: 'STOP_POMODORO' });
+    }
     await refresh();
   });
 

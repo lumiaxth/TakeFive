@@ -15,7 +15,7 @@
       paused: false,
       badgeMode: 'auto',
       usageReminder: { enabled: false, minutes: 45 },
-      pomodoro: { enabled: false, focusMinutes: 25, breakMinutes: 5, whitelist: [] }
+      pomodoro: { enabled: true, focusMinutes: 25, breakMinutes: 5, whitelist: [] }
     },
     history: []
   };
@@ -55,7 +55,7 @@
     delete data.settings.breakMinutes;
     data.settings.usageReminder = Object.assign({ enabled: false, minutes: 45 }, data.settings.usageReminder || {});
     data.settings.pomodoro = Object.assign(
-      { enabled: false, focusMinutes: 25, breakMinutes: 5, whitelist: [] },
+      { enabled: true, focusMinutes: 25, breakMinutes: 5, whitelist: [] },
       data.settings.pomodoro || {}
     );
     data.settings.pomodoro.whitelist = Array.isArray(data.settings.pomodoro.whitelist)

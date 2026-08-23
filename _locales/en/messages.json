@@ -436,6 +436,22 @@
     "message": "On break",
     "description": "Pomodoro phase name"
   },
+  "pomodoroPhaseIdle": {
+    "message": "Not started",
+    "description": "Pomodoro phase name when enabled but not running"
+  },
+  "pomodoroReady": {
+    "message": "Ready to focus",
+    "description": "Popup text when pomodoro feature is on but the timer is not running"
+  },
+  "pomodoroStartFocus": {
+    "message": "Start focus",
+    "description": "Popup button to start a focus session"
+  },
+  "pomodoroEndFocus": {
+    "message": "End",
+    "description": "Popup button to end the current focus/break session"
+  },
   "pomodoroIdle": {
     "message": "Pomodoro off",
     "description": "Pomodoro idle state"
@@ -448,13 +464,5 @@
         "content": "$1"
       }
     }
-  },
-  "pomodoroToggleOn": {
-    "message": "Start pomodoro",
-    "description": "Popup button to enable pomodoro"
-  },
-  "pomodoroToggleOff": {
-    "message": "Stop pomodoro",
-    "description": "Popup button to disable pomodoro"
   }
 }

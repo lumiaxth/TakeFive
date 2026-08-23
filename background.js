@@ -499,23 +499,40 @@ async function handleMessage(msg) {
     }
     case 'SET_POMODORO': {
       const data = await HE.storage.load();
-      const prevEnabled = data.settings.pomodoro.enabled;
       data.settings.pomodoro.enabled = !!msg.enabled;
       data.settings.pomodoro.focusMinutes = Math.max(1, Math.floor(Number(msg.focusMinutes) || 0));
       data.settings.pomodoro.breakMinutes = Math.max(1, Math.floor(Number(msg.breakMinutes) || 0));
-      if (data.settings.pomodoro.enabled) {
-        if (!prevEnabled || data.pomodoroState.phase === 'idle') {
-          data.pomodoroState.phase = 'focus';
-          data.pomodoroState.remainingMs = data.settings.pomodoro.focusMinutes * 60000;
-        } else if (data.pomodoroState.phase === 'focus') {
+      if (!data.settings.pomodoro.enabled) {
+        data.pomodoroState.phase = 'idle';
+        data.pomodoroState.remainingMs = 0;
+      } else if (data.pomodoroState.phase !== 'idle') {
+        // keep a running timer, apply new durations to the current phase
+        if (data.pomodoroState.phase === 'focus') {
           data.pomodoroState.remainingMs = data.settings.pomodoro.focusMinutes * 60000;
         } else {
           data.pomodoroState.remainingMs = data.settings.pomodoro.breakMinutes * 60000;
         }
-      } else {
-        data.pomodoroState.phase = 'idle';
-        data.pomodoroState.remainingMs = 0;
       }
+      // if enabled and phase is idle, stay idle: the user starts focus from the popup
+      await HE.storage.save(data);
+      await updateBadge();
+      await enforceBlocks(data);
+      return {};
+    }
+    case 'START_POMODORO': {
+      const data = await HE.storage.load();
+      if (!data.settings.pomodoro.enabled) return { error: 'pomodoroDisabled' };
+      data.pomodoroState.phase = 'focus';
+      data.pomodoroState.remainingMs = data.settings.pomodoro.focusMinutes * 60000;
+      await HE.storage.save(data);
+      await updateBadge();
+      await enforceBlocks(data);
+      return {};
+    }
+    case 'STOP_POMODORO': {
+      const data = await HE.storage.load();
+      data.pomodoroState.phase = 'idle';
+      data.pomodoroState.remainingMs = 0;
       await HE.storage.save(data);
       await updateBadge();
       await enforceBlocks(data);

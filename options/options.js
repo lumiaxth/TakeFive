@@ -55,13 +55,17 @@
 
     const st = data.pomodoroState;
     if (p.enabled) {
-      const phaseText =
-        st.phase === 'break'
-          ? esc(t('pomodoroPhaseBreak'))
-          : esc(t('pomodoroPhaseFocus'));
-      const rem = Math.max(0, Math.ceil(st.remainingMs / 60000));
-      pomodoroStatus.textContent =
-        t('pomodoroStatusLabel') + ': ' + phaseText + ' · ' + t('pomodoroRemaining', [String(rem)]);
+      if (st.phase === 'idle') {
+        pomodoroStatus.textContent = t('pomodoroStatusLabel') + ': ' + esc(t('pomodoroPhaseIdle'));
+      } else {
+        const phaseText =
+          st.phase === 'break'
+            ? esc(t('pomodoroPhaseBreak'))
+            : esc(t('pomodoroPhaseFocus'));
+        const rem = Math.max(0, Math.ceil(st.remainingMs / 60000));
+        pomodoroStatus.textContent =
+          t('pomodoroStatusLabel') + ': ' + phaseText + ' · ' + t('pomodoroRemaining', [String(rem)]);
+      }
     } else {
       pomodoroStatus.textContent = t('pomodoroIdle');
     }
