@@ -2,7 +2,17 @@ importScripts('shared/tldts.min.js', 'shared/hostname.js', 'shared/storage.js');
 
 const RESUME_TOLERANCE_MS = 2 * 60 * 1000;
 const USAGE_RESET_AFTER_MS = 2 * 60 * 1000;
+const MAX_COMMIT_DELTA_MS = 3 * 60 * 1000;
+const IDLE_DETECT_SECONDS = 60;
 const PAUSED_BADGE_CHAR = '\u2014';
+
+async function queryIdleState() {
+  try {
+    return await chrome.idle.queryState(IDLE_DETECT_SECONDS);
+  } catch (e) {
+    return 'active';
+  }
+}
 
 const DEFAULT_ICONS = { 16: 'icons/icon16.png', 32: 'icons/icon32.png', 48: 'icons/icon48.png', 128: 'icons/icon128.png' };
 const TOMATO_ICONS = { 16: 'icons/tomato16.png', 32: 'icons/tomato32.png', 48: 'icons/tomato48.png', 128: 'icons/tomato128.png' };
@@ -206,6 +216,10 @@ async function commitTime() {
   const delta = now - state.sessionStart;
   state.sessionStart = now;
   if (delta < 1000) return;
+  if (delta > MAX_COMMIT_DELTA_MS) {
+    // machine was likely asleep/suspended: don't count the gap
+    return;
+  }
   const host = state.activeHost;
   try {
     const data = await HE.storage.load();
@@ -312,6 +326,15 @@ async function switchPomodoroPhase(data) {
 
 async function startSession(host) {
   if (state.activeHost === host && state.counting) return;
+  if ((await queryIdleState()) === 'locked') {
+    state.activeHost = null;
+    state.counting = false;
+    state.sessionStart = Date.now();
+    const data = await HE.storage.load();
+    data.tracking = { host: null, since: 0 };
+    await HE.storage.save(data);
+    return;
+  }
   await commitTime();
   state.activeHost = host;
   const data = await HE.storage.load();
@@ -326,7 +349,13 @@ async function startSession(host) {
   if (!paused) {
     const tr = data.tracking;
     if (tr && tr.host === host && now - tr.since <= RESUME_TOLERANCE_MS) {
-      since = tr.since;
+      let idle = 'active';
+      try {
+        idle = await queryIdleState();
+      } catch (e) {
+        /* ignore */
+      }
+      if (idle !== 'locked') since = tr.since;
     }
     state.sessionStart = since;
   }
@@ -391,6 +420,9 @@ async function setPaused(paused) {
 
 async function onTick() {
   await commitTime();
+  if ((await queryIdleState()) === 'locked') {
+    await stopSession();
+  }
   await syncActiveTab();
   await enforceBlocks();
   await updateBadge();
@@ -619,6 +651,16 @@ chrome.windows.onRemoved.addListener((windowId) => {
 chrome.windows.onFocusChanged.addListener((windowId) => {
   serialized(async () => {
     if (windowId === chrome.windows.WINDOW_ID_NONE) {
+      await stopSession();
+    } else {
+      await syncActiveTab();
+    }
+  });
+});
+
+chrome.idle.onStateChanged.addListener((newState) => {
+  serialized(async () => {
+    if (newState === 'locked') {
       await stopSession();
     } else {
       await syncActiveTab();
