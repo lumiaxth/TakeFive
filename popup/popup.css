@@ -100,17 +100,30 @@ header {
 }
 
 .pomodoro-bar {
+  position: fixed;
+  left: 14px;
+  right: 14px;
+  bottom: 12px;
+  z-index: 10;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  margin: 0 14px 8px;
   padding: 7px 12px;
   background: var(--green-light);
   color: var(--green-dark);
   border-radius: var(--radius);
   font-size: 12px;
   font-weight: 600;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+}
+
+.pomodoro-bar[hidden] {
+  display: none;
+}
+
+body.has-pomodoro {
+  padding-bottom: 58px;
 }
 
 .pomodoro-bar.break {

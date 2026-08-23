@@ -376,7 +376,7 @@
     "description": "Options section header"
   },
   "pomodoroHint": {
-    "message": "During a focus session, domains outside the whitelist are blocked. A focus/break cycle runs while the browser is in the foreground.",
+    "message": "During a focus session, domains outside the whitelist are blocked. A focus/break cycle runs while the browser is in the foreground. Turning pomodoro off hides its entry in the popup.",
     "description": "Helper text for pomodoro section"
   },
   "pomodoroEnabled": {

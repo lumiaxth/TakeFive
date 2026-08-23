@@ -73,10 +73,11 @@
       info.textContent = '\uD83C\uDF45 ' + phase + ' \u00B7 ' + t('pomodoroRemaining', [String(rem)]);
       btn.textContent = t('pomodoroToggleOff');
       bar.classList.toggle('break', st.phase === 'break');
+      bar.hidden = false;
+      document.body.classList.add('has-pomodoro');
     } else {
-      info.textContent = '\uD83C\uDF45 ' + t('pomodoroIdle');
-      btn.textContent = t('pomodoroToggleOn');
-      bar.classList.remove('break');
+      bar.hidden = true;
+      document.body.classList.remove('has-pomodoro');
     }
   }
 

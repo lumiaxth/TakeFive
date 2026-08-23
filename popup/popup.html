@@ -17,11 +17,6 @@
 
     <div id="pausedBanner" class="paused-banner" hidden></div>
 
-    <div id="pomodoroBar" class="pomodoro-bar">
-      <span id="pomodoroInfo" data-i18n="pomodoroIdle"></span>
-      <button id="btnPomodoro" class="btn small" type="button" data-i18n="pomodoroToggleOn"></button>
-    </div>
-
     <main>
       <section class="summary">
         <div class="total">
@@ -44,6 +39,11 @@
     <footer>
       <a id="linkSettings" href="#" data-i18n="openSettings"></a>
     </footer>
+
+    <div id="pomodoroBar" class="pomodoro-bar" hidden>
+      <span id="pomodoroInfo" data-i18n="pomodoroIdle"></span>
+      <button id="btnPomodoro" class="btn small" type="button" data-i18n="pomodoroToggleOn"></button>
+    </div>
 
     <script src="../shared/tldts.min.js"></script>
     <script src="../shared/hostname.js"></script>
