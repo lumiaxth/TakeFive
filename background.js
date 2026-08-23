@@ -175,6 +175,7 @@ async function updateBadge() {
     if (HE.storage.isPaused(data)) {
       chrome.action.setBadgeBackgroundColor({ color: '#dc2626' });
       chrome.action.setBadgeText({ text: PAUSED_BADGE_CHAR });
+      chrome.action.setBadgeTextColor({ color: "white" });
       return;
     }
     const mode = data.settings.badgeMode || 'auto';
@@ -200,8 +201,9 @@ async function updateBadge() {
           : fmtHm(total);
       }
     }
-    chrome.action.setBadgeBackgroundColor({ color: '#16a34a' });
+    chrome.action.setBadgeBackgroundColor({ color: '#008000' });
     chrome.action.setBadgeText({ text });
+    chrome.action.setBadgeTextColor({ color: "white" });
   } catch (e) {
     /* ignore */
   }

@@ -290,7 +290,7 @@
     "description": "连续使用提醒的通知标题"
   },
   "notifyUsageBody": {
-    "message": "你已连续使用浏览器 $MIN$ 分钟，建议休息一下。",
+    "message": "你已连续使用浏览器 $MIN$ 分钟，休息一下吧！",
     "description": "连续使用提醒的通知正文",
     "placeholders": {
       "MIN": {
@@ -299,7 +299,7 @@
     }
   },
   "bannerUsage": {
-    "message": "已连续使用浏览器 $TIME$，建议休息",
+    "message": "已连续使用浏览器 $TIME$，休息一下吧！",
     "description": "连续使用提醒的页面横幅文案",
     "placeholders": {
       "TIME": {
@@ -441,7 +441,7 @@
     "description": "番茄钟已启用但未开始计时时的阶段名称"
   },
   "pomodoroReady": {
-    "message": "准备开始专注",
+    "message": "番茄钟",
     "description": "弹窗中番茄钟功能开启但未开始计时时的文案"
   },
   "pomodoroStartFocus": {
