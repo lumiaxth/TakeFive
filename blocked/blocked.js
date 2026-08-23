@@ -18,6 +18,9 @@
   if (reason === 'blacklist') {
     reasonEl.textContent = t('blockedReasonBlacklist', [domain]);
     btnBreak.hidden = true;
+  } else if (reason === 'pomodoro') {
+    reasonEl.textContent = t('blockedReasonPomodoro', [domain]);
+    btnBreak.hidden = true;
   } else {
     HE.storage.load().then((data) => {
       const timeMs = (data.domains[domain] && data.domains[domain].timeMs) || 0;

@@ -29,30 +29,12 @@
   }
 
   function render() {
-    renderPause();
     renderBadge();
     renderUsageReminder();
     renderPomodoro();
     renderLimits();
     renderBlacklist();
     renderData();
-  }
-
-  function renderPause() {
-    const paused = HE.storage.isPaused(data);
-    const status = $('pausedStatus');
-    if (paused) {
-      status.hidden = false;
-      status.innerHTML =
-        '<span>' + esc(t('paused')) + '</span>' +
-        '<button class="btn small" id="btnResumeOptions" type="button">' + esc(t('resume')) + '</button>';
-      $('btnResumeOptions').addEventListener('click', async () => {
-        await send({ type: 'RESUME' });
-        await refresh();
-      });
-    } else {
-      status.hidden = true;
-    }
   }
 
   function renderBadge() {
@@ -313,6 +295,14 @@
     }
     await send({ type: 'ADD_POMODORO_WHITELIST', host });
     $('pomodoroWhitelistDomain').value = '';
+    await refresh();
+  });
+
+  $('btnImportWhitelist').addEventListener('click', async () => {
+    const resp = await send({ type: 'IMPORT_TABS_TO_POMODORO_WHITELIST' });
+    if (resp && resp.ok) {
+      alert(t('importedCount', [String(resp.added || 0)]));
+    }
     await refresh();
   });
 

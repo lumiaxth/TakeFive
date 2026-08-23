@@ -59,10 +59,6 @@
     "message": "已暂停计时",
     "description": "暂停中的状态文案"
   },
-  "pauseSection": {
-    "message": "暂停 / 恢复",
-    "description": "选项页暂停状态分区标题"
-  },
   "openSettings": {
     "message": "打开设置",
     "description": "跳转到设置页的链接"
@@ -97,6 +93,15 @@
       },
       "TIME": {
         "content": "$2"
+      }
+    }
+  },
+  "blockedReasonPomodoro": {
+    "message": "$HOST$ 不在番茄钟白名单内（专注阶段）。",
+    "description": "番茄钟白名单的阻断说明",
+    "placeholders": {
+      "HOST": {
+        "content": "$1"
       }
     }
   },
@@ -207,10 +212,6 @@
   "saveBadgeMode": {
     "message": "保存",
     "description": "保存角标模式的按钮"
-  },
-  "badgePaused": {
-    "message": "停",
-    "description": "暂停时图标角标标记"
   },
   "currentPaused": {
     "message": "当前处于暂停状态，恢复后可继续计时。",
@@ -350,28 +351,6 @@
       }
     }
   },
-  "notifyPomodoroWarnTitle": {
-    "message": "番茄钟专注中",
-    "description": "番茄钟白名单外切换的通知标题"
-  },
-  "notifyPomodoroWarnBody": {
-    "message": "$HOST$ 不在番茄钟白名单内。",
-    "description": "番茄钟白名单外切换的通知正文",
-    "placeholders": {
-      "HOST": {
-        "content": "$1"
-      }
-    }
-  },
-  "bannerPomodoroWarn": {
-    "message": "番茄钟：$HOST$ 不在白名单",
-    "description": "番茄钟白名单外切换的页面横幅文案",
-    "placeholders": {
-      "HOST": {
-        "content": "$1"
-      }
-    }
-  },
   "usageReminderSection": {
     "message": "连续使用提醒",
     "description": "选项页分区标题"
@@ -393,11 +372,11 @@
     "description": "保存连续使用提醒设置的按钮"
   },
   "pomodoroSection": {
-    "message": "番茄钟",
+    "message": "🍅 番茄钟",
     "description": "选项页分区标题"
   },
   "pomodoroHint": {
-    "message": "专注阶段切到白名单以外的标签页会提醒；浏览器在前台时按专注/休息周期倒计时。",
+    "message": "专注阶段将禁止访问白名单以外的网页；浏览器在前台时按专注/休息周期倒计时。",
     "description": "番茄钟分区的说明文字"
   },
   "pomodoroEnabled": {
@@ -431,6 +410,19 @@
   "noPomodoroWhitelistYet": {
     "message": "白名单为空。",
     "description": "番茄钟白名单空状态"
+  },
+  "importPomodoroWhitelist": {
+    "message": "导入当前打开的网页",
+    "description": "将当前打开的标签页批量导入番茄钟白名单的按钮"
+  },
+  "importedCount": {
+    "message": "已向白名单导入 $N$ 个域名。",
+    "description": "批量导入完成后的提示",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
   },
   "pomodoroStatusLabel": {
     "message": "当前状态",

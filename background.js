@@ -2,7 +2,10 @@ importScripts('shared/tldts.min.js', 'shared/hostname.js', 'shared/storage.js');
 
 const RESUME_TOLERANCE_MS = 2 * 60 * 1000;
 const USAGE_RESET_AFTER_MS = 2 * 60 * 1000;
-const POMODORO_WARN_COOLDOWN_MS = 60 * 1000;
+const PAUSED_BADGE_CHAR = '\u2014';
+
+const DEFAULT_ICONS = { 16: 'icons/icon16.png', 32: 'icons/icon32.png', 48: 'icons/icon48.png', 128: 'icons/icon128.png' };
+const TOMATO_ICONS = { 16: 'icons/tomato16.png', 32: 'icons/tomato32.png', 48: 'icons/tomato48.png', 128: 'icons/tomato128.png' };
 
 function createTickAlarm() {
   try {
@@ -28,8 +31,7 @@ let state = {
   sessionStart: 0,
   activeTabId: -1,
   activeWindowId: -1,
-  counting: false,
-  lastPomodoroWarnAt: 0
+  counting: false
 };
 
 function i18nUnits() {
@@ -47,11 +49,19 @@ function limitReached(data, host) {
   return t >= limit.dailyMs;
 }
 
+function pomodoroBlockReason(data, host) {
+  const pomodoro = data.settings.pomodoro;
+  if (!pomodoro.enabled || data.pomodoroState.phase !== 'focus') return null;
+  if (HE.storage.isPaused(data)) return null;
+  if (pomodoro.whitelist.indexOf(host) !== -1) return null;
+  return 'pomodoro';
+}
+
 function blockedReasonFor(data, host) {
   if (data.settings.blacklist.indexOf(host) !== -1) return 'blacklist';
   if (HE.storage.isPaused(data)) return null;
   if (limitReached(data, host)) return 'limit';
-  return null;
+  return pomodoroBlockReason(data, host);
 }
 
 function blockedUrl(reason, host, url) {
@@ -66,29 +76,45 @@ function blockedUrl(reason, host, url) {
   );
 }
 
+async function redirectTab(tabId, reason, host, url) {
+  try {
+    await chrome.tabs.update(tabId, { url: blockedUrl(reason, host, url) });
+  } catch (e) {
+    /* tab closed concurrently */
+  }
+}
+
 async function enforceBlocks(data) {
   data = data || (await HE.storage.load());
   const paused = HE.storage.isPaused(data);
   const extPrefix = chrome.runtime.getURL('');
+  const blockAllReason = (host) => {
+    if (data.settings.blacklist.indexOf(host) !== -1) return 'blacklist';
+    if (!paused && limitReached(data, host)) return 'limit';
+    return null;
+  };
+
+  let activeTab = null;
   let tabs;
   try {
+    const q = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+    activeTab = q && q[0];
     tabs = await chrome.tabs.query({});
   } catch (e) {
     return;
   }
+
   for (const tab of tabs) {
     if (!tab.id || !tab.url) continue;
     if (tab.url.indexOf(extPrefix) === 0) continue;
     const host = HE.hostname.getRegistrableDomain(tab.url);
     if (!host) continue;
-    let reason = null;
-    if (data.settings.blacklist.indexOf(host) !== -1) reason = 'blacklist';
-    else if (!paused && limitReached(data, host)) reason = 'limit';
-    if (!reason) continue;
-    try {
-      await chrome.tabs.update(tab.id, { url: blockedUrl(reason, host, tab.url) });
-    } catch (e) {
-      /* tab closed concurrently */
+    if (activeTab && tab.id === activeTab.id) {
+      const reason = blockedReasonFor(data, host);
+      if (reason) await redirectTab(tab.id, reason, host, tab.url);
+    } else {
+      const reason = blockAllReason(host);
+      if (reason) await redirectTab(tab.id, reason, host, tab.url);
     }
   }
 }
@@ -134,13 +160,14 @@ async function currentHost() {
 async function updateBadge() {
   try {
     const data = await HE.storage.load();
+    const pomodoroActive = data.settings.pomodoro.enabled && data.pomodoroState.phase !== 'idle';
+    chrome.action.setIcon({ path: pomodoroActive ? TOMATO_ICONS : DEFAULT_ICONS });
     if (HE.storage.isPaused(data)) {
-      chrome.action.setBadgeBackgroundColor({ color: '#d97706' });
-      chrome.action.setBadgeText({ text: chrome.i18n.getMessage('badgePaused') });
+      chrome.action.setBadgeBackgroundColor({ color: '#dc2626' });
+      chrome.action.setBadgeText({ text: PAUSED_BADGE_CHAR });
       return;
     }
     const mode = data.settings.badgeMode || 'auto';
-    const pomodoroActive = data.settings.pomodoro.enabled && data.pomodoroState.phase !== 'idle';
     const total = HE.storage.totalForDomains(data.domains);
     let text;
     if (mode === 'total') {
@@ -283,28 +310,6 @@ async function switchPomodoroPhase(data) {
   await HE.storage.save(data);
 }
 
-async function maybeWarnPomodoro(host) {
-  if (!host) return;
-  try {
-    const data = await HE.storage.load();
-    const pomodoro = data.settings.pomodoro;
-    if (!pomodoro.enabled || data.pomodoroState.phase !== 'focus') return;
-    if (HE.storage.isPaused(data)) return;
-    if (pomodoro.whitelist.indexOf(host) !== -1) return;
-    const now = Date.now();
-    if (state.lastPomodoroWarnAt && now - state.lastPomodoroWarnAt < POMODORO_WARN_COOLDOWN_MS) return;
-    state.lastPomodoroWarnAt = now;
-    notifyAndBanner(
-      'he-pomodoro-warn',
-      chrome.i18n.getMessage('notifyPomodoroWarnTitle'),
-      chrome.i18n.getMessage('notifyPomodoroWarnBody', [host]),
-      chrome.i18n.getMessage('bannerPomodoroWarn', [host])
-    );
-  } catch (e) {
-    /* ignore */
-  }
-}
-
 async function startSession(host) {
   if (state.activeHost === host && state.counting) return;
   await commitTime();
@@ -363,10 +368,10 @@ async function syncActiveTab() {
     const host = HE.hostname.getRegistrableDomain(tab.url || '');
     if (host) {
       await startSession(host);
-      await maybeWarnPomodoro(host);
     } else {
       await stopSession();
     }
+    await enforceBlocks();
     await updateBadge();
   } catch (e) {
     /* window closed mid-query */
@@ -481,6 +486,7 @@ async function handleMessage(msg) {
       }
       await HE.storage.save(data);
       await updateBadge();
+      await enforceBlocks(data);
       return {};
     }
     case 'SET_BADGE_MODE': {
@@ -509,6 +515,26 @@ async function handleMessage(msg) {
       }
       await HE.storage.save(data);
       return {};
+    }
+    case 'IMPORT_TABS_TO_POMODORO_WHITELIST': {
+      const data = await HE.storage.load();
+      let added = 0;
+      try {
+        const tabs = await chrome.tabs.query({});
+        for (const tab of tabs) {
+          if (!tab.url) continue;
+          const host = HE.hostname.getRegistrableDomain(tab.url);
+          if (!host) continue;
+          if (data.settings.pomodoro.whitelist.indexOf(host) === -1) {
+            data.settings.pomodoro.whitelist.push(host);
+            added++;
+          }
+        }
+      } catch (e) {
+        /* ignore */
+      }
+      await HE.storage.save(data);
+      return { added };
     }
     case 'CLEAR_TODAY': {
       const data = await HE.storage.load();
@@ -560,10 +586,10 @@ chrome.tabs.onActivated.addListener((info) => {
       const host = HE.hostname.getRegistrableDomain(tab.url || '');
       if (host) {
         await startSession(host);
-        await maybeWarnPomodoro(host);
       } else {
         await stopSession();
       }
+      await enforceBlocks();
     } catch (e) {
       /* tab closed */
     }

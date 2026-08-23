@@ -15,11 +15,6 @@
         </div>
       </header>
 
-      <section id="section-pause" class="card">
-        <h2 data-i18n="pauseSection"></h2>
-        <div id="pausedStatus" class="paused-status" hidden></div>
-      </section>
-
       <section id="section-badge" class="card">
         <h2 data-i18n="badgeSection"></h2>
         <p class="hint" data-i18n="badgeHint"></p>
@@ -71,6 +66,9 @@
           <input id="pomodoroWhitelistDomain" type="text" data-i18n-placeholder="domainPlaceholder" />
           <button class="btn primary" type="submit" data-i18n="addPomodoroWhitelist"></button>
         </form>
+        <div class="import-row">
+          <button id="btnImportWhitelist" class="btn" type="button" data-i18n="importPomodoroWhitelist"></button>
+        </div>
       </section>
 
       <section id="section-limits" class="card">

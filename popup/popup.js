@@ -70,11 +70,11 @@
     if (p.enabled) {
       const phase = st.phase === 'break' ? t('pomodoroPhaseBreak') : t('pomodoroPhaseFocus');
       const rem = Math.max(0, Math.ceil(st.remainingMs / 60000));
-      info.textContent = phase + ' · ' + t('pomodoroRemaining', [String(rem)]);
+      info.textContent = '\uD83C\uDF45 ' + phase + ' \u00B7 ' + t('pomodoroRemaining', [String(rem)]);
       btn.textContent = t('pomodoroToggleOff');
       bar.classList.toggle('break', st.phase === 'break');
     } else {
-      info.textContent = t('pomodoroIdle');
+      info.textContent = '\uD83C\uDF45 ' + t('pomodoroIdle');
       btn.textContent = t('pomodoroToggleOn');
       bar.classList.remove('break');
     }

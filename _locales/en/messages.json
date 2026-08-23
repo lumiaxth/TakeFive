@@ -59,10 +59,6 @@
     "message": "Tracking paused",
     "description": "Status text while paused"
   },
-  "pauseSection": {
-    "message": "Pause / Resume",
-    "description": "Options section header for pause status"
-  },
   "openSettings": {
     "message": "Open settings",
     "description": "Link to the options page"
@@ -97,6 +93,15 @@
       },
       "TIME": {
         "content": "$2"
+      }
+    }
+  },
+  "blockedReasonPomodoro": {
+    "message": "$HOST$ is not in your pomodoro whitelist (focus session).",
+    "description": "Blocked page explanation for pomodoro whitelist",
+    "placeholders": {
+      "HOST": {
+        "content": "$1"
       }
     }
   },
@@ -207,10 +212,6 @@
   "saveBadgeMode": {
     "message": "Save",
     "description": "Button to save badge mode"
-  },
-  "badgePaused": {
-    "message": "P",
-    "description": "Icon badge marker while paused"
   },
   "currentPaused": {
     "message": "Tracking is currently paused. Resume to start tracking again.",
@@ -350,28 +351,6 @@
       }
     }
   },
-  "notifyPomodoroWarnTitle": {
-    "message": "Pomodoro focus",
-    "description": "Notification title when switching to a non-whitelisted tab during focus"
-  },
-  "notifyPomodoroWarnBody": {
-    "message": "$HOST$ is not in your pomodoro whitelist.",
-    "description": "Notification body for pomodoro whitelist warning",
-    "placeholders": {
-      "HOST": {
-        "content": "$1"
-      }
-    }
-  },
-  "bannerPomodoroWarn": {
-    "message": "Pomodoro: $HOST$ is not whitelisted",
-    "description": "Banner text for pomodoro whitelist warning",
-    "placeholders": {
-      "HOST": {
-        "content": "$1"
-      }
-    }
-  },
   "usageReminderSection": {
     "message": "Continuous use reminder",
     "description": "Options section header"
@@ -393,11 +372,11 @@
     "description": "Button to save usage reminder settings"
   },
   "pomodoroSection": {
-    "message": "Pomodoro",
+    "message": "🍅 Pomodoro",
     "description": "Options section header"
   },
   "pomodoroHint": {
-    "message": "While a focus session is active, switching to a tab outside the whitelist triggers a reminder. A focus/break cycle runs while the browser is in the foreground.",
+    "message": "During a focus session, domains outside the whitelist are blocked. A focus/break cycle runs while the browser is in the foreground.",
     "description": "Helper text for pomodoro section"
   },
   "pomodoroEnabled": {
@@ -431,6 +410,19 @@
   "noPomodoroWhitelistYet": {
     "message": "Whitelist is empty.",
     "description": "Empty state for pomodoro whitelist"
+  },
+  "importPomodoroWhitelist": {
+    "message": "Import currently open tabs",
+    "description": "Button to import open tabs into the pomodoro whitelist"
+  },
+  "importedCount": {
+    "message": "Imported $N$ domains into the whitelist.",
+    "description": "Feedback after importing open tabs",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
   },
   "pomodoroStatusLabel": {
     "message": "Current session",
