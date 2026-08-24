@@ -1,6 +1,7 @@
-# 健康上网助手 (Healthy Explorer)
+# 歇会儿 - TakeFive
+## 健康上网助手 / Healthy Browsing Companion
 
-一款基于 Manifest V3 的浏览器插件（Chrome / Edge），帮助你统计每日各网站的使用时长，为域名设置时间限制、提醒，以及屏蔽干扰网站。
+一款基于 Manifest V3 的浏览器插件（Chrome / Edge），统计每日各网站的使用时长，为网站设置时间限制、提醒与屏蔽，并用番茄钟帮助你专注、及时休息。
 
 ## 功能
 
@@ -25,9 +26,9 @@
 
 ## 使用方法
 
-- **查看统计**：点击工具栏图标，弹窗展示今日总时长与各域名使用时长，每行可加入黑名单、为未设限额的域名设置限额；番茄钟开启后，弹窗底部显示番茄钟模块，可点击「开始专注」开始 / 「结束」停止。
+- **查看统计**：点击工具栏图标，弹窗展示今日总时长与各域名使用时长，每行可加入黑名单、为未设限额的域名设置限额；番茄钟开启后，弹窗底部显示番茄钟模块，可点击「开始专注」开始 / 「结束专注」停止。
 - **设置限制与黑名单**：右键图标「选项」（或设置页入口），管理限额规则、黑名单、图标角标显示类型、连续使用提醒、番茄钟（时长与白名单，白名单可一键导入当前打开的网页）。
-- **被阻断时**：达到限额的域名会跳转到阻断页，可点击「暂停并继续访问」暂停计时后继续；黑名单与番茄钟（专注阶段）的阻断页不提供放行入口，番茄钟白名单外的阻断需在弹窗暂停或调整白名单。
+- **被阻断时**：达到限额的域名会跳转到阻断页，可点击「暂停记录并继续」暂停统计后继续；黑名单与番茄钟（专注阶段）的阻断页不提供放行入口，番茄钟白名单外的阻断需在弹窗暂停或调整白名单。
 
 ## 项目结构
 
@@ -37,7 +38,7 @@ healthy_explorer/
 ├── background.js          # Service Worker：计时、限额/提醒/阻断、暂停、连续使用提醒、番茄钟
 ├── content/banner.js      # 页面顶部横幅内容脚本（Shadow DOM 隔离）
 ├── popup/                 # 工具栏弹窗：今日概览 + 快捷操作 + 番茄钟开关
-├── options/               # 设置页：限额 / 黑名单 / 数据 / 休息 / 提醒 / 番茄钟
+├── options/               # 设置页：限额 / 黑名单 / 数据 / 角标 / 提醒 / 番茄钟
 ├── blocked/               # 阻断落地页
 ├── shared/
 │   ├── storage.js         # 数据读写、每日重置、限额判断
@@ -58,6 +59,7 @@ healthy_explorer/
 | `notifications` | 限额接近/达成的桌面提醒 |
 | `webNavigation` | 监听导航并重定向到阻断页 |
 | `windows` | 感知窗口聚焦，仅在前台时计时 |
+| `idle` | 检测锁屏/睡眠，自动停止计时 |
 | `host_permissions: <all_urls>` | 允许 `webNavigation` 观察到任意站点的导航（用于屏蔽） |
 
 ## 计时说明
@@ -85,7 +87,7 @@ healthy_explorer/
     "paused": false,
     "badgeMode": "auto",
     "usageReminder": { "enabled": true, "minutes": 45 },
-    "pomodoro": { "enabled": false, "focusMinutes": 25, "breakMinutes": 5, "whitelist": ["work.com"] }
+    "pomodoro": { "enabled": true, "focusMinutes": 25, "breakMinutes": 5, "whitelist": ["work.com"] }
   },
   "history": [ { "date": "2026-08-20", "domains": { "google.com": { "timeMs": 999000 } } } ]
 }
@@ -110,6 +112,12 @@ node D:/Data/Temp/opencode/test_i18n_dom.js
 ```
 
 > 测试脚本位于 `D:/Data/Temp/opencode/`，仅为开发辅助，未纳入本仓库。
+
+## 商店上架
+
+- 商店文案：见 `store-listing.md`（中英文短/长描述、类别、标签、权限说明）
+- 隐私政策：见 `privacy-policy.md`（数据仅存本地、不上传），上架前请填写生效日期与联系方式并托管到可访问的 URL
+- 截图清单：见 `screenshots.md`（Edge 至少 5 张 1280×800 截图，需在浏览器中手动截取）
 
 ## License
 

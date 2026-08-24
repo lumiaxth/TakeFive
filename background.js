@@ -258,7 +258,7 @@ async function commitTime() {
     if (reachedFirstTime) await enforceBlocks(data);
     await updateBadge();
   } catch (e) {
-    console.error('[Healthy Explorer] commitTime error', e);
+    console.error('[TakeFive] commitTime error', e);
   }
 }
 

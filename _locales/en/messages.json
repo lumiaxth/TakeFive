@@ -1,10 +1,10 @@
 {
   "extName": {
-    "message": "Healthy Explorer",
+    "message": "TakeFive",
     "description": "Extension name"
   },
   "extDescription": {
-    "message": "Track your daily time on websites, set per-domain time limits and block distracting domains.",
+    "message": "Track time spent on websites, set daily limits, block distracting sites, and stay focused with a pomodoro timer. Auto-pauses when you lock your PC or it sleeps.",
     "description": "Extension description"
   },
   "todayTotal": {
@@ -16,11 +16,11 @@
     "description": "Label for total time today"
   },
   "domainsTitle": {
-    "message": "Domain usage",
+    "message": "Site usage",
     "description": "Header of the domain usage list"
   },
   "noDataYet": {
-    "message": "No data yet. Start browsing to track time.",
+    "message": "Start browsing and your usage will be tracked here.",
     "description": "Empty state in popup"
   },
   "limitReached": {
@@ -48,7 +48,7 @@
     "description": "Button label to remove a limit"
   },
   "pause": {
-    "message": "Pause timer",
+    "message": "Pause tracking",
     "description": "Button label to pause tracking and blocking"
   },
   "resume": {
@@ -60,7 +60,7 @@
     "description": "Status text while paused"
   },
   "openSettings": {
-    "message": "Open settings",
+    "message": "Settings",
     "description": "Link to the options page"
   },
   "minutesUnit": {
@@ -72,11 +72,11 @@
     "description": "Short hours unit"
   },
   "blockedTitle": {
-    "message": "This site is blocked",
+    "message": "Take a break",
     "description": "Blocked page title"
   },
   "blockedReasonBlacklist": {
-    "message": "$HOST$ is on your block list.",
+    "message": "System.Management.Automation.Internal.Host.InternalHost$ is on your block list — take a break.",
     "description": "Blocked page explanation for blacklisted domain",
     "placeholders": {
       "HOST": {
@@ -85,7 +85,7 @@
     }
   },
   "blockedReasonLimit": {
-    "message": "You have reached the daily time limit for $HOST$ ($TIME$ today).",
+    "message": "You’ve spent \\$ on System.Management.Automation.Internal.Host.InternalHost$ today and reached your daily limit. Take a break.",
     "description": "Blocked page explanation for time limit reached",
     "placeholders": {
       "HOST": {
@@ -97,7 +97,7 @@
     }
   },
   "blockedReasonPomodoro": {
-    "message": "$HOST$ is not in your pomodoro whitelist (focus session).",
+    "message": "System.Management.Automation.Internal.Host.InternalHost$ is not in your pomodoro whitelist (focus session). Focus on your work.",
     "description": "Blocked page explanation for pomodoro whitelist",
     "placeholders": {
       "HOST": {
@@ -106,7 +106,7 @@
     }
   },
   "breakFor": {
-    "message": "Pause and continue",
+    "message": "Pause tracking and continue",
     "description": "Button on blocked page to pause tracking and continue"
   },
   "goBack": {
@@ -114,7 +114,7 @@
     "description": "Button to navigate back on blocked page"
   },
   "optionsTitle": {
-    "message": "Healthy Explorer Settings",
+    "message": "TakeFive · Settings",
     "description": "Options page title"
   },
   "limitsSection": {
@@ -449,7 +449,7 @@
     "description": "Popup button to start a focus session"
   },
   "pomodoroEndFocus": {
-    "message": "End",
+    "message": "End focus",
     "description": "Popup button to end the current focus/break session"
   },
   "pomodoroIdle": {

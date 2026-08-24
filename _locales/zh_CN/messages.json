@@ -1,10 +1,10 @@
 {
   "extName": {
-    "message": "健康上网助手",
+    "message": "歇会儿 - TakeFive",
     "description": "扩展名称"
   },
   "extDescription": {
-    "message": "统计每日各网站使用时长，为域名设置时间限制，屏蔽干扰网站。",
+    "message": "统计各网站使用时长，设置每日限额与黑名单，番茄钟专注计时，锁屏/睡眠自动暂停，助你科学上网、及时休息。",
     "description": "扩展描述"
   },
   "todayTotal": {
@@ -16,11 +16,11 @@
     "description": "今日总时长标签"
   },
   "domainsTitle": {
-    "message": "各域名使用情况",
+    "message": "各网站使用情况",
     "description": "域名列表标题"
   },
   "noDataYet": {
-    "message": "暂无数据，开始浏览后会自动计时。",
+    "message": "浏览网页后，这里会自动统计时长。",
     "description": "弹窗空状态提示"
   },
   "limitReached": {
@@ -48,19 +48,19 @@
     "description": "移除限额按钮"
   },
   "pause": {
-    "message": "暂停计时",
+    "message": "暂停记录",
     "description": "暂停计时与屏蔽按钮"
   },
   "resume": {
-    "message": "恢复",
+    "message": "继续",
     "description": "恢复计时按钮"
   },
   "paused": {
-    "message": "已暂停计时",
+    "message": "已暂停记录",
     "description": "暂停中的状态文案"
   },
   "openSettings": {
-    "message": "打开设置",
+    "message": "设置",
     "description": "跳转到设置页的链接"
   },
   "minutesUnit": {
@@ -72,11 +72,11 @@
     "description": "小时简写"
   },
   "blockedTitle": {
-    "message": "该网站已被屏蔽",
+    "message": "先歇会儿吧",
     "description": "阻断页标题"
   },
   "blockedReasonBlacklist": {
-    "message": "$HOST$ 已被你加入黑名单。",
+    "message": "System.Management.Automation.Internal.Host.InternalHost$ 在你的屏蔽名单中，先歇会儿吧。",
     "description": "黑名单域名的阻断说明",
     "placeholders": {
       "HOST": {
@@ -85,7 +85,7 @@
     }
   },
   "blockedReasonLimit": {
-    "message": "你今天在 $HOST$ 上的使用时长已达每日限额（今日 $TIME$）。",
+    "message": "今天已使用 System.Management.Automation.Internal.Host.InternalHost$ \\$，到达每日限额，先歇会儿吧。",
     "description": "达到限额的阻断说明",
     "placeholders": {
       "HOST": {
@@ -97,7 +97,7 @@
     }
   },
   "blockedReasonPomodoro": {
-    "message": "$HOST$ 不在番茄钟白名单内（专注阶段）。",
+    "message": "System.Management.Automation.Internal.Host.InternalHost$ 不在番茄钟白名单内（专注阶段），先专注手头的事吧。",
     "description": "番茄钟白名单的阻断说明",
     "placeholders": {
       "HOST": {
@@ -106,7 +106,7 @@
     }
   },
   "breakFor": {
-    "message": "暂停并继续访问",
+    "message": "暂停记录并继续",
     "description": "阻断页暂停计时并继续访问的按钮"
   },
   "goBack": {
@@ -114,7 +114,7 @@
     "description": "阻断页返回按钮"
   },
   "optionsTitle": {
-    "message": "健康上网助手设置",
+    "message": "歇会儿 · 设置",
     "description": "设置页标题"
   },
   "limitsSection": {
@@ -449,7 +449,7 @@
     "description": "弹窗开始专注按钮"
   },
   "pomodoroEndFocus": {
-    "message": "结束",
+    "message": "结束专注",
     "description": "弹窗结束当前专注/休息按钮"
   },
   "pomodoroIdle": {
