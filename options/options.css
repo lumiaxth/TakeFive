@@ -47,33 +47,7 @@ header {
   width: 32px;
   height: 32px;
   border-radius: 8px;
-  background: linear-gradient(135deg, #22c55e, #15803d);
-  position: relative;
   flex-shrink: 0;
-}
-
-.logo::after {
-  content: "";
-  position: absolute;
-  left: 5px;
-  top: 17px;
-  width: 11px;
-  height: 5px;
-  background: #fff;
-  border-radius: 3px;
-  transform: rotate(45deg);
-}
-
-.logo::before {
-  content: "";
-  position: absolute;
-  left: 10px;
-  top: 14px;
-  width: 18px;
-  height: 5px;
-  background: #fff;
-  border-radius: 3px;
-  transform: rotate(-45deg);
 }
 
 h1 {

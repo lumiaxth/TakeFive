@@ -75,11 +75,10 @@ header {
 }
 
 .logo {
-  width: 20px;
-  height: 20px;
-  border-radius: 6px;
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
   flex-shrink: 0;
-  display: block;
 }
 
 .active-host {
