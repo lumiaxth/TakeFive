@@ -1,46 +1,46 @@
-# 隐私政策（Privacy Policy）
+# Privacy Policy
 
-生效日期（Effective date）: 2026-08-24
+**Effective date:** 2026-08-24
 
-「歇会儿 - TakeFive」（以下简称"本扩展"）重视你的隐私。本政策说明本扩展收集、使用和存储数据的方式。
+TakeFive (歇会儿) ("the Extension") respects your privacy. This policy explains what data the Extension accesses, how it is used, and how it is stored.
 
-## 数据收集
+## Data collection
 
-**本扩展不收集、不传输任何个人数据。** 所有数据均保存在你自己的设备上，通过浏览器的 `chrome.storage.local` 本地存储，**不会**上传到任何服务器，也不包含任何分析、统计或第三方 SDK。
+The Extension does not collect, transmit, or sell any personal data. All data is stored locally on your device using the browser's `chrome.storage.local` and is never uploaded to any server. The Extension contains no analytics, advertising, or third-party SDKs.
 
-## 本地存储的数据
+## What data is processed
 
-以下数据仅保存在本地浏览器中：
+To provide its core function—tracking how much time you spend on each website—the Extension reads the domain of the currently active tab and records how long that domain was in the foreground. The following data is kept only on your device:
 
-- 各网站的每日使用时长与最近 7 天历史（`domains` / `history`）
-- 你设置的限额、黑名单、番茄钟白名单与提醒设置（`settings`）
-- 连续使用计时与番茄钟运行状态（`usage` / `pomodoroState`）
+- Daily per-site usage time and the last 7 days of history (`domains` / `history`)
+- Your settings: per-site time limits, blacklist, pomodoro whitelist, and reminder preferences (`settings`)
+- Continuous-use tracking and pomodoro timer state (`usage` / `pomodoroState`)
 
-这些数据只用于在弹窗、设置页展示统计并执行你设定的拦截/提醒规则。
+This data is used only to display statistics in the popup and options pages and to enforce the limits, blocks, and reminders you configure. The Extension does not read page content, text, images, or other website content.
 
-## 权限用途
+## Permissions
 
-| 权限 | 用途 | 是否上传 |
+| Permission | Purpose | Uploaded? |
 |---|---|---|
-| `tabs` | 读取当前活动标签页 URL 以识别网站 | 否 |
-| `storage` | 本地保存统计与设置 | 否 |
-| `alarms` | 定时提交计时数据 | 否 |
-| `notifications` | 限额/提醒/番茄钟的桌面通知 | 否 |
-| `webNavigation` + `<all_urls>` | 拦截并重定向被限制或屏蔽的网站 | 否 |
-| `windows` | 感知窗口聚焦，仅在前台计时 | 否 |
-| `idle` | 检测锁屏/睡眠并自动停止计时 | 否 |
+| `tabs` | Read the active tab URL to identify the current website | No |
+| `storage` | Store statistics and settings locally | No |
+| `alarms` | Periodically persist elapsed time for accuracy | No |
+| `notifications` | Show limit/reminder/pomodoro desktop notifications | No |
+| `webNavigation` + `<all_urls>` | Detect and redirect navigation to limited or blocked sites | No |
+| `windows` | Detect window focus so time is only counted in the foreground | No |
+| `idle` | Detect lock/sleep and pause tracking automatically | No |
 
-以上权限仅在浏览器本地使用，不会向任何外部服务发送数据。
+All permissions are used only within the browser and never send data to any external service.
 
-## 数据删除
+## Data deletion
 
-- 在设置页「数据」分区点击「重置今日数据」或「清空全部数据」，可随时删除本地统计。
-- 卸载本扩展会同时删除其所有本地数据。
+- In the options page, "Data" section, you can click "Reset today's data" or "Clear all data" to delete local statistics at any time.
+- Uninstalling the Extension deletes all of its local data.
 
-## 变更
+## Changes
 
-若本政策发生重大变更，我们会更新此页面并在新版本说明中提示。
+If this policy changes materially, we will update this page and note the change in the release notes.
 
-## 联系方式
+## Contact
 
-如有隐私相关问题，请联系本作者。
+For privacy-related questions, please contact the developer.
