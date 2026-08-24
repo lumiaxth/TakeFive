@@ -75,36 +75,11 @@ header {
 }
 
 .logo {
-  width: 18px;
-  height: 18px;
-  border-radius: 5px;
-  background: linear-gradient(135deg, #22c55e, #15803d);
-  position: relative;
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
   flex-shrink: 0;
-}
-
-.logo::after {
-  content: "";
-  position: absolute;
-  left: 3px;
-  top: 10px;
-  width: 6px;
-  height: 3px;
-  background: #fff;
-  border-radius: 2px;
-  transform: rotate(45deg);
-}
-
-.logo::before {
-  content: "";
-  position: absolute;
-  left: 6px;
-  top: 8px;
-  width: 10px;
-  height: 3px;
-  background: #fff;
-  border-radius: 2px;
-  transform: rotate(-45deg);
+  display: block;
 }
 
 .active-host {
