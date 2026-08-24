@@ -71,12 +71,8 @@
     "message": "时",
     "description": "小时简写"
   },
-  "blockedTitle": {
-    "message": "先歇会儿吧",
-    "description": "阻断页标题"
-  },
   "blockedReasonBlacklist": {
-    "message": "System.Management.Automation.Internal.Host.InternalHost$ 在你的屏蔽名单中，先歇会儿吧。",
+    "message": "$HOST$ 在你的屏蔽名单中，先歇会儿吧。",
     "description": "黑名单域名的阻断说明",
     "placeholders": {
       "HOST": {
@@ -85,7 +81,7 @@
     }
   },
   "blockedReasonLimit": {
-    "message": "今天已使用 System.Management.Automation.Internal.Host.InternalHost$ \\$，到达每日限额，先歇会儿吧。",
+    "message": "今天已使用 $HOST$ $TIME$，到达每日限额，先歇会儿吧。",
     "description": "达到限额的阻断说明",
     "placeholders": {
       "HOST": {
@@ -97,7 +93,7 @@
     }
   },
   "blockedReasonPomodoro": {
-    "message": "System.Management.Automation.Internal.Host.InternalHost$ 不在番茄钟白名单内（专注阶段），先专注手头的事吧。",
+    "message": "$HOST$ 不在番茄钟白名单内（专注阶段），先专注手头的事吧。",
     "description": "番茄钟白名单的阻断说明",
     "placeholders": {
       "HOST": {
@@ -464,5 +460,29 @@
         "content": "$1"
       }
     }
+  },
+  "blockedTitleLimit": {
+    "message": "今日额度已用完，歇会儿吧~",
+    "description": "限额阻断页标题"
+  },
+  "blockedTitleBlacklist": {
+    "message": "这个网站被关进小黑屋啦",
+    "description": "黑名单阻断页标题"
+  },
+  "blockedTitlePomodoro": {
+    "message": "专注时间，稍后再来",
+    "description": "番茄钟阻断页标题"
+  },
+  "blockedTitleGeneric": {
+    "message": "歇会儿再回来吧",
+    "description": "通用阻断页标题"
+  },
+  "blockedReasonGeneric": {
+    "message": "这个页面暂时无法访问。",
+    "description": "通用阻断说明"
+  },
+  "moreDomains": {
+    "message": "更多",
+    "description": "弹窗查看更多域名的链接"
   }
 }

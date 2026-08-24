@@ -71,12 +71,8 @@
     "message": "h",
     "description": "Short hours unit"
   },
-  "blockedTitle": {
-    "message": "Take a break",
-    "description": "Blocked page title"
-  },
   "blockedReasonBlacklist": {
-    "message": "System.Management.Automation.Internal.Host.InternalHost$ is on your block list — take a break.",
+    "message": "$HOST$ is on your block list — take a break.",
     "description": "Blocked page explanation for blacklisted domain",
     "placeholders": {
       "HOST": {
@@ -85,7 +81,7 @@
     }
   },
   "blockedReasonLimit": {
-    "message": "You’ve spent \\$ on System.Management.Automation.Internal.Host.InternalHost$ today and reached your daily limit. Take a break.",
+    "message": "You’ve spent $TIME$ on $HOST$ today and reached your daily limit. Take a break.",
     "description": "Blocked page explanation for time limit reached",
     "placeholders": {
       "HOST": {
@@ -97,7 +93,7 @@
     }
   },
   "blockedReasonPomodoro": {
-    "message": "System.Management.Automation.Internal.Host.InternalHost$ is not in your pomodoro whitelist (focus session). Focus on your work.",
+    "message": "$HOST$ is not in your pomodoro whitelist (focus session). Focus on your work.",
     "description": "Blocked page explanation for pomodoro whitelist",
     "placeholders": {
       "HOST": {
@@ -464,5 +460,29 @@
         "content": "$1"
       }
     }
+  },
+  "blockedTitleLimit": {
+    "message": "Time’s up for today. Take five!",
+    "description": "Limit block page title"
+  },
+  "blockedTitleBlacklist": {
+    "message": "This site is on your naughty list",
+    "description": "Blacklist block page title"
+  },
+  "blockedTitlePomodoro": {
+    "message": "Focus mode on. Come back later",
+    "description": "Pomodoro block page title"
+  },
+  "blockedTitleGeneric": {
+    "message": "Take five and come back",
+    "description": "Generic block page title"
+  },
+  "blockedReasonGeneric": {
+    "message": "This page isn’t available right now.",
+    "description": "Generic block reason text"
+  },
+  "moreDomains": {
+    "message": "More",
+    "description": "Popup link to view more domains"
   }
 }

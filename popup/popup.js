@@ -55,10 +55,24 @@
 
     renderPomodoro();
 
+    const MAX_DOMAINS = 10;
     const domains = HE.storage.sortedDomains(data.domains);
     emptyEl.hidden = domains.length > 0;
     list.textContent = '';
-    domains.forEach((d) => list.appendChild(renderDomain(d.host, d.timeMs)));
+    domains.slice(0, MAX_DOMAINS).forEach((d) => list.appendChild(renderDomain(d.host, d.timeMs)));
+    if (domains.length > MAX_DOMAINS) {
+      const row = document.createElement('div');
+      row.className = 'more-link';
+      const link = document.createElement('a');
+      link.href = '#';
+      link.textContent = t('moreDomains');
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        chrome.tabs.create({ url: chrome.runtime.getURL('options/options.html#section-data') });
+      });
+      row.appendChild(link);
+      list.appendChild(row);
+    }
   }
 
   function renderPomodoro() {
@@ -246,8 +260,7 @@
     await refresh();
   });
 
-  $('linkSettings').addEventListener('click', (e) => {
-    e.preventDefault();
+  $('btnSettings').addEventListener('click', () => {
     chrome.runtime.openOptionsPage();
   });
 

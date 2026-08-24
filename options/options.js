@@ -26,6 +26,10 @@
     const resp = await send({ type: 'GET_DATA' });
     data = resp.data;
     render();
+    if (location.hash === '#section-data') {
+      const el = document.getElementById('section-data');
+      if (el) el.scrollIntoView();
+    }
   }
 
   function render() {

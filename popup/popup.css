@@ -41,6 +41,37 @@ header {
   gap: 8px;
   font-weight: 700;
   font-size: 14px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card);
+  color: var(--muted);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.icon-btn:hover {
+  background: #f3f4f6;
+  color: var(--text);
 }
 
 .logo {
@@ -352,18 +383,18 @@ body.has-pomodoro {
   opacity: 0.9;
 }
 
-footer {
-  padding: 10px 14px;
-  border-top: 1px solid var(--border);
+.more-link {
   text-align: center;
+  padding: 6px 0 2px;
 }
 
-footer a {
+.more-link a {
   color: var(--green-dark);
   text-decoration: none;
   font-size: 12px;
+  font-weight: 600;
 }
 
-footer a:hover {
+.more-link a:hover {
   text-decoration: underline;
 }
