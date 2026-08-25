@@ -95,9 +95,16 @@
       const avgLine = document.createElement('div');
       avgLine.className = 'avg-line';
       avgLine.style.bottom = Math.max(2, Math.round((avg / max) * 100)) + '%';
-      const lbl = document.createElement('span');
+      const lbl = document.createElement('div');
       lbl.className = 'avg-label';
-      lbl.textContent = t('chartAvg', [fmt(avg)]);
+      const title = document.createElement('span');
+      title.className = 'avg-title';
+      title.textContent = t('chartAvg');
+      const timeEl = document.createElement('span');
+      timeEl.className = 'avg-time';
+      timeEl.textContent = fmt(avg);
+      lbl.appendChild(title);
+      lbl.appendChild(timeEl);
       avgLine.appendChild(lbl);
       grid.appendChild(avgLine);
     }

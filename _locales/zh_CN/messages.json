@@ -526,13 +526,8 @@
     "description": "图表模块小标题"
   },
   "chartAvg": {
-    "message": "7 日平均 $TIME$",
-    "description": "图表平均值标签",
-    "placeholders": {
-      "TIME": {
-        "content": "$1"
-      }
-    }
+    "message": "日均",
+    "description": "图表日均值标签（第一行）"
   },
   "noDataForDay": {
     "message": "该日没有使用记录",

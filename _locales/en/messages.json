@@ -526,13 +526,8 @@
     "description": "Chart module subtitle"
   },
   "chartAvg": {
-    "message": "7-day avg $TIME$",
-    "description": "Chart average label",
-    "placeholders": {
-      "TIME": {
-        "content": "$1"
-      }
-    }
+    "message": "Daily avg",
+    "description": "Chart daily-average label (first line)"
   },
   "noDataForDay": {
     "message": "No usage recorded on this day",

@@ -149,7 +149,7 @@ h1 {
   align-items: flex-end;
   gap: 10px;
   height: 200px;
-  padding: 12px 104px 0 6px;
+  padding: 12px 92px 0 6px;
   border-bottom: 1px solid var(--border);
 }
 
@@ -180,14 +180,30 @@ h1 {
 .chart-grid .avg-label {
   position: absolute;
   right: 4px;
-  top: -9px;
-  font-size: 11px;
-  color: var(--amber);
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1px;
   background: var(--card);
   padding: 0 4px;
   border-radius: 4px;
   white-space: nowrap;
+  max-width: 84px;
+  overflow: hidden;
+}
+
+.chart-grid .avg-title {
+  font-size: 10px;
+  color: var(--amber);
+  opacity: 0.85;
+}
+
+.chart-grid .avg-time {
+  font-size: 11px;
+  color: var(--amber);
   font-weight: 600;
+  font-variant-numeric: tabular-nums;
 }
 
 .bar-col {
