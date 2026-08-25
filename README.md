@@ -119,6 +119,3 @@ node D:/Data/Temp/opencode/test_i18n_dom.js
 - 隐私政策：见 `privacy-policy.md`（数据仅存本地、不上传），上架前请填写生效日期与联系方式并托管到可访问的 URL
 - 截图清单：见 `screenshots.md`（Edge 至少 5 张 1280×800 截图，需在浏览器中手动截取）
 
-## License
-
-MIT
