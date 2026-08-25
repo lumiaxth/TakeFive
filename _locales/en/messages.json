@@ -466,15 +466,15 @@
     }
   },
   "blockedTitleLimit": {
-    "message": "Time’s up for today. Take five!",
+    "message": "Time’s up. Take five!",
     "description": "Limit block page title"
   },
   "blockedTitleBlacklist": {
-    "message": "This site is on your naughty list",
+    "message": "It's on your naughty list.",
     "description": "Blacklist block page title"
   },
   "blockedTitlePomodoro": {
-    "message": "Focus mode on. Come back later",
+    "message": "Focus mode. Hold on!",
     "description": "Pomodoro block page title"
   },
   "blockedTitleGeneric": {
