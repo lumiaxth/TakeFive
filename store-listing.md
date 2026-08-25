@@ -4,8 +4,11 @@
 
 ## 商店名称
 
-- 中文：歇会儿 - TakeFive
-- English：TakeFive
+> 商店名称取自扩展包的 manifest（`name`），修改后需重新打包上传。
+> 中文界面 manifest 名称为「歇会儿 - 健康上网助手」，英文界面为「TakeFive - Website Time Tracker & Blocker」；浏览器内主页面显示短名「歇会儿 / TakeFive」（`extNameShort`）。
+
+- 中文：歇会儿 - 健康上网助手
+- English：TakeFive - Website Time Tracker & Blocker
 
 ## 短描述（Short description，~90 字符内）
 

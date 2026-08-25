@@ -152,6 +152,8 @@ function fmtHm(ms) {
   const totalMin = Math.max(0, Math.floor((ms || 0) / 60000));
   const h = Math.floor(totalMin / 60);
   const m = totalMin % 60;
+  // the badge only fits ~4 characters, so compact hours >= 10 as "10h"/"99h"
+  if (h >= 10) return h + 'h';
   return h + ':' + (m < 10 ? '0' + m : m);
 }
 

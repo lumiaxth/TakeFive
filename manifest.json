@@ -17,7 +17,7 @@
   },
   "action": {
     "default_popup": "popup/popup.html",
-    "default_title": "__MSG_extName__"
+    "default_title": "__MSG_extNameShort__"
   },
   "content_scripts": [
     {

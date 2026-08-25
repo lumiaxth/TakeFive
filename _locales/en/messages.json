@@ -1,7 +1,11 @@
 {
   "extName": {
+    "message": "TakeFive - Website Time Tracker & Blocker",
+    "description": "Extension name (store)"
+  },
+  "extNameShort": {
     "message": "TakeFive",
-    "description": "Extension name"
+    "description": "Short title shown in the extension UI"
   },
   "extDescription": {
     "message": "Track time spent on websites, set daily limits, block distracting sites, and stay focused with a pomodoro timer. Auto-pauses when you lock your PC or it sleeps.",
@@ -506,7 +510,7 @@
     "description": "No data placeholder"
   },
   "topDomains": {
-    "message": "Top 5 sites",
+    "message": "Usage ranking",
     "description": "Top 5 domains of the day"
   },
   "dashboardSubtitle": {
@@ -533,5 +537,9 @@
   "noDataForDay": {
     "message": "No usage recorded on this day",
     "description": "No-data day detail message"
+  },
+  "collapse": {
+    "message": "Collapse",
+    "description": "Collapse button"
   }
 }

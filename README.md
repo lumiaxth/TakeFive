@@ -1,5 +1,5 @@
-# 歇会儿 - TakeFive
-## 健康上网助手 / Healthy Browsing Companion
+# 歇会儿 - 健康上网助手
+## TakeFive - Website Time Tracker & Blocker
 
 一款基于 Manifest V3 的浏览器插件（Chrome / Edge），统计每日各网站的使用时长，为网站设置时间限制、提醒与屏蔽，并用番茄钟帮助你专注、及时休息。
 

@@ -25,21 +25,37 @@
     render();
   }
 
+  let todayExpanded = false;
+  let detailExpanded = false;
+
   function render() {
+    renderToday();
+    buildDays();
+    renderChart();
+  }
+
+  function renderToday() {
     const todayTotal = HE.storage.totalForDomains(data.domains);
     $('todayTotal').textContent = fmt(todayTotal);
-    const todayRows = HE.storage.sortedDomains(data.domains);
+    const all = HE.storage.sortedDomains(data.domains);
+    const list = todayExpanded ? all : all.slice(0, 5);
     $('todayList').innerHTML =
-      todayRows.length > 0
-        ? todayRows
+      list.length > 0
+        ? list
             .map((d) =>
               '<div class="day-row"><span class="rhost">' + esc(d.host) + '</span><span class="rtime">' + esc(fmt(d.timeMs)) + '</span></div>'
             )
             .join('')
         : '<div class="day-row"><span class="rhost">' + esc(t('noData')) + '</span></div>';
 
-    buildDays();
-    renderChart();
+    const more = $('todayMore');
+    if (all.length > 5) {
+      more.hidden = false;
+      more.textContent = t(todayExpanded ? 'collapse' : 'moreDomains');
+    } else {
+      more.hidden = true;
+      more.textContent = '';
+    }
   }
 
   function buildDays() {
@@ -113,7 +129,10 @@
       c.classList.toggle('selected', label === dateKey.slice(5).replace('-', '/'));
     });
     const day = days.find((d) => d.date === dateKey);
-    if (day) renderDayDetail(day);
+    if (day) {
+      detailExpanded = false;
+      renderDayDetail(day);
+    }
   }
 
   function renderDayDetail(day) {
@@ -143,22 +162,41 @@
     title.textContent = t('topDomains');
     dayDetailEl.appendChild(title);
 
+    const all = HE.storage.sortedDomains(day.entry.domains);
+    const list = detailExpanded ? all : all.slice(0, 5);
     const rows = document.createElement('div');
     rows.className = 'day-rows';
-    HE.storage.sortedDomains(day.entry.domains)
-      .slice(0, 5)
-      .forEach((d) => {
-        const row = document.createElement('div');
-        row.className = 'day-row';
-        row.innerHTML =
-          '<span class="rhost">' + esc(d.host) + '</span><span class="rtime">' + esc(fmt(d.timeMs)) + '</span>';
-        rows.appendChild(row);
-      });
+    list.forEach((d) => {
+      const row = document.createElement('div');
+      row.className = 'day-row';
+      row.innerHTML =
+        '<span class="rhost">' + esc(d.host) + '</span><span class="rtime">' + esc(fmt(d.timeMs)) + '</span>';
+      rows.appendChild(row);
+    });
     dayDetailEl.appendChild(rows);
+
+    if (all.length > 5) {
+      const more = document.createElement('div');
+      more.className = 'more-link';
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.textContent = t(detailExpanded ? 'collapse' : 'moreDomains');
+      btn.addEventListener('click', () => {
+        detailExpanded = !detailExpanded;
+        renderDayDetail(day);
+      });
+      more.appendChild(btn);
+      dayDetailEl.appendChild(more);
+    }
   }
 
   $('btnSettings').addEventListener('click', () => {
     location.href = chrome.runtime.getURL('options/options.html');
+  });
+
+  $('todayMore').addEventListener('click', () => {
+    todayExpanded = !todayExpanded;
+    renderToday();
   });
 
   $('btnClearToday').addEventListener('click', async () => {

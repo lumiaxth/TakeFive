@@ -149,7 +149,7 @@ h1 {
   align-items: flex-end;
   gap: 10px;
   height: 200px;
-  padding: 12px 6px 0;
+  padding: 12px 104px 0 6px;
   border-bottom: 1px solid var(--border);
 }
 
@@ -173,18 +173,18 @@ h1 {
 .chart-grid .avg-line {
   position: absolute;
   left: 0;
-  right: 0;
+  right: 6px;
   border-top: 1px dashed var(--amber);
 }
 
 .chart-grid .avg-label {
   position: absolute;
-  right: 0;
+  right: 4px;
   top: -9px;
   font-size: 11px;
   color: var(--amber);
   background: var(--card);
-  padding: 0 5px;
+  padding: 0 4px;
   border-radius: 4px;
   white-space: nowrap;
   font-weight: 600;
@@ -261,6 +261,26 @@ h1 {
   color: var(--muted);
   font-size: 12px;
   margin: 8px 0 4px;
+}
+
+.more-link {
+  text-align: center;
+  margin-top: 8px;
+}
+
+.more-link button {
+  border: none;
+  background: none;
+  color: var(--green-dark);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  padding: 2px 8px;
+}
+
+.more-link button:hover {
+  text-decoration: underline;
 }
 
 .danger-actions {

@@ -1,7 +1,11 @@
 {
   "extName": {
-    "message": "歇会儿 - TakeFive",
-    "description": "扩展名称"
+    "message": "歇会儿 - 健康上网助手",
+    "description": "扩展名称（商店显示）"
+  },
+  "extNameShort": {
+    "message": "歇会儿",
+    "description": "主页面短标题"
   },
   "extDescription": {
     "message": "统计各网站使用时长，设置每日限额与黑名单，番茄钟专注计时，锁屏/睡眠自动暂停，助你科学上网、及时休息。",
@@ -506,7 +510,7 @@
     "description": "无数据提示"
   },
   "topDomains": {
-    "message": "时长前五",
+    "message": "使用排行",
     "description": "当天域名前五标题"
   },
   "dashboardSubtitle": {
@@ -533,5 +537,9 @@
   "noDataForDay": {
     "message": "该日没有使用记录",
     "description": "无数据日期的详情提示"
+  },
+  "collapse": {
+    "message": "收起",
+    "description": "收起按钮"
   }
 }
