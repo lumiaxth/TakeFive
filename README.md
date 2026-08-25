@@ -95,32 +95,4 @@ healthy_explorer/
 }
 ```
 
-## 开发与自测
 
-本项目的共享层与后台逻辑可在 Node.js 下用 mock 的 `chrome` API 进行单元自测：
-
-```bash
-# 共享层（域名解析 / 存储 / 每日重置 / 暂停）
-node D:/Data/Temp/opencode/test_shared.js
-
-# 后台逻辑（消息流转 / 限额 / 提醒 / 阻断 / 暂停 / 图标角标）
-node D:/Data/Temp/opencode/test_background.js
-
-# 计时准确度（暂停不计时 / SW 重启续算 / GET_DATA 补记）
-node D:/Data/Temp/opencode/test_timing.js
-
-# 界面多语言渲染（jsdom）
-node D:/Data/Temp/opencode/test_i18n_dom.js
-```
-
-> 测试脚本位于 `D:/Data/Temp/opencode/`，仅为开发辅助，未纳入本仓库。
-
-## 商店上架
-
-- 商店文案：见 `store-listing.md`（中英文短/长描述、类别、标签、权限说明）
-- 隐私政策：见 `privacy-policy.md`（数据仅存本地、不上传），上架前请填写生效日期与联系方式并托管到可访问的 URL
-- 截图清单：见 `screenshots.md`（Edge 至少 5 张 1280×800 截图，需在浏览器中手动截取）
-
-## License
-
-MIT
