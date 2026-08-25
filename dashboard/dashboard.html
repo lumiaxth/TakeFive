@@ -11,7 +11,10 @@
       <header>
         <div class="brand">
           <img class="logo" src="../icons/icon32.png" alt="" />
-          <h1 data-i18n="dashboardTitle"></h1>
+          <div>
+            <h1 data-i18n="dashboardTitle"></h1>
+            <p class="page-subtitle" data-i18n="dashboardSubtitle"></p>
+          </div>
         </div>
         <div class="nav-actions">
           <button id="btnSettings" class="icon-btn" type="button" data-i18n-title="openSettings" aria-label="Settings">
@@ -25,13 +28,14 @@
 
       <section class="card" id="section-today">
         <h2 data-i18n="todayDateLabel"></h2>
+        <p class="hint" data-i18n="todaySubtitle"></p>
         <div id="todayTotal" class="today-total"></div>
         <div id="todayList" class="day-rows"></div>
       </section>
 
       <section class="card" id="section-chart">
         <h2 data-i18n="last7Days"></h2>
-        <p class="hint" data-i18n="selectDayHint"></p>
+        <p class="hint" data-i18n="chartSubtitle"></p>
         <div id="chart" class="chart"></div>
         <div id="dayDetail" class="day-detail"></div>
       </section>

@@ -54,7 +54,14 @@ header {
 
 h1 {
   font-size: 20px;
+  margin: 0 0 2px;
+}
+
+.page-subtitle {
   margin: 0;
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 400;
 }
 
 .nav-actions {
@@ -137,6 +144,7 @@ h1 {
 }
 
 .chart {
+  position: relative;
   display: flex;
   align-items: flex-end;
   gap: 10px;
@@ -145,8 +153,47 @@ h1 {
   border-bottom: 1px solid var(--border);
 }
 
+.chart-grid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.chart-grid .gridline {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-top: 1px solid #e6e9e6;
+}
+
+.chart-grid .avg-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-top: 1px dashed var(--amber);
+}
+
+.chart-grid .avg-label {
+  position: absolute;
+  right: 0;
+  top: -9px;
+  font-size: 11px;
+  color: var(--amber);
+  background: var(--card);
+  padding: 0 5px;
+  border-radius: 4px;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
 .bar-col {
   flex: 1;
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;

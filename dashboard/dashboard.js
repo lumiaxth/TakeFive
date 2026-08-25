@@ -62,8 +62,31 @@
   }
 
   function renderChart() {
-    const max = Math.max(1, ...days.map((d) => d.total));
+    const totals = days.map((d) => d.total);
+    const max = Math.max(1, ...totals);
     chartEl.textContent = '';
+
+    const grid = document.createElement('div');
+    grid.className = 'chart-grid';
+    [25, 50, 75].forEach((p) => {
+      const line = document.createElement('div');
+      line.className = 'gridline';
+      line.style.bottom = p + '%';
+      grid.appendChild(line);
+    });
+    const avg = totals.reduce((a, b) => a + b, 0) / days.length;
+    if (max > 0 && avg > 0) {
+      const avgLine = document.createElement('div');
+      avgLine.className = 'avg-line';
+      avgLine.style.bottom = Math.max(2, Math.round((avg / max) * 100)) + '%';
+      const lbl = document.createElement('span');
+      lbl.className = 'avg-label';
+      lbl.textContent = t('chartAvg', [fmt(avg)]);
+      avgLine.appendChild(lbl);
+      grid.appendChild(avgLine);
+    }
+    chartEl.appendChild(grid);
+
     days.forEach((day, idx) => {
       const col = document.createElement('div');
       col.className = 'bar-col' + (idx === 6 ? ' selected' : '');
@@ -96,9 +119,13 @@
   function renderDayDetail(day) {
     dayDetailEl.textContent = '';
     if (!day || !day.entry || day.total <= 0) {
+      const dateEl = document.createElement('div');
+      dateEl.className = 'detail-date';
+      dateEl.textContent = day && day.date && day.date === data.date ? t('todayDateLabel') : (day ? day.date : t('todayDateLabel'));
       const empty = document.createElement('div');
       empty.className = 'detail-empty';
-      empty.textContent = t('noData');
+      empty.textContent = t('noDataForDay');
+      dayDetailEl.appendChild(dateEl);
       dayDetailEl.appendChild(empty);
       return;
     }

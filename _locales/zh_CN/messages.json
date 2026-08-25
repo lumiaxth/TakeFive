@@ -497,10 +497,6 @@
     "message": "近 7 天使用时长",
     "description": "柱状图标题"
   },
-  "selectDayHint": {
-    "message": "点击柱子查看当天详情",
-    "description": "图表提示"
-  },
   "todayDateLabel": {
     "message": "今日",
     "description": "今日区块标题"
@@ -512,5 +508,30 @@
   "topDomains": {
     "message": "时长前五",
     "description": "当天域名前五标题"
+  },
+  "dashboardSubtitle": {
+    "message": "你的浏览时间统计",
+    "description": "数据页副标题"
+  },
+  "todaySubtitle": {
+    "message": "今天在各网站的使用时长",
+    "description": "今日模块小标题"
+  },
+  "chartSubtitle": {
+    "message": "每天使用总时长，点击柱子查看当天详情",
+    "description": "图表模块小标题"
+  },
+  "chartAvg": {
+    "message": "7 日平均 $TIME$",
+    "description": "图表平均值标签",
+    "placeholders": {
+      "TIME": {
+        "content": "$1"
+      }
+    }
+  },
+  "noDataForDay": {
+    "message": "该日没有使用记录",
+    "description": "无数据日期的详情提示"
   }
 }

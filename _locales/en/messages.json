@@ -497,10 +497,6 @@
     "message": "Last 7 days",
     "description": "Bar chart title"
   },
-  "selectDayHint": {
-    "message": "Click a bar to see that day’s details",
-    "description": "Chart hint"
-  },
   "todayDateLabel": {
     "message": "Today",
     "description": "Today block title"
@@ -512,5 +508,30 @@
   "topDomains": {
     "message": "Top 5 sites",
     "description": "Top 5 domains of the day"
+  },
+  "dashboardSubtitle": {
+    "message": "Your browsing time at a glance",
+    "description": "Dashboard subtitle"
+  },
+  "todaySubtitle": {
+    "message": "Time spent per site today",
+    "description": "Today module subtitle"
+  },
+  "chartSubtitle": {
+    "message": "Daily total usage — click a bar for that day’s details",
+    "description": "Chart module subtitle"
+  },
+  "chartAvg": {
+    "message": "7-day avg $TIME$",
+    "description": "Chart average label",
+    "placeholders": {
+      "TIME": {
+        "content": "$1"
+      }
+    }
+  },
+  "noDataForDay": {
+    "message": "No usage recorded on this day",
+    "description": "No-data day detail message"
   }
 }
