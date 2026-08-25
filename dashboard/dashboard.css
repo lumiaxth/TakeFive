@@ -180,7 +180,7 @@ h1 {
 .chart-grid .avg-label {
   position: absolute;
   right: 4px;
-  bottom: 0;
+  bottom: 7px;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
@@ -201,6 +201,7 @@ h1 {
 
 .chart-grid .avg-time {
   font-size: 11px;
+  line-height: 14px;
   color: var(--amber);
   font-weight: 600;
   font-variant-numeric: tabular-nums;
