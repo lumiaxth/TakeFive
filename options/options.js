@@ -13,8 +13,6 @@
   const blacklistList = $('blacklistList');
   const pomodoroWhitelistList = $('pomodoroWhitelistList');
   const pomodoroStatus = $('pomodoroStatus');
-  const todayBlock = $('todayBlock');
-  const historyBlock = $('historyBlock');
 
   let data = null;
 
@@ -26,10 +24,6 @@
     const resp = await send({ type: 'GET_DATA' });
     data = resp.data;
     render();
-    if (location.hash === '#section-data') {
-      const el = document.getElementById('section-data');
-      if (el) el.scrollIntoView();
-    }
   }
 
   function render() {
@@ -38,7 +32,6 @@
     renderPomodoro();
     renderLimits();
     renderBlacklist();
-    renderData();
   }
 
   function renderBadge() {
@@ -184,38 +177,9 @@
     });
   }
 
-  function renderData() {
-    const today = data.date;
-    const todayTotal = HE.storage.totalForDomains(data.domains);
-    todayBlock.innerHTML =
-      '<h3>' + esc(t('todayDate', [today])) + '</h3>' +
-      '<div class="day-total">' + esc(t('totalForDay', [fmt(todayTotal)])) + '</div>' +
-      '<div class="day-rows">' +
-      HE.storage.sortedDomains(data.domains)
-        .map((d) =>
-          '<div class="day-row"><span class="rhost">' + esc(d.host) + '</span><span class="rtime">' + esc(fmt(d.timeMs)) + '</span></div>'
-        )
-        .join('') +
-      '</div>';
-
-    historyBlock.textContent = '';
-    data.history.forEach((day) => {
-      const total = HE.storage.totalForDomains(day.domains);
-      const block = document.createElement('div');
-      block.className = 'day-block';
-      block.innerHTML =
-        '<h3>' + esc(day.date) + '</h3>' +
-        '<div class="day-total">' + esc(t('totalForDay', [fmt(total)])) + '</div>' +
-        '<div class="day-rows">' +
-        HE.storage.sortedDomains(day.domains)
-          .map((d) =>
-            '<div class="day-row"><span class="rhost">' + esc(d.host) + '</span><span class="rtime">' + esc(fmt(d.timeMs)) + '</span></div>'
-          )
-          .join('') +
-        '</div>';
-      historyBlock.appendChild(block);
-    });
-  }
+  $('btnDashboard').addEventListener('click', () => {
+    location.href = chrome.runtime.getURL('dashboard/dashboard.html');
+  });
 
   $('limitForm').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -252,20 +216,6 @@
   $('btnSaveBadgeMode').addEventListener('click', async () => {
     await send({ type: 'SET_BADGE_MODE', mode: $('badgeMode').value });
     await refresh();
-  });
-
-  $('btnClearToday').addEventListener('click', async () => {
-    if (confirm(t('clearToday') + '?')) {
-      await send({ type: 'CLEAR_TODAY' });
-      await refresh();
-    }
-  });
-
-  $('btnClearAll').addEventListener('click', async () => {
-    if (confirm(t('clearAll') + '?')) {
-      await send({ type: 'CLEAR_ALL' });
-      await refresh();
-    }
   });
 
   $('btnSaveUsageReminder').addEventListener('click', async () => {

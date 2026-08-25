@@ -68,7 +68,7 @@
       link.textContent = t('moreDomains');
       link.addEventListener('click', (e) => {
         e.preventDefault();
-        chrome.tabs.create({ url: chrome.runtime.getURL('options/options.html#section-data') });
+        chrome.tabs.create({ url: chrome.runtime.getURL('dashboard/dashboard.html') });
       });
       row.appendChild(link);
       list.appendChild(row);
@@ -262,6 +262,10 @@
 
   $('btnSettings').addEventListener('click', () => {
     chrome.runtime.openOptionsPage();
+  });
+
+  $('btnDashboard').addEventListener('click', () => {
+    chrome.tabs.create({ url: chrome.runtime.getURL('dashboard/dashboard.html') });
   });
 
   refresh();

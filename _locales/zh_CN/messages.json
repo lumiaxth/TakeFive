@@ -93,7 +93,7 @@
     }
   },
   "blockedReasonPomodoro": {
-    "message": "$HOST$ 不在番茄钟白名单内（专注阶段），先专注手头的事吧。",
+    "message": "$HOST$ 不在番茄钟白名单内，先专注手头的事吧。",
     "description": "番茄钟白名单的阻断说明",
     "placeholders": {
       "HOST": {
@@ -170,7 +170,7 @@
     "description": "设置页-数据分区标题"
   },
   "dataHint": {
-    "message": "查看今日使用情况与最近 7 天记录。",
+    "message": "查看今日与近 7 天使用情况，点击柱子可查看当天详情。",
     "description": "数据分区的说明文字"
   },
   "clearToday": {
@@ -484,5 +484,33 @@
   "moreDomains": {
     "message": "更多",
     "description": "弹窗查看更多域名的链接"
+  },
+  "dashboardTitle": {
+    "message": "数据",
+    "description": "数据页标题"
+  },
+  "openDashboard": {
+    "message": "数据",
+    "description": "打开数据页的图标标题"
+  },
+  "last7Days": {
+    "message": "近 7 天使用时长",
+    "description": "柱状图标题"
+  },
+  "selectDayHint": {
+    "message": "点击柱子查看当天详情",
+    "description": "图表提示"
+  },
+  "todayDateLabel": {
+    "message": "今日",
+    "description": "今日区块标题"
+  },
+  "noData": {
+    "message": "暂无数据",
+    "description": "无数据提示"
+  },
+  "topDomains": {
+    "message": "时长前五",
+    "description": "当天域名前五标题"
   }
 }

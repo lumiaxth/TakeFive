@@ -12,9 +12,22 @@
     }
   }
 
+  function isIPv4(host) {
+    const parts = host.split('.');
+    return (
+      parts.length === 4 &&
+      parts.every((o) => o !== '' && /^\d{1,3}$/.test(o))
+    );
+  }
+
   function getRegistrableDomain(url) {
     const host = getHostname(url);
     if (!host) return null;
+    if (isIPv4(host)) return host;
+    if (host.indexOf(':') !== -1) {
+      // IPv6 (url.hostname includes brackets) -> keep the full address
+      return host.replace(/^\[|\]$/g, '');
+    }
     if (tldts) {
       const d = tldts.getDomain(host);
       if (d) return d;

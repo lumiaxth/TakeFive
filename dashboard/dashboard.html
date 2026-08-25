@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="dashboard.css" />
+    <title data-i18n="dashboardTitle"></title>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <div class="brand">
+          <img class="logo" src="../icons/icon32.png" alt="" />
+          <h1 data-i18n="dashboardTitle"></h1>
+        </div>
+        <div class="nav-actions">
+          <button id="btnSettings" class="icon-btn" type="button" data-i18n-title="openSettings" aria-label="Settings">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <section class="card" id="section-today">
+        <h2 data-i18n="todayDateLabel"></h2>
+        <div id="todayTotal" class="today-total"></div>
+        <div id="todayList" class="day-rows"></div>
+      </section>
+
+      <section class="card" id="section-chart">
+        <h2 data-i18n="last7Days"></h2>
+        <p class="hint" data-i18n="selectDayHint"></p>
+        <div id="chart" class="chart"></div>
+        <div id="dayDetail" class="day-detail"></div>
+      </section>
+
+      <section class="card" id="section-manage">
+        <h2 data-i18n="dataSection"></h2>
+        <p class="hint" data-i18n="dataHint"></p>
+        <div class="danger-actions">
+          <button id="btnClearToday" class="btn danger" type="button" data-i18n="clearToday"></button>
+          <button id="btnClearAll" class="btn danger" type="button" data-i18n="clearAll"></button>
+        </div>
+      </section>
+    </div>
+
+    <script src="../shared/tldts.min.js"></script>
+    <script src="../shared/hostname.js"></script>
+    <script src="../shared/storage.js"></script>
+    <script src="../shared/i18n.js"></script>
+    <script src="dashboard.js"></script>
+  </body>
+</html>

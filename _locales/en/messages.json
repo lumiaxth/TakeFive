@@ -93,7 +93,7 @@
     }
   },
   "blockedReasonPomodoro": {
-    "message": "$HOST$ is not in your pomodoro whitelist (focus session). Focus on your work.",
+    "message": "$HOST$ is not in your pomodoro whitelist. Focus on your work.",
     "description": "Blocked page explanation for pomodoro whitelist",
     "placeholders": {
       "HOST": {
@@ -170,7 +170,7 @@
     "description": "Options section header for data"
   },
   "dataHint": {
-    "message": "View today's usage and the last 7 days.",
+    "message": "Review today’s and the last 7 days’ usage. Click a bar to see that day’s details.",
     "description": "Helper text for data section"
   },
   "clearToday": {
@@ -484,5 +484,33 @@
   "moreDomains": {
     "message": "More",
     "description": "Popup link to view more domains"
+  },
+  "dashboardTitle": {
+    "message": "Dashboard",
+    "description": "Dashboard page title"
+  },
+  "openDashboard": {
+    "message": "Dashboard",
+    "description": "Icon title to open dashboard"
+  },
+  "last7Days": {
+    "message": "Last 7 days",
+    "description": "Bar chart title"
+  },
+  "selectDayHint": {
+    "message": "Click a bar to see that day’s details",
+    "description": "Chart hint"
+  },
+  "todayDateLabel": {
+    "message": "Today",
+    "description": "Today block title"
+  },
+  "noData": {
+    "message": "No data",
+    "description": "No data placeholder"
+  },
+  "topDomains": {
+    "message": "Top 5 sites",
+    "description": "Top 5 domains of the day"
   }
 }

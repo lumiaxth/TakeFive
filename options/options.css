@@ -43,6 +43,38 @@ header {
   gap: 12px;
 }
 
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--muted);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.icon-btn:hover {
+  background: #f3f4f6;
+  color: var(--text);
+}
+
 .logo {
   width: 32px;
   height: 32px;
@@ -253,54 +285,4 @@ input:focus {
   color: var(--muted);
   font-size: 13px;
   margin-bottom: 14px;
-}
-
-.day-block {
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 12px 14px;
-  margin-bottom: 10px;
-}
-
-.day-block h3 {
-  margin: 0 0 8px;
-  font-size: 14px;
-}
-
-.day-block .day-total {
-  color: var(--muted);
-  font-size: 12px;
-  margin-bottom: 8px;
-}
-
-.day-rows {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.day-row {
-  display: flex;
-  justify-content: space-between;
-  font-size: 13px;
-}
-
-.day-row .rhost {
-  color: var(--text);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.day-row .rtime {
-  color: var(--muted);
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-  margin-left: 12px;
-}
-
-.danger-actions {
-  display: flex;
-  gap: 10px;
-  margin-top: 14px;
 }
