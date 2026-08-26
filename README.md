@@ -1,6 +1,7 @@
 # 歇会儿 / TakeFive
 
 🌿 一款帮你**健康上网、定时休息、保持专注**的浏览器插件。
+🌿 A browser extension that helps you **browse healthily, take regular breaks, and stay focused**.
 
 ---
 
