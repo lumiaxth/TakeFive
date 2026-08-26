@@ -1,7 +1,8 @@
 # 歇会儿 / TakeFive
 
-- 🌿 一款帮你**健康上网、定时休息、保持专注**的浏览器插件。
-- 🌿 A browser extension that helps you **browse healthily, take regular breaks, and stay focused**.
+🌿 一款帮你**健康上网、定时休息、保持专注**的浏览器插件。
+
+🌿 A browser extension that helps you **browse healthily, take regular breaks, and stay focused**.
 
 ---
 
@@ -10,13 +11,15 @@
 - **中文** → [README.zh.md](./README.zh.md)
 - **English** → [README.en.md](./README.en.md)
 
----
+
 
 ## 📦 下载 / Download
 
-- [Edge Addons](https://microsoftedge.microsoft.com/addons/detail/ioobdmlggonpicbhbkfaclhmjhicpknb) 
+您可以直接进入浏览器扩展商店，一键安装使用。/ You can go directly to the browser extension store and install it with a single click.    
+- **Edge users**: [Edge Addons](https://microsoftedge.microsoft.com/addons/detail/ioobdmlggonpicbhbkfaclhmjhicpknb) 
+- **Chrome users**: 敬请期待。您也可以直接使用开发模式加载本插件。详见🚀快速开始。/ Stay tuned. You can also load this extension directly in developer mode. For more details, see 🚀 Quick Start.
 
----
+
 
 ## 🚀 快速开始 / Quick Start
 
