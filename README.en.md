@@ -1,5 +1,4 @@
-# 歇会儿 - 健康上网助手
-## TakeFive - Website Time Tracker & Blocker
+# TakeFive - Website Time Tracker & Blocker
 
 A Manifest V3 browser extension (Chrome / Edge) that tracks daily website usage, sets time limits and reminders, blocks distracting sites, and helps you stay focused with a Pomodoro timer.
 
