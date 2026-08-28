@@ -4,7 +4,6 @@
 
 🌿 A browser extension that helps you **browse healthily, take regular breaks, and stay focused**.
 
----
 
 ## 📖 文档 / Documentation
 
@@ -16,7 +15,8 @@
 ## 📦 下载 / Download
 
 您可以直接进入浏览器扩展商店，一键安装使用。/ You can go directly to the browser extension store and install it with a single click.    
-- **Edge users**: [Edge Addons](https://microsoftedge.microsoft.com/addons/detail/ioobdmlggonpicbhbkfaclhmjhicpknb) 
+- **Edge users**: [Edge Addons](https://microsoftedge.microsoft.com/addons/detail/ioobdmlggonpicbhbkfaclhmjhicpknb)
+- **Firefox users**: [Firefox Addons](https://addons.mozilla.org/zh-CN/firefox/addon/takefive/) (new!)
 - **Chrome users**: 敬请期待。您也可以直接使用开发模式加载本插件。详见🚀快速开始。/ Stay tuned. You can also load this extension directly in developer mode. For more details, see 🚀 Quick Start.
 
 
