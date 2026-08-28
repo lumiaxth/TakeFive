@@ -17,14 +17,12 @@
 您可以直接进入浏览器扩展商店，一键安装使用。/ You can go directly to the browser extension store and install it with a single click.    
 - **Edge users**: [Edge Addons](https://microsoftedge.microsoft.com/addons/detail/ioobdmlggonpicbhbkfaclhmjhicpknb)
 - **Firefox users**: [Firefox Addons](https://addons.mozilla.org/zh-CN/firefox/addon/takefive/) (new!)
-- **Chrome users**: 敬请期待。您也可以直接使用开发模式加载本插件。详见🚀快速开始。/ Stay tuned. You can also load this extension directly in developer mode. For more details, see 🚀 Quick Start.
+- **Chrome users**: 敬请期待。您也可以直接使用开发模式加载本插件。详见🚀安装。/ Stay tuned. You can also load this extension directly in developer mode. For more details, see 🚀 Installation.
 
+## 🚀 安装 / Installation
 
-
-## 🚀 快速开始 / Quick Start
-
-- **中文用户**：请查看 [使用说明](./README.zh.md#开发模式加载)  
-- **English users**：Please refer to [Installation Guide](./README.en.md#installation-developer-mode)
+- **中文用户**：请查看 [使用说明](./README.zh.md#安装)  
+- **English users**：Please refer to [Installation Guide](./README.en.md#Installation)
 
 ---
 
