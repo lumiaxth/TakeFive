@@ -27,14 +27,23 @@ A Manifest V3 browser extension (Chrome / Edge) that tracks daily website usage,
 4. Optimized the badge icon display for times over 10 hours.
 5. Store listing names updated: `歇会儿 - 健康上网助手` / `TakeFive - Website Time Tracker & Blocker`. The popup header now displays the short name `歇会儿 / TakeFive`.
 
-## Installation (Developer Mode)
+## Installation
 
-1. Open the browser's extension management page: Chrome — `chrome://extensions`, Edge — `edge://extensions`.
+### Option 1 — CRX from GitHub Releases (Chrome)
+1. Go to the [GitHub Releases](https://github.com/lumiaxth/TakeFive/releases) page and download the latest `.crx` file.
+2. Open Chrome's extensions page: `chrome://extensions`.
+3. Enable **Developer mode** (top‑right).
+4. **Drag and drop** the downloaded `.crx` file onto the extensions page, then confirm the install prompt.
+   > If Chrome blocks it with "Apps, extensions, and user scripts cannot be added from this website", use Option 2 (Load unpacked), or extract the CRX and use **Load unpacked** on the extracted folder.
+5. The 🌿 toolbar icon appears when installation completes.
+
+### Option 2 — Developer Mode (Load Unpacked)
+1. Open the extensions page: Chrome — `chrome://extensions`, Edge — `edge://extensions`.
 2. Enable **Developer mode** (top‑right corner).
 3. Click **Load unpacked** and select this repository's root directory (the one containing `manifest.json`).
 4. The extension icon should appear in the toolbar, ready to use.
 
-> After each code update, go back to the extension management page and click **Reload** to apply changes.
+> After each code update, go back to the extensions page and click **Reload** to apply changes.
 
 ## How to Use
 
