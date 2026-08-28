@@ -25,8 +25,17 @@
 4. 优化图标角标 10 小时以上时的显示
 5. 商店命名：「歇会儿 - 健康上网助手」/「TakeFive - Website Time Tracker & Blocker」，主页面显示短名「歇会儿 / TakeFive」
 
-## 开发模式加载
+## 安装
 
+### Chrome（CRX 安装）
+1. 打开 [GitHub Releases](https://github.com/lumiaxth/TakeFive/releases)，下载最新的 `.crx` 文件。
+2. 打开 Chrome 扩展管理页面：`chrome://extensions`。
+3. 右上角开启「开发者模式」。
+4. 将下载的 `.crx` 文件**拖拽**到扩展管理页面，按提示完成安装。
+   > 若 Chrome 提示“无法添加来自此网站的应用、扩展程序或用户脚本”，请改用下方的“开发模式加载”，或将 CRX 解压后使用“加载已解压的扩展程序”。
+5. 安装完成后，工具栏出现图标即可使用。
+
+### 开发模式加载
 1. 打开浏览器扩展管理页：Chrome 访问 `chrome://extensions`，Edge 访问 `edge://extensions`。
 2. 打开右上角「开发者模式」。
 3. 点击「加载已解压的扩展程序」，选择本仓库目录（含 `manifest.json` 的根目录）。
