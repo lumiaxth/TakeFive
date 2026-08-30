@@ -644,5 +644,9 @@
   "notifyPomodoroCancelledBody": {
     "message": "The previous pomodoro could not finish and was closed. Start again when ready.",
     "description": "Notification body when reopening the browser"
+  },
+  "floatingClock": {
+    "message": "Enable floating clock",
+    "description": "Floating clock toggle label"
   }
 }

@@ -244,16 +244,16 @@ function computeCountdown(data, host, counting, paused) {
   return chips;
 }
 
-function sendCountdown(tabId, chips, theme, paused, position, size, ticking) {
-  if (tabId == null || tabId < 0) return;
+function sendCountdown(chips, theme, paused, position, size, ticking, clock) {
   let msg;
-  if (chips && chips.length) {
+  if ((chips && chips.length) || clock) {
     msg = {
       type: 'HE_COUNTDOWN',
-      chips,
+      chips: chips || [],
       theme: theme || 'system',
       paused: !!paused,
       ticking: !!ticking,
+      clock: !!clock,
       position: position || 'middle-right',
       size: size || 'medium'
     };
@@ -261,27 +261,22 @@ function sendCountdown(tabId, chips, theme, paused, position, size, ticking) {
     msg = { type: 'HE_COUNTDOWN_HIDE' };
   }
   try {
-    const p = chrome.tabs.sendMessage(tabId, msg);
+    const p = chrome.runtime.sendMessage(msg);
     if (p && p.catch) p.catch(() => {});
   } catch (e) {
-    /* no content script on that tab */
+    /* no receivers */
   }
 }
 
 async function pushCountdown() {
-  if (state.activeTabId < 0) return;
   try {
     const data = await HE.storage.load();
     const crossed = await advancePomodoro(data);
     if (crossed) await HE.storage.save(data);
     const cd = data.settings.countdown;
-    if (!cd.enabled) {
-      sendCountdown(state.activeTabId, null, data.settings.theme, data.settings.paused, cd.position, cd.size, state.counting);
-      return;
-    }
     const host = state.activeHost || (await currentHost());
-    const chips = computeCountdown(data, host, state.counting, data.settings.paused);
-    sendCountdown(state.activeTabId, chips, data.settings.theme, data.settings.paused, cd.position, cd.size, state.counting);
+    const chips = cd.enabled ? computeCountdown(data, host, state.counting, data.settings.paused) : null;
+    sendCountdown(chips, data.settings.theme, data.settings.paused, cd.position, cd.size, state.counting, cd.clock);
   } catch (e) {
     /* ignore */
   }
@@ -703,21 +698,19 @@ async function handleMessage(msg, sender) {
       data.settings.countdown.position = positions.indexOf(msg.position) !== -1 ? msg.position : 'middle-right';
       const sizes = ['small', 'medium', 'large'];
       data.settings.countdown.size = sizes.indexOf(msg.size) !== -1 ? msg.size : 'medium';
+      data.settings.countdown.clock = !!msg.clock;
       await HE.storage.save(data);
       await pushCountdown();
       return {};
     }
     case 'COUNTDOWN_REQUEST': {
-      const tab = sender && sender.tab;
-      if (tab && tab.id) {
-        const data = await HE.storage.load();
-        const crossed = await advancePomodoro(data);
-        if (crossed) await HE.storage.save(data);
-        const cd = data.settings.countdown;
-        const host = tab.url ? HE.hostname.getRegistrableDomain(tab.url) : null;
-        const chips = cd.enabled ? computeCountdown(data, host, state.counting, data.settings.paused) : null;
-        sendCountdown(tab.id, chips, data.settings.theme, data.settings.paused, cd.position, cd.size, state.counting);
-      }
+      const data = await HE.storage.load();
+      const crossed = await advancePomodoro(data);
+      if (crossed) await HE.storage.save(data);
+      const cd = data.settings.countdown;
+      const host = state.activeHost || (await currentHost());
+      const chips = cd.enabled ? computeCountdown(data, host, state.counting, data.settings.paused) : null;
+      sendCountdown(chips, data.settings.theme, data.settings.paused, cd.position, cd.size, state.counting, cd.clock);
       return {};
     }
     case 'GET_POMODORO': {

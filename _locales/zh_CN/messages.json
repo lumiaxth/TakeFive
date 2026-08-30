@@ -644,5 +644,9 @@
   "notifyPomodoroCancelledBody": {
     "message": "上次的番茄钟没能结束，现已关闭。重新开始吧。",
     "description": "浏览器关闭后重新打开的通知正文"
+  },
+  "floatingClock": {
+    "message": "启用浮动时钟",
+    "description": "浮动时钟开关标签"
   }
 }

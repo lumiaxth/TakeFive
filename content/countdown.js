@@ -2,7 +2,7 @@
   let host = null;
   let shadow = null;
   let timer = null;
-  let state = null; // { chips, paused, theme, position, size }
+  let state = null; // { chips, clock, paused, theme, position, size }
 
   function fmtCountdown(ms) {
     const totalSec = Math.max(0, Math.floor(ms / 1000));
@@ -15,6 +15,31 @@
       return h + ':' + mm + ':' + ss;
     }
     return mm + ':' + ss;
+  }
+
+  function fmtClock() {
+    const d = new Date();
+    const h = d.getHours();
+    const m = d.getMinutes();
+    return (h < 10 ? '0' + h : String(h)) + ':' + (m < 10 ? '0' + m : String(m));
+  }
+
+  function isExtensionPage() {
+    return location.protocol === 'chrome-extension:';
+  }
+
+  function displayChips() {
+    const out = [];
+    if (state && state.clock) {
+      out.push({ id: 'clock', emoji: '\uD83D\uDD50', ticking: true });
+    }
+    if (state && state.chips) {
+      state.chips.forEach((c) => {
+        if (isExtensionPage() && c.id !== 'pomodoro') return;
+        out.push(c);
+      });
+    }
+    return out;
   }
 
   function render() {
@@ -30,7 +55,7 @@
       style.textContent = buildStyles();
       shadow.appendChild(style);
     }
-    host.style.display = state ? 'block' : 'none';
+    host.style.display = state && !document.hidden ? 'block' : 'none';
     if (!state) return;
 
     const dark = state.theme === 'dark' || (state.theme === 'system' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
@@ -49,21 +74,22 @@
       shadow.appendChild(container);
     }
     container.className = 'he-cd ' + (dark ? 'dark' : 'light') + ' ' + (state.size || 'medium');
-    let html = '';
-    (state.chips || []).forEach((c) => {
-      html +=
-        '<div class="chip" data-id="' + c.id + '"><span class="emoji">' + c.emoji + '</span>' +
-        '<span class="time">' + fmtCountdown(c.remainingMs) + '</span></div>';
-    });
-    container.innerHTML = html;
+    container.innerHTML = displayChips().map((c) => chipHtml(c)).join('');
     update();
+  }
+
+  function chipHtml(c) {
+    return (
+      '<div class="chip" data-id="' + c.id + '"><span class="emoji">' + c.emoji + '</span>' +
+      '<span class="time">' + (c.id === 'clock' ? fmtClock() : fmtCountdown(c.remainingMs)) + '</span></div>'
+    );
   }
 
   function update() {
     if (!state) return;
-    (state.chips || []).forEach((c) => {
+    displayChips().forEach((c) => {
       const el = shadow.querySelector('.chip[data-id="' + c.id + '"] .time');
-      if (el) el.textContent = fmtCountdown(c.remainingMs);
+      if (el) el.textContent = c.id === 'clock' ? fmtClock() : fmtCountdown(c.remainingMs);
     });
   }
 
@@ -76,12 +102,14 @@
       (state.chips || []).forEach((c) => {
         if (c.ticking && c.remainingMs > 0) { c.remainingMs -= 1000; changed = true; }
       });
-      if (changed) update();
+      if (changed || state.clock) update();
     }, 1000);
   }
 
   function hasTickingChip() {
-    return (state && state.chips && state.chips.some((c) => c.ticking)) || false;
+    if (!state) return false;
+    if (state.clock) return true;
+    return displayChips().some((c) => c.ticking);
   }
 
   function stopTimer() {

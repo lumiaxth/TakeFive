@@ -54,6 +54,7 @@
   function renderCountdown() {
     const cd = data.settings.countdown;
     $('countdownEnabled').checked = !!cd.enabled;
+    $('floatingClockEnabled').checked = !!cd.clock;
     $('countdownThreshold').value = cd.thresholdMin || 15;
     $('countdownPosition').value = cd.position || 'middle-right';
     $('countdownSize').value = cd.size || 'medium';
@@ -253,6 +254,7 @@
     await send({
       type: 'SET_COUNTDOWN',
       enabled: $('countdownEnabled').checked,
+      clock: $('floatingClockEnabled').checked,
       thresholdMin: threshold,
       position: $('countdownPosition').value,
       size: $('countdownSize').value

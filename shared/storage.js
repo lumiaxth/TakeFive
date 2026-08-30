@@ -19,7 +19,8 @@
         enabled: true,
         thresholdMin: 15,
         position: 'middle-right',
-        size: 'medium'
+        size: 'medium',
+        clock: true
       },
       usageReminder: { enabled: false, minutes: 45 },
       pomodoro: { enabled: true, focusMinutes: 25, breakMinutes: 5, whitelist: [] }
@@ -63,7 +64,7 @@
     delete data.settings.breakMinutes;
     data.settings.usageReminder = Object.assign({ enabled: false, minutes: 45 }, data.settings.usageReminder || {});
     data.settings.countdown = Object.assign(
-      { enabled: true, thresholdMin: 15, position: 'middle-right', size: 'medium' },
+      { enabled: true, thresholdMin: 15, position: 'middle-right', size: 'medium', clock: true },
       data.settings.countdown || {}
     );
     data.settings.pomodoro = Object.assign(
