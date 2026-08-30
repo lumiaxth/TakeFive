@@ -127,10 +127,21 @@ h1 {
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
+  margin-bottom: 12px;
 }
 
-.field label {
+.field:last-child {
+  margin-bottom: 0;
+}
+
+.field > label:not(.check) {
+  min-width: 130px;
   color: var(--muted);
+  font-size: 13px;
+}
+
+.field > .btn {
+  margin-left: auto;
 }
 
 .field input[type="number"] {
@@ -159,6 +170,10 @@ h1 {
 .field label.check input {
   width: auto;
   accent-color: var(--green);
+}
+
+.field.check-row {
+  margin-bottom: 12px;
 }
 
 .pomodoro-status {
@@ -297,10 +312,10 @@ input:focus {
   --hover: #374151;
   --green: #22c55e;
   --green-dark: #4ade80;
-  --green-light: rgba(34, 197, 94, 0.16);
+  --green-light: #14532d;
   --amber: #fbbf24;
-  --amber-light: rgba(251, 191, 36, 0.16);
+  --amber-light: #451a03;
   --red: #f87171;
-  --red-light: rgba(248, 113, 113, 0.16);
+  --red-light: #7f1d1d;
 }
 [data-theme="dark"] .field select { background: #1f2937; color: #f3f4f6; }

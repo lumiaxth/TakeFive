@@ -63,8 +63,9 @@ Privacy: all data stays in your browser locally (chrome.storage.local) and is ne
 | `alarms` | 定时提交计时数据，保证统计准确 |
 | `notifications` | 限额、连续使用、番茄钟的桌面提醒 |
 | `webNavigation` + `<all_urls>` | 拦截/重定向被限制或屏蔽的网站 |
-| `windows` | 感知浏览器窗口聚焦，仅在前台时计时 |
+| `windows` | 感知浏览器窗口聚焦，仅在前台计时 |
 | `idle` | 检测锁屏/睡眠，自动停止计时 |
+| `scripting` | 动态注入浮动倒计时内容脚本到已打开的网页 |
 
 > 不收集、不传输任何个人数据；所有数据仅保存在本地。
 

@@ -51,7 +51,7 @@
       <section id="section-countdown" class="card">
         <h2 data-i18n="countdownSection"></h2>
         <p class="hint" data-i18n="countdownHint"></p>
-        <div class="field">
+        <div class="field check-row">
           <label class="check">
             <input id="countdownEnabled" type="checkbox" />
             <span data-i18n="countdownEnabled"></span>
@@ -86,11 +86,13 @@
       <section id="section-usage-reminder" class="card">
         <h2 data-i18n="usageReminderSection"></h2>
         <p class="hint" data-i18n="usageReminderHint"></p>
-        <div class="field">
+        <div class="field check-row">
           <label class="check">
             <input id="usageReminderEnabled" type="checkbox" />
             <span data-i18n="usageReminderEnabled"></span>
           </label>
+        </div>
+        <div class="field">
           <label for="usageReminderMinutes" data-i18n="usageReminderMinutes"></label>
           <input id="usageReminderMinutes" type="number" min="1" max="600" value="45" />
           <button id="btnSaveUsageReminder" class="btn primary" type="button" data-i18n="saveUsageReminder"></button>
@@ -100,11 +102,13 @@
       <section id="section-pomodoro" class="card">
         <h2 data-i18n="pomodoroSection"></h2>
         <p class="hint" data-i18n="pomodoroHint"></p>
-        <div class="field">
+        <div class="field check-row">
           <label class="check">
             <input id="pomodoroEnabled" type="checkbox" />
             <span data-i18n="pomodoroEnabled"></span>
           </label>
+        </div>
+        <div class="field">
           <label for="pomodoroFocusMinutes" data-i18n="pomodoroFocusMinutes"></label>
           <input id="pomodoroFocusMinutes" type="number" min="1" max="180" value="25" />
           <label for="pomodoroBreakMinutes" data-i18n="pomodoroBreakMinutes"></label>

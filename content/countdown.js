@@ -42,14 +42,20 @@
     host.style.transform = pos.indexOf('middle') !== -1 ? 'translateY(-50%)' : 'none';
     if (pos.indexOf('middle') !== -1) host.style.top = '50%';
 
-    let html = '<div class="he-cd ' + (dark ? 'dark' : 'light') + ' ' + (state.size || 'medium') + '">';
+    let container = shadow.querySelector('.he-cd');
+    if (!container) {
+      container = document.createElement('div');
+      container.className = 'he-cd';
+      shadow.appendChild(container);
+    }
+    container.className = 'he-cd ' + (dark ? 'dark' : 'light') + ' ' + (state.size || 'medium');
+    let html = '';
     (state.chips || []).forEach((c) => {
       html +=
         '<div class="chip" data-id="' + c.id + '"><span class="emoji">' + c.emoji + '</span>' +
         '<span class="time">' + fmtCountdown(c.remainingMs) + '</span></div>';
     });
-    html += '</div>';
-    shadow.querySelector('.he-cd') ? (shadow.querySelector('.he-cd').outerHTML = html) : (shadow.innerHTML = html);
+    container.innerHTML = html;
     update();
   }
 
@@ -119,4 +125,9 @@
       } catch (e) { /* ignore */ }
     }
   });
+
+  // initialize on injection so the widget appears without waiting for a push
+  try {
+    chrome.runtime.sendMessage({ type: 'COUNTDOWN_REQUEST' });
+  } catch (e) { /* ignore */ }
 })();

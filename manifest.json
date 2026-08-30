@@ -10,7 +10,7 @@
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
   },
-  "permissions": ["tabs", "storage", "alarms", "notifications", "webNavigation", "windows", "idle"],
+  "permissions": ["tabs", "storage", "alarms", "notifications", "webNavigation", "windows", "idle", "scripting"],
   "host_permissions": ["<all_urls>"],
   "background": {
     "service_worker": "background.js"
@@ -22,7 +22,7 @@
   "content_scripts": [
     {
       "matches": ["http://*/*", "https://*/*"],
-      "js": ["content/banner.js", "content/countdown.js"],
+      "js": ["content/banner.js"],
       "run_at": "document_idle"
     }
   ],

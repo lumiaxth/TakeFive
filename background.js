@@ -237,19 +237,22 @@ function computeCountdown(data, host) {
 
 function sendCountdown(tabId, chips, theme, paused, position, size) {
   if (tabId == null || tabId < 0) return;
+  let msg;
+  if (chips && chips.length) {
+    msg = {
+      type: 'HE_COUNTDOWN',
+      chips,
+      theme: theme || 'system',
+      paused: !!paused,
+      position: position || 'middle-right',
+      size: size || 'medium'
+    };
+  } else {
+    msg = { type: 'HE_COUNTDOWN_HIDE' };
+  }
   try {
-    if (chips && chips.length) {
-      chrome.tabs.sendMessage(tabId, {
-        type: 'HE_COUNTDOWN',
-        chips,
-        theme: theme || 'system',
-        paused: !!paused,
-        position: position || 'middle-right',
-        size: size || 'medium'
-      });
-    } else {
-      chrome.tabs.sendMessage(tabId, { type: 'HE_COUNTDOWN_HIDE' });
-    }
+    const p = chrome.tabs.sendMessage(tabId, msg);
+    if (p && p.catch) p.catch(() => {});
   } catch (e) {
     /* no content script on that tab */
   }
@@ -809,13 +812,31 @@ chrome.notifications.onClicked.addListener((id) => {
   chrome.notifications.clear(id);
 });
 
+function registerCountdownScript() {
+  try {
+    chrome.scripting.registerContentScripts([
+      {
+        id: 'he-countdown',
+        matches: ['http://*/*', 'https://*/*'],
+        js: ['content/countdown.js'],
+        runAt: 'document_idle',
+        persistAcrossSessions: true
+      }
+    ]).catch(() => {});
+  } catch (e) {
+    /* already registered or scripting unavailable */
+  }
+}
+
 function init() {
   createTickAlarm();
+  registerCountdownScript();
   serialized(async () => {
     await HE.storage.load();
     await syncActiveTab();
     await enforceBlocks();
     await updateBadge();
+    await pushCountdown();
   });
 }
 
