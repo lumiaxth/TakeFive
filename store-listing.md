@@ -73,3 +73,21 @@ Privacy: all data stays in your browser locally (chrome.storage.local) and is ne
 
 - 最低版本：Chromium 110+（Manifest V3）
 - 图标：128×128（见 `icons/icon128.png`）
+
+## 1.3 版本更新日志
+
+### 中文
+- 新增深色模式（跟随系统 / 浅色 / 深色，Edge 风格配色）。
+- 新增浮动倒计时：网页侧边实时显示番茄钟与站点剩余时间，含设置页/数据页/阻断页。
+- 新增浮动时钟：显示当前时间（HH:MM），可独立开关。
+- 番茄钟改为自然时间倒计时，离开或关闭浏览器时自动停止并提醒。
+- 番茄钟倒计时精确到秒。
+- 修复番茄钟阶段切换与通知、网页浮动倒计时显示等若干问题。
+
+### English
+- Added dark mode (follow system / light / dark, Edge-inspired palette).
+- Added a floating countdown showing Pomodoro and site-limit remaining time, including on Settings, Dashboard and block pages.
+- Added a floating clock (HH:MM) with an independent toggle.
+- Pomodoro now counts by wall-clock time and auto-stops when you leave or close the browser.
+- Pomodoro countdown is now shown to the second.
+- Fixed Pomodoro phase/notification issues and the floating countdown on web pages.
