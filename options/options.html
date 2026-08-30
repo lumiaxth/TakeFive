@@ -24,10 +24,20 @@
         </div>
       </header>
 
-      <section id="section-badge" class="card">
-        <h2 data-i18n="badgeSection"></h2>
-        <p class="hint" data-i18n="badgeHint"></p>
+      <section id="section-appearance" class="card">
+        <h2 data-i18n="appearanceSection"></h2>
+        <p class="hint" data-i18n="appearanceHint"></p>
         <div class="field">
+          <label for="themeMode" data-i18n="themeLabel"></label>
+          <select id="themeMode">
+            <option value="system" data-i18n="themeSystem"></option>
+            <option value="light" data-i18n="themeLight"></option>
+            <option value="dark" data-i18n="themeDark"></option>
+          </select>
+          <button id="btnSaveTheme" class="btn primary" type="button" data-i18n="saveTheme"></button>
+        </div>
+        <div class="field">
+          <label for="badgeMode" data-i18n="badgeSection"></label>
           <select id="badgeMode">
             <option value="auto" data-i18n="badgeModeAuto"></option>
             <option value="total" data-i18n="badgeModeTotal"></option>
@@ -35,6 +45,41 @@
             <option value="pomodoro" data-i18n="badgeModePomodoro"></option>
           </select>
           <button id="btnSaveBadgeMode" class="btn primary" type="button" data-i18n="saveBadgeMode"></button>
+        </div>
+      </section>
+
+      <section id="section-countdown" class="card">
+        <h2 data-i18n="countdownSection"></h2>
+        <p class="hint" data-i18n="countdownHint"></p>
+        <div class="field">
+          <label class="check">
+            <input id="countdownEnabled" type="checkbox" />
+            <span data-i18n="countdownEnabled"></span>
+          </label>
+        </div>
+        <div class="field">
+          <label for="countdownThreshold" data-i18n="countdownThreshold"></label>
+          <input id="countdownThreshold" type="number" min="1" max="180" value="15" />
+        </div>
+        <div class="field">
+          <label for="countdownPosition" data-i18n="countdownPosition"></label>
+          <select id="countdownPosition">
+            <option value="top-left" data-i18n="countdownPosTopLeft"></option>
+            <option value="top-right" data-i18n="countdownPosTopRight"></option>
+            <option value="middle-left" data-i18n="countdownPosMiddleLeft"></option>
+            <option value="middle-right" data-i18n="countdownPosMiddleRight"></option>
+            <option value="bottom-left" data-i18n="countdownPosBottomLeft"></option>
+            <option value="bottom-right" data-i18n="countdownPosBottomRight"></option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="countdownSize" data-i18n="countdownSize"></label>
+          <select id="countdownSize">
+            <option value="small" data-i18n="countdownSizeSmall"></option>
+            <option value="medium" data-i18n="countdownSizeMedium"></option>
+            <option value="large" data-i18n="countdownSizeLarge"></option>
+          </select>
+          <button id="btnSaveCountdown" class="btn primary" type="button" data-i18n="saveCountdown"></button>
         </div>
       </section>
 
@@ -109,6 +154,7 @@
     <script src="../shared/hostname.js"></script>
     <script src="../shared/storage.js"></script>
     <script src="../shared/i18n.js"></script>
+    <script src="../shared/theme.js"></script>
     <script src="options.js"></script>
   </body>
 </html>

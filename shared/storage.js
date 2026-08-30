@@ -14,6 +14,13 @@
       blacklist: [],
       paused: false,
       badgeMode: 'auto',
+      theme: 'system',
+      countdown: {
+        enabled: true,
+        thresholdMin: 15,
+        position: 'middle-right',
+        size: 'medium'
+      },
       usageReminder: { enabled: false, minutes: 45 },
       pomodoro: { enabled: true, focusMinutes: 25, breakMinutes: 5, whitelist: [] }
     },
@@ -54,6 +61,10 @@
     delete data.settings.pauseUntil;
     delete data.settings.breakMinutes;
     data.settings.usageReminder = Object.assign({ enabled: false, minutes: 45 }, data.settings.usageReminder || {});
+    data.settings.countdown = Object.assign(
+      { enabled: true, thresholdMin: 15, position: 'middle-right', size: 'medium' },
+      data.settings.countdown || {}
+    );
     data.settings.pomodoro = Object.assign(
       { enabled: true, focusMinutes: 25, breakMinutes: 5, whitelist: [] },
       data.settings.pomodoro || {}

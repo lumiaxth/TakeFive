@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "__MSG_extName__",
   "description": "__MSG_extDescription__",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "default_locale": "zh_CN",
   "icons": {
     "16": "icons/icon16.png",
@@ -22,7 +22,7 @@
   "content_scripts": [
     {
       "matches": ["http://*/*", "https://*/*"],
-      "js": ["content/banner.js"],
+      "js": ["content/banner.js", "content/countdown.js"],
       "run_at": "document_idle"
     }
   ],

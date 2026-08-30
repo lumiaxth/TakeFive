@@ -1,4 +1,5 @@
 :root {
+  --hover: #f3f4f6;
   --bg: #f7faf7;
   --card: #ffffff;
   --text: #1f2937;
@@ -70,7 +71,7 @@ header {
 }
 
 .icon-btn:hover {
-  background: #f3f4f6;
+  background: var(--hover);
   color: var(--text);
 }
 
@@ -179,7 +180,7 @@ body.has-pomodoro {
 }
 
 .btn:hover {
-  background: #f3f4f6;
+  background: var(--hover);
 }
 
 .btn.primary {
@@ -372,3 +373,21 @@ body.has-pomodoro {
 .more-link a:hover {
   text-decoration: underline;
 }
+
+[data-theme="dark"] {
+  --bg: #111827;
+  --card: #1f2937;
+  --text: #f3f4f6;
+  --muted: #9ca3af;
+  --border: #374151;
+  --hover: #374151;
+  --green: #22c55e;
+  --green-dark: #4ade80;
+  --green-light: rgba(34, 197, 94, 0.16);
+  --amber: #fbbf24;
+  --amber-light: rgba(251, 191, 36, 0.16);
+  --red: #f87171;
+  --red-light: rgba(248, 113, 113, 0.16);
+}
+[data-theme="dark"] .badge.blocked { background: #2e1065; color: #c4b5fd; }
+[data-theme="dark"] .progress { background: #1f2937; }

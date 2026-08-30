@@ -211,6 +211,67 @@ async function updateBadge() {
   }
 }
 
+function computeCountdown(data, host) {
+  const chips = [];
+  const pomodoro = data.settings.pomodoro;
+  if (pomodoro.enabled && data.pomodoroState.phase !== 'idle') {
+    chips.push({
+      id: 'pomodoro',
+      emoji: data.pomodoroState.phase === 'break' ? '\u2615' : '\uD83C\uDF45',
+      remainingMs: Math.max(0, data.pomodoroState.remainingMs)
+    });
+  }
+  const cd = data.settings.countdown;
+  if (host) {
+    const limit = data.settings.limits[host];
+    if (limit && limit.dailyMs > 0) {
+      const used = (data.domains[host] && data.domains[host].timeMs) || 0;
+      const remaining = limit.dailyMs - used;
+      if (remaining > 0 && remaining <= cd.thresholdMin * 60000) {
+        chips.push({ id: 'site', emoji: '\u23F3', remainingMs: remaining });
+      }
+    }
+  }
+  return chips;
+}
+
+function sendCountdown(tabId, chips, theme, paused, position, size) {
+  if (tabId == null || tabId < 0) return;
+  try {
+    if (chips && chips.length) {
+      chrome.tabs.sendMessage(tabId, {
+        type: 'HE_COUNTDOWN',
+        chips,
+        theme: theme || 'system',
+        paused: !!paused,
+        position: position || 'middle-right',
+        size: size || 'medium'
+      });
+    } else {
+      chrome.tabs.sendMessage(tabId, { type: 'HE_COUNTDOWN_HIDE' });
+    }
+  } catch (e) {
+    /* no content script on that tab */
+  }
+}
+
+async function pushCountdown() {
+  if (state.activeTabId < 0) return;
+  try {
+    const data = await HE.storage.load();
+    const cd = data.settings.countdown;
+    if (!cd.enabled) {
+      sendCountdown(state.activeTabId, null, data.settings.theme, data.settings.paused, cd.position, cd.size);
+      return;
+    }
+    const host = state.activeHost || (await currentHost());
+    const chips = computeCountdown(data, host);
+    sendCountdown(state.activeTabId, chips, data.settings.theme, data.settings.paused, cd.position, cd.size);
+  } catch (e) {
+    /* ignore */
+  }
+}
+
 async function commitTime() {
   if (!state.activeHost || !state.counting) {
     state.sessionStart = Date.now();
@@ -259,6 +320,7 @@ async function commitTime() {
     if (pomodoroCrossed) await switchPomodoroPhase(data);
     if (reachedFirstTime) await enforceBlocks(data);
     await updateBadge();
+    await pushCountdown();
   } catch (e) {
     console.error('[TakeFive] commitTime error', e);
   }
@@ -326,6 +388,7 @@ async function switchPomodoroPhase(data) {
     );
   }
   await HE.storage.save(data);
+  await pushCountdown();
 }
 
 async function startSession(host) {
@@ -406,6 +469,7 @@ async function syncActiveTab() {
     }
     await enforceBlocks();
     await updateBadge();
+    await pushCountdown();
   } catch (e) {
     /* window closed mid-query */
   }
@@ -420,6 +484,7 @@ async function setPaused(paused) {
   data.tracking = { host: state.activeHost, since: paused ? 0 : state.sessionStart };
   await HE.storage.save(data);
   await updateBadge();
+  await pushCountdown();
 }
 
 async function onTick() {
@@ -430,9 +495,10 @@ async function onTick() {
   await syncActiveTab();
   await enforceBlocks();
   await updateBadge();
+  await pushCountdown();
 }
 
-async function handleMessage(msg) {
+async function handleMessage(msg, sender) {
   switch (msg && msg.type) {
     case 'GET_DATA': {
       await syncActiveTab();
@@ -521,6 +587,7 @@ async function handleMessage(msg) {
       await HE.storage.save(data);
       await updateBadge();
       await enforceBlocks(data);
+      await pushCountdown();
       return {};
     }
     case 'START_POMODORO': {
@@ -531,6 +598,7 @@ async function handleMessage(msg) {
       await HE.storage.save(data);
       await updateBadge();
       await enforceBlocks(data);
+      await pushCountdown();
       return {};
     }
     case 'STOP_POMODORO': {
@@ -540,6 +608,37 @@ async function handleMessage(msg) {
       await HE.storage.save(data);
       await updateBadge();
       await enforceBlocks(data);
+      await pushCountdown();
+      return {};
+    }
+    case 'SET_THEME': {
+      const theme = ['system', 'light', 'dark'].indexOf(msg.theme) !== -1 ? msg.theme : 'system';
+      const data = await HE.storage.load();
+      data.settings.theme = theme;
+      await HE.storage.save(data);
+      return {};
+    }
+    case 'SET_COUNTDOWN': {
+      const data = await HE.storage.load();
+      data.settings.countdown.enabled = !!msg.enabled;
+      data.settings.countdown.thresholdMin = Math.max(1, Math.min(180, Math.floor(Number(msg.thresholdMin) || 15)));
+      const positions = ['top-left', 'top-right', 'middle-left', 'middle-right', 'bottom-left', 'bottom-right'];
+      data.settings.countdown.position = positions.indexOf(msg.position) !== -1 ? msg.position : 'middle-right';
+      const sizes = ['small', 'medium', 'large'];
+      data.settings.countdown.size = sizes.indexOf(msg.size) !== -1 ? msg.size : 'medium';
+      await HE.storage.save(data);
+      await pushCountdown();
+      return {};
+    }
+    case 'COUNTDOWN_REQUEST': {
+      const tab = sender && sender.tab;
+      if (tab && tab.id) {
+        const data = await HE.storage.load();
+        const cd = data.settings.countdown;
+        const host = tab.url ? HE.hostname.getRegistrableDomain(tab.url) : null;
+        const chips = cd.enabled ? computeCountdown(data, host) : null;
+        sendCountdown(tab.id, chips, data.settings.theme, data.settings.paused, cd.position, cd.size);
+      }
       return {};
     }
     case 'SET_BADGE_MODE': {
@@ -608,10 +707,10 @@ async function handleMessage(msg) {
   }
 }
 
-chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   serialized(async () => {
     try {
-      const result = await handleMessage(msg);
+      const result = await handleMessage(msg, sender);
       if (result && result.error) sendResponse({ ok: false, error: result.error });
       else sendResponse({ ok: true, ...result });
     } catch (err) {

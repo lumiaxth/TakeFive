@@ -536,5 +536,97 @@
   "collapse": {
     "message": "收起",
     "description": "收起按钮"
+  },
+  "appearanceSection": {
+    "message": "外观",
+    "description": "设置页外观分区标题"
+  },
+  "appearanceHint": {
+    "message": "选择界面主题与工具栏角标显示方式。",
+    "description": "外观分区说明"
+  },
+  "themeLabel": {
+    "message": "主题",
+    "description": "主题选择标签"
+  },
+  "themeSystem": {
+    "message": "跟随系统",
+    "description": "主题选项"
+  },
+  "themeLight": {
+    "message": "浅色",
+    "description": "主题选项"
+  },
+  "themeDark": {
+    "message": "深色",
+    "description": "主题选项"
+  },
+  "saveTheme": {
+    "message": "保存主题",
+    "description": "保存主题按钮"
+  },
+  "countdownSection": {
+    "message": "浮动倒计时",
+    "description": "设置页倒计时分区标题"
+  },
+  "countdownHint": {
+    "message": "网站剩余时间或番茄钟运行时，在网页侧边显示实时倒计时。",
+    "description": "倒计时分区说明"
+  },
+  "countdownEnabled": {
+    "message": "启用浮动倒计时",
+    "description": "启用开关标签"
+  },
+  "countdownThreshold": {
+    "message": "站点剩余提醒阈值（分钟）",
+    "description": "阈值输入标签"
+  },
+  "countdownPosition": {
+    "message": "位置",
+    "description": "位置选择标签"
+  },
+  "countdownPosTopLeft": {
+    "message": "左上",
+    "description": "位置选项"
+  },
+  "countdownPosTopRight": {
+    "message": "右上",
+    "description": "位置选项"
+  },
+  "countdownPosMiddleLeft": {
+    "message": "左侧中部",
+    "description": "位置选项"
+  },
+  "countdownPosMiddleRight": {
+    "message": "右侧中部",
+    "description": "位置选项"
+  },
+  "countdownPosBottomLeft": {
+    "message": "左下",
+    "description": "位置选项"
+  },
+  "countdownPosBottomRight": {
+    "message": "右下",
+    "description": "位置选项"
+  },
+  "countdownSize": {
+    "message": "大小",
+    "description": "大小选择标签"
+  },
+  "countdownSizeSmall": {
+    "message": "小",
+    "description": "大小选项"
+  },
+  "countdownSizeMedium": {
+    "message": "中",
+    "description": "大小选项"
+  },
+  "countdownSizeLarge": {
+    "message": "大",
+    "description": "大小选项"
+  },
+  "saveCountdown": {
+    "message": "保存倒计时设置",
+    "description": "保存倒计时设置按钮"
   }
 }

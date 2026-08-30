@@ -1,5 +1,6 @@
 (function () {
   HE.i18n.apply();
+  HE.theme.init();
   const t = (key, subs) => chrome.i18n.getMessage(key, subs);
   const units = { h: t('hoursShort'), m: t('minutesUnit'), s: 's' };
   const fmt = (ms) => HE.storage.formatDuration(ms, units);
@@ -27,15 +28,26 @@
   }
 
   function render() {
-    renderBadge();
+    renderAppearance();
+    renderCountdown();
+    renderUsageReminder();
     renderUsageReminder();
     renderPomodoro();
     renderLimits();
     renderBlacklist();
   }
 
-  function renderBadge() {
+  function renderAppearance() {
+    $('themeMode').value = data.settings.theme || 'system';
     $('badgeMode').value = data.settings.badgeMode || 'auto';
+  }
+
+  function renderCountdown() {
+    const cd = data.settings.countdown;
+    $('countdownEnabled').checked = !!cd.enabled;
+    $('countdownThreshold').value = cd.thresholdMin || 15;
+    $('countdownPosition').value = cd.position || 'middle-right';
+    $('countdownSize').value = cd.size || 'medium';
   }
 
   function renderUsageReminder() {
@@ -215,6 +227,28 @@
 
   $('btnSaveBadgeMode').addEventListener('click', async () => {
     await send({ type: 'SET_BADGE_MODE', mode: $('badgeMode').value });
+    await refresh();
+  });
+
+  $('btnSaveTheme').addEventListener('click', async () => {
+    await send({ type: 'SET_THEME', theme: $('themeMode').value });
+    HE.theme.apply($('themeMode').value);
+    await refresh();
+  });
+
+  $('btnSaveCountdown').addEventListener('click', async () => {
+    const threshold = Number($('countdownThreshold').value);
+    if (!threshold || threshold < 1) {
+      alert(t('invalidNumber'));
+      return;
+    }
+    await send({
+      type: 'SET_COUNTDOWN',
+      enabled: $('countdownEnabled').checked,
+      thresholdMin: threshold,
+      position: $('countdownPosition').value,
+      size: $('countdownSize').value
+    });
     await refresh();
   });
 

@@ -1,5 +1,6 @@
 (function () {
   HE.i18n.apply();
+  HE.theme.init();
   const t = (key, subs) => chrome.i18n.getMessage(key, subs);
   const units = { h: t('hoursShort'), m: t('minutesUnit'), s: 's' };
   const fmt = (ms) => HE.storage.formatDuration(ms, units);

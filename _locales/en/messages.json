@@ -536,5 +536,97 @@
   "collapse": {
     "message": "Collapse",
     "description": "Collapse button"
+  },
+  "appearanceSection": {
+    "message": "Appearance",
+    "description": "Options appearance section"
+  },
+  "appearanceHint": {
+    "message": "Choose the interface theme and how the toolbar badge is shown.",
+    "description": "Appearance hint"
+  },
+  "themeLabel": {
+    "message": "Theme",
+    "description": "Theme select label"
+  },
+  "themeSystem": {
+    "message": "Follow system",
+    "description": "Theme option"
+  },
+  "themeLight": {
+    "message": "Light",
+    "description": "Theme option"
+  },
+  "themeDark": {
+    "message": "Dark",
+    "description": "Theme option"
+  },
+  "saveTheme": {
+    "message": "Save theme",
+    "description": "Save theme button"
+  },
+  "countdownSection": {
+    "message": "Floating countdown",
+    "description": "Options countdown section"
+  },
+  "countdownHint": {
+    "message": "Show a live countdown on the page edge when a site limit is near or a pomodoro is running.",
+    "description": "Countdown hint"
+  },
+  "countdownEnabled": {
+    "message": "Enable floating countdown",
+    "description": "Enable toggle label"
+  },
+  "countdownThreshold": {
+    "message": "Site limit threshold (minutes)",
+    "description": "Threshold input label"
+  },
+  "countdownPosition": {
+    "message": "Position",
+    "description": "Position select label"
+  },
+  "countdownPosTopLeft": {
+    "message": "Top left",
+    "description": "Position option"
+  },
+  "countdownPosTopRight": {
+    "message": "Top right",
+    "description": "Position option"
+  },
+  "countdownPosMiddleLeft": {
+    "message": "Middle left",
+    "description": "Position option"
+  },
+  "countdownPosMiddleRight": {
+    "message": "Middle right",
+    "description": "Position option"
+  },
+  "countdownPosBottomLeft": {
+    "message": "Bottom left",
+    "description": "Position option"
+  },
+  "countdownPosBottomRight": {
+    "message": "Bottom right",
+    "description": "Position option"
+  },
+  "countdownSize": {
+    "message": "Size",
+    "description": "Size select label"
+  },
+  "countdownSizeSmall": {
+    "message": "Small",
+    "description": "Size option"
+  },
+  "countdownSizeMedium": {
+    "message": "Medium",
+    "description": "Size option"
+  },
+  "countdownSizeLarge": {
+    "message": "Large",
+    "description": "Size option"
+  },
+  "saveCountdown": {
+    "message": "Save countdown",
+    "description": "Save countdown button"
   }
 }
