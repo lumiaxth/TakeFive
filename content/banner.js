@@ -24,9 +24,9 @@
       host.style.all = 'initial';
       const shadow = host.attachShadow({ mode: 'closed' });
       const style = document.createElement('style');
-      const bg = dark ? '#451a03' : '#fef3c7';
-      const border = dark ? '#f59e0b' : '#d97706';
-      const fg = dark ? '#fef3c7' : '#1f2937';
+      const bg = dark ? '#4A2C16' : '#fef3c7';
+      const border = dark ? '#FF9F5B' : '#d97706';
+      const fg = dark ? '#FFFFFF' : '#1f2937';
       style.textContent =
         ':host{all:initial}' +
         '.he-banner{' +

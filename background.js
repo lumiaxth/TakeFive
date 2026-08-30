@@ -244,7 +244,7 @@ function computeCountdown(data, host, counting, paused) {
   return chips;
 }
 
-function sendCountdown(chips, theme, paused, position, size, ticking, clock) {
+function sendCountdown(tabId, chips, theme, paused, position, size, ticking, clock) {
   let msg;
   if ((chips && chips.length) || clock) {
     msg = {
@@ -260,12 +260,18 @@ function sendCountdown(chips, theme, paused, position, size, ticking, clock) {
   } else {
     msg = { type: 'HE_COUNTDOWN_HIDE' };
   }
+  // targeted: the active web tab's content script
+  if (tabId != null && tabId >= 0) {
+    try {
+      const p = chrome.tabs.sendMessage(tabId, msg);
+      if (p && p.catch) p.catch(() => {});
+    } catch (e) { /* no content script on that tab */ }
+  }
+  // broadcast: extension pages (options / dashboard / blocked)
   try {
     const p = chrome.runtime.sendMessage(msg);
     if (p && p.catch) p.catch(() => {});
-  } catch (e) {
-    /* no receivers */
-  }
+  } catch (e) { /* no receivers */ }
 }
 
 async function pushCountdown() {
@@ -276,7 +282,7 @@ async function pushCountdown() {
     const cd = data.settings.countdown;
     const host = state.activeHost || (await currentHost());
     const chips = cd.enabled ? computeCountdown(data, host, state.counting, data.settings.paused) : null;
-    sendCountdown(chips, data.settings.theme, data.settings.paused, cd.position, cd.size, state.counting, cd.clock);
+    sendCountdown(state.activeTabId, chips, data.settings.theme, data.settings.paused, cd.position, cd.size, state.counting, cd.clock);
   } catch (e) {
     /* ignore */
   }
@@ -710,7 +716,7 @@ async function handleMessage(msg, sender) {
       const cd = data.settings.countdown;
       const host = state.activeHost || (await currentHost());
       const chips = cd.enabled ? computeCountdown(data, host, state.counting, data.settings.paused) : null;
-      sendCountdown(chips, data.settings.theme, data.settings.paused, cd.position, cd.size, state.counting, cd.clock);
+sendCountdown(state.activeTabId, chips, data.settings.theme, data.settings.paused, cd.position, cd.size, state.counting, cd.clock);
       return {};
     }
     case 'GET_POMODORO': {

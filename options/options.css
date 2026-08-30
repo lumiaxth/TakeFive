@@ -304,18 +304,19 @@ input:focus {
 }
 
 [data-theme="dark"] {
-  --bg: #111827;
-  --card: #1f2937;
-  --text: #f3f4f6;
-  --muted: #9ca3af;
-  --border: #374151;
-  --hover: #374151;
-  --green: #22c55e;
-  --green-dark: #4ade80;
-  --green-light: #14532d;
-  --amber: #fbbf24;
-  --amber-light: #451a03;
-  --red: #f87171;
-  --red-light: #7f1d1d;
+  --bg: #1E1E1E;
+  --card: #252526;
+  --text: #FFFFFF;
+  --muted: #ADADAD;
+  --border: #333333;
+  --hover: #333333;
+  --green: #6DDBAA;
+  --green-dark: #6DDBAA;
+  --green-light: #1E3A2F;
+  --amber: #FF9F5B;
+  --amber-light: #4A2C16;
+  --red: #F14C4C;
+  --red-light: #4A1010;
 }
-[data-theme="dark"] .field select { background: #1f2937; color: #f3f4f6; }
+
+[data-theme="dark"] .btn.primary { color: #0B3B2A; }[data-theme="dark"] .field select { background: #252526; color: #FFFFFF; }

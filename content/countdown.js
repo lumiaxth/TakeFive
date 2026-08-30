@@ -133,7 +133,7 @@
       '.chip .emoji{font-size:20px;line-height:1;}' +
       '.chip .time{font-variant-numeric:tabular-nums;white-space:nowrap;}' +
       '.light .chip{background:rgba(255,255,255,.95);color:#1f2937;border:1px solid #e5e7eb;}' +
-      '.dark .chip{background:rgba(31,41,55,.95);color:#f3f4f6;border:1px solid #374151;}' +
+      '.dark .chip{background:#252526;color:#FFFFFF;border:1px solid #333333;}' +
       '.small .chip{padding:5px 9px;border-radius:9px;font-size:12px;}' +
       '.small .chip .emoji{font-size:16px;}' +
       '.medium .chip{padding:8px 12px;font-size:14px;}' +
