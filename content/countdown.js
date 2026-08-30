@@ -69,8 +69,9 @@
 
   function startTimer() {
     stopTimer();
+    if (!state || state.paused || !state.ticking) return;
     timer = setInterval(() => {
-      if (!state || state.paused) return;
+      if (!state || state.paused || !state.ticking) return;
       let changed = false;
       (state.chips || []).forEach((c) => {
         if (c.remainingMs > 0) { c.remainingMs -= 1000; changed = true; }
@@ -87,7 +88,7 @@
     state = next;
     if (!next) { render(); return; }
     render();
-    if (next.paused) stopTimer();
+    if (next.paused || !next.ticking) stopTimer();
     else startTimer();
   }
 

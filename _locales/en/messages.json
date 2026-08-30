@@ -457,10 +457,10 @@
     "description": "Pomodoro idle state"
   },
   "pomodoroRemaining": {
-    "message": "$MIN$ min left",
-    "description": "Pomodoro countdown text",
+    "message": "Left $TIME$",
+    "description": "Pomodoro countdown (to the second)",
     "placeholders": {
-      "MIN": {
+      "TIME": {
         "content": "$1"
       }
     }

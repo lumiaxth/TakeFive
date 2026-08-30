@@ -235,7 +235,7 @@ function computeCountdown(data, host) {
   return chips;
 }
 
-function sendCountdown(tabId, chips, theme, paused, position, size) {
+function sendCountdown(tabId, chips, theme, paused, position, size, ticking) {
   if (tabId == null || tabId < 0) return;
   let msg;
   if (chips && chips.length) {
@@ -244,6 +244,7 @@ function sendCountdown(tabId, chips, theme, paused, position, size) {
       chips,
       theme: theme || 'system',
       paused: !!paused,
+      ticking: !!ticking,
       position: position || 'middle-right',
       size: size || 'medium'
     };
@@ -264,12 +265,12 @@ async function pushCountdown() {
     const data = await HE.storage.load();
     const cd = data.settings.countdown;
     if (!cd.enabled) {
-      sendCountdown(state.activeTabId, null, data.settings.theme, data.settings.paused, cd.position, cd.size);
+      sendCountdown(state.activeTabId, null, data.settings.theme, data.settings.paused, cd.position, cd.size, state.counting);
       return;
     }
     const host = state.activeHost || (await currentHost());
     const chips = computeCountdown(data, host);
-    sendCountdown(state.activeTabId, chips, data.settings.theme, data.settings.paused, cd.position, cd.size);
+    sendCountdown(state.activeTabId, chips, data.settings.theme, data.settings.paused, cd.position, cd.size, state.counting);
   } catch (e) {
     /* ignore */
   }
@@ -298,12 +299,7 @@ async function commitTime() {
     const ur = data.settings.usageReminder;
     if (ur.enabled && ur.minutes > 0) data.usage.accumulatedMs += delta;
 
-    let pomodoroCrossed = false;
-    const pomodoro = data.settings.pomodoro;
-    if (pomodoro.enabled && data.pomodoroState.phase !== 'idle') {
-      data.pomodoroState.remainingMs -= delta;
-      if (data.pomodoroState.remainingMs <= 0) pomodoroCrossed = true;
-    }
+    const pomodoroCrossed = tickPomodoro(data, delta);
 
     const reachedFirstTime = await checkLimits(data, host);
 
@@ -320,7 +316,7 @@ async function commitTime() {
 
     await HE.storage.save(data);
 
-    if (pomodoroCrossed) await switchPomodoroPhase(data);
+    if (pomodoroCrossed) await pushCountdown();
     if (reachedFirstTime) await enforceBlocks(data);
     await updateBadge();
     await pushCountdown();
@@ -369,29 +365,37 @@ async function checkLimits(data, host) {
   return reachedFirstTime;
 }
 
-async function switchPomodoroPhase(data) {
+function tickPomodoro(data, delta) {
   const pomodoro = data.settings.pomodoro;
-  if (data.pomodoroState.phase === 'focus') {
-    data.pomodoroState.phase = 'break';
-    data.pomodoroState.remainingMs = pomodoro.breakMinutes * 60000;
-    notifyAndBanner(
-      'he-pomodoro-break',
-      chrome.i18n.getMessage('notifyPomodoroBreakTitle'),
-      chrome.i18n.getMessage('notifyPomodoroBreakBody', [String(pomodoro.breakMinutes)]),
-      chrome.i18n.getMessage('bannerPomodoroBreak', [String(pomodoro.breakMinutes)])
-    );
-  } else {
-    data.pomodoroState.phase = 'focus';
-    data.pomodoroState.remainingMs = pomodoro.focusMinutes * 60000;
-    notifyAndBanner(
-      'he-pomodoro-focus',
-      chrome.i18n.getMessage('notifyPomodoroFocusTitle'),
-      chrome.i18n.getMessage('notifyPomodoroFocusBody', [String(pomodoro.focusMinutes)]),
-      chrome.i18n.getMessage('bannerPomodoroFocus', [String(pomodoro.focusMinutes)])
-    );
+  if (!pomodoro.enabled || data.pomodoroState.phase === 'idle') return false;
+  data.pomodoroState.remainingMs -= delta;
+  let crossed = false;
+  while (data.pomodoroState.remainingMs <= 0 && data.pomodoroState.phase !== 'idle') {
+    crossed = true;
+    const overflow = -data.pomodoroState.remainingMs;
+    if (data.pomodoroState.phase === 'focus') {
+      // focus ended -> break starts
+      data.pomodoroState.phase = 'break';
+      data.pomodoroState.remainingMs = pomodoro.breakMinutes * 60000 - overflow;
+      notifyAndBanner(
+        'he-pomodoro-focus-end',
+        chrome.i18n.getMessage('notifyPomodoroFocusTitle'),
+        chrome.i18n.getMessage('notifyPomodoroFocusBody', [String(pomodoro.breakMinutes)]),
+        chrome.i18n.getMessage('bannerPomodoroFocus', [String(pomodoro.breakMinutes)])
+      );
+    } else {
+      // break ended -> focus starts
+      data.pomodoroState.phase = 'focus';
+      data.pomodoroState.remainingMs = pomodoro.focusMinutes * 60000 - overflow;
+      notifyAndBanner(
+        'he-pomodoro-break-end',
+        chrome.i18n.getMessage('notifyPomodoroBreakTitle'),
+        chrome.i18n.getMessage('notifyPomodoroBreakBody', [String(pomodoro.focusMinutes)]),
+        chrome.i18n.getMessage('bannerPomodoroBreak', [String(pomodoro.focusMinutes)])
+      );
+    }
   }
-  await HE.storage.save(data);
-  await pushCountdown();
+  return crossed;
 }
 
 async function startSession(host) {
@@ -436,6 +440,7 @@ async function startSession(host) {
 async function stopSession() {
   if (!state.activeHost) {
     state.counting = false;
+    await pushCountdown();
     return;
   }
   await commitTime();
@@ -445,6 +450,7 @@ async function stopSession() {
   data.tracking = { host: null, since: 0 };
   data.usage.lastStopAt = Date.now();
   await HE.storage.save(data);
+  await pushCountdown();
 }
 
 async function syncActiveTab() {
@@ -640,9 +646,19 @@ async function handleMessage(msg, sender) {
         const cd = data.settings.countdown;
         const host = tab.url ? HE.hostname.getRegistrableDomain(tab.url) : null;
         const chips = cd.enabled ? computeCountdown(data, host) : null;
-        sendCountdown(tab.id, chips, data.settings.theme, data.settings.paused, cd.position, cd.size);
+        sendCountdown(tab.id, chips, data.settings.theme, data.settings.paused, cd.position, cd.size, state.counting);
       }
       return {};
+    }
+    case 'GET_POMODORO': {
+      await commitTime();
+      const data = await HE.storage.load();
+      return {
+        phase: data.pomodoroState.phase,
+        remainingMs: data.pomodoroState.remainingMs,
+        paused: data.settings.paused,
+        counting: state.counting
+      };
     }
     case 'SET_BADGE_MODE': {
       const mode = ['auto', 'total', 'domain', 'pomodoro'].indexOf(msg.mode) !== -1 ? msg.mode : 'auto';

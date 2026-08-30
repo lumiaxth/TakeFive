@@ -4,6 +4,15 @@
   const t = (key, subs) => chrome.i18n.getMessage(key, subs);
   const units = { h: t('hoursShort'), m: t('minutesUnit'), s: 's' };
   const fmt = (ms) => HE.storage.formatDuration(ms, units);
+  const fmtCountdown = (ms) => {
+    const totalSec = Math.max(0, Math.floor(ms / 1000));
+    const h = Math.floor(totalSec / 3600);
+    const m = Math.floor((totalSec % 3600) / 60);
+    const s = totalSec % 60;
+    const mm = m < 10 ? '0' + m : String(m);
+    const ss = s < 10 ? '0' + s : String(s);
+    return h > 0 ? h + ':' + mm + ':' + ss : mm + ':' + ss;
+  };
   const esc = (s) =>
     String(s).replace(/[&<>"']/g, (c) =>
       ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])
@@ -71,9 +80,8 @@
           st.phase === 'break'
             ? esc(t('pomodoroPhaseBreak'))
             : esc(t('pomodoroPhaseFocus'));
-        const rem = Math.max(0, Math.ceil(st.remainingMs / 60000));
         pomodoroStatus.textContent =
-          t('pomodoroStatusLabel') + ': ' + phaseText + ' · ' + t('pomodoroRemaining', [String(rem)]);
+          t('pomodoroStatusLabel') + ': ' + phaseText + ' · ' + t('pomodoroRemaining', [fmtCountdown(st.remainingMs)]);
       }
     } else {
       pomodoroStatus.textContent = t('pomodoroIdle');

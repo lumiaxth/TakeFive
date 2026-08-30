@@ -457,10 +457,10 @@
     "description": "番茄钟闲置状态"
   },
   "pomodoroRemaining": {
-    "message": "剩余 $MIN$ 分钟",
-    "description": "番茄钟倒计时文案",
+    "message": "剩余 $TIME$",
+    "description": "番茄钟倒计时（精确到秒）",
     "placeholders": {
-      "MIN": {
+      "TIME": {
         "content": "$1"
       }
     }

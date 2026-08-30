@@ -76,6 +76,16 @@
     }
   }
 
+  function fmtCountdown(ms) {
+    const totalSec = Math.max(0, Math.floor(ms / 1000));
+    const h = Math.floor(totalSec / 3600);
+    const m = Math.floor((totalSec % 3600) / 60);
+    const s = totalSec % 60;
+    const mm = m < 10 ? '0' + m : String(m);
+    const ss = s < 10 ? '0' + s : String(s);
+    return h > 0 ? h + ':' + mm + ':' + ss : mm + ':' + ss;
+  }
+
   function renderPomodoro() {
     const bar = $('pomodoroBar');
     const info = $('pomodoroInfo');
@@ -89,8 +99,7 @@
         bar.classList.remove('break');
       } else {
         const phase = st.phase === 'break' ? t('pomodoroPhaseBreak') : t('pomodoroPhaseFocus');
-        const rem = Math.max(0, Math.ceil(st.remainingMs / 60000));
-        info.textContent = '\uD83C\uDF45 ' + phase + ' \u00B7 ' + t('pomodoroRemaining', [String(rem)]);
+        info.textContent = '\uD83C\uDF45 ' + phase + ' \u00B7 ' + t('pomodoroRemaining', [fmtCountdown(st.remainingMs)]);
         btn.textContent = t('pomodoroEndFocus');
         bar.classList.toggle('break', st.phase === 'break');
       }
@@ -271,4 +280,19 @@
 
   refresh();
   setInterval(refresh, 30000);
+
+  // keep the pomodoro countdown precise to seconds while the popup is open
+  setInterval(async () => {
+    if (!data || !data.settings.pomodoro.enabled) return;
+    try {
+      const resp = await send({ type: 'GET_POMODORO' });
+      if (resp && resp.ok) {
+        data.pomodoroState.phase = resp.phase;
+        data.pomodoroState.remainingMs = resp.remainingMs;
+        renderPomodoro();
+      }
+    } catch (e) {
+      /* ignore */
+    }
+  }, 1000);
 })();
