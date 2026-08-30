@@ -3,6 +3,7 @@ importScripts('shared/tldts.min.js', 'shared/hostname.js', 'shared/storage.js');
 const RESUME_TOLERANCE_MS = 2 * 60 * 1000;
 const USAGE_RESET_AFTER_MS = 2 * 60 * 1000;
 const MAX_COMMIT_DELTA_MS = 3 * 60 * 1000;
+const POMODORO_CLOSED_THRESHOLD_MS = 2 * 60 * 1000;
 const IDLE_DETECT_SECONDS = 60;
 const PAUSED_BADGE_CHAR = '\u2014';
 
@@ -211,14 +212,17 @@ async function updateBadge() {
   }
 }
 
-function computeCountdown(data, host) {
+function computeCountdown(data, host, counting, paused) {
   const chips = [];
   const pomodoro = data.settings.pomodoro;
   if (pomodoro.enabled && data.pomodoroState.phase !== 'idle') {
+    const anchor = data.pomodoroState.anchorAt || Date.now();
+    const remaining = Math.max(0, data.pomodoroState.remainingMs - (Date.now() - anchor));
     chips.push({
       id: 'pomodoro',
       emoji: data.pomodoroState.phase === 'break' ? '\u2615' : '\uD83C\uDF45',
-      remainingMs: Math.max(0, data.pomodoroState.remainingMs)
+      remainingMs: remaining,
+      ticking: true
     });
   }
   const cd = data.settings.countdown;
@@ -228,7 +232,12 @@ function computeCountdown(data, host) {
       const used = (data.domains[host] && data.domains[host].timeMs) || 0;
       const remaining = limit.dailyMs - used;
       if (remaining > 0 && remaining <= cd.thresholdMin * 60000) {
-        chips.push({ id: 'site', emoji: '\u23F3', remainingMs: remaining });
+        chips.push({
+          id: 'site',
+          emoji: '\u23F3',
+          remainingMs: remaining,
+          ticking: !!counting && !paused
+        });
       }
     }
   }
@@ -263,13 +272,15 @@ async function pushCountdown() {
   if (state.activeTabId < 0) return;
   try {
     const data = await HE.storage.load();
+    const crossed = await advancePomodoro(data);
+    if (crossed) await HE.storage.save(data);
     const cd = data.settings.countdown;
     if (!cd.enabled) {
       sendCountdown(state.activeTabId, null, data.settings.theme, data.settings.paused, cd.position, cd.size, state.counting);
       return;
     }
     const host = state.activeHost || (await currentHost());
-    const chips = computeCountdown(data, host);
+    const chips = computeCountdown(data, host, state.counting, data.settings.paused);
     sendCountdown(state.activeTabId, chips, data.settings.theme, data.settings.paused, cd.position, cd.size, state.counting);
   } catch (e) {
     /* ignore */
@@ -299,7 +310,7 @@ async function commitTime() {
     const ur = data.settings.usageReminder;
     if (ur.enabled && ur.minutes > 0) data.usage.accumulatedMs += delta;
 
-    const pomodoroCrossed = tickPomodoro(data, delta);
+    const pomodoroCrossed = await advancePomodoro(data);
 
     const reachedFirstTime = await checkLimits(data, host);
 
@@ -365,37 +376,90 @@ async function checkLimits(data, host) {
   return reachedFirstTime;
 }
 
-function tickPomodoro(data, delta) {
+async function isUserActive() {
+  try {
+    const state = await chrome.idle.queryState(60);
+    return state === 'active';
+  } catch (e) {
+    return true;
+  }
+}
+
+async function advancePomodoro(data) {
   const pomodoro = data.settings.pomodoro;
-  if (!pomodoro.enabled || data.pomodoroState.phase === 'idle') return false;
-  data.pomodoroState.remainingMs -= delta;
+  const st = data.pomodoroState;
+  if (!pomodoro.enabled || st.phase === 'idle') return false;
+  const now = Date.now();
+  const anchor = st.anchorAt || now;
+  let elapsed = Math.max(0, now - anchor);
+  if (elapsed <= 0) return false;
   let crossed = false;
-  while (data.pomodoroState.remainingMs <= 0 && data.pomodoroState.phase !== 'idle') {
-    crossed = true;
-    const overflow = -data.pomodoroState.remainingMs;
-    if (data.pomodoroState.phase === 'focus') {
-      // focus ended -> break starts
-      data.pomodoroState.phase = 'break';
-      data.pomodoroState.remainingMs = pomodoro.breakMinutes * 60000 - overflow;
-      notifyAndBanner(
-        'he-pomodoro-focus-end',
-        chrome.i18n.getMessage('notifyPomodoroFocusTitle'),
-        chrome.i18n.getMessage('notifyPomodoroFocusBody', [String(pomodoro.breakMinutes)]),
-        chrome.i18n.getMessage('bannerPomodoroFocus', [String(pomodoro.breakMinutes)])
-      );
+  while (elapsed > 0 && st.phase !== 'idle') {
+    if (elapsed < st.remainingMs) {
+      st.remainingMs -= elapsed;
+      elapsed = 0;
     } else {
-      // break ended -> focus starts
-      data.pomodoroState.phase = 'focus';
-      data.pomodoroState.remainingMs = pomodoro.focusMinutes * 60000 - overflow;
-      notifyAndBanner(
-        'he-pomodoro-break-end',
-        chrome.i18n.getMessage('notifyPomodoroBreakTitle'),
-        chrome.i18n.getMessage('notifyPomodoroBreakBody', [String(pomodoro.focusMinutes)]),
-        chrome.i18n.getMessage('bannerPomodoroBreak', [String(pomodoro.focusMinutes)])
-      );
+      elapsed -= st.remainingMs;
+      crossed = true;
+      if (st.phase === 'focus') {
+        // focus ended -> break starts
+        st.phase = 'break';
+        st.remainingMs = pomodoro.breakMinutes * 60000;
+        if (await isUserActive()) {
+          notifyAndBanner(
+            'he-pomodoro-focus-end',
+            chrome.i18n.getMessage('notifyPomodoroFocusTitle'),
+            chrome.i18n.getMessage('notifyPomodoroFocusBody', [String(pomodoro.breakMinutes)]),
+            chrome.i18n.getMessage('bannerPomodoroFocus', [String(pomodoro.breakMinutes)])
+          );
+        }
+      } else {
+        // break ended -> start focus, or stop the round if the user is away
+        if (await isUserActive()) {
+          st.phase = 'focus';
+          st.remainingMs = pomodoro.focusMinutes * 60000;
+          notifyAndBanner(
+            'he-pomodoro-break-end',
+            chrome.i18n.getMessage('notifyPomodoroBreakTitle'),
+            chrome.i18n.getMessage('notifyPomodoroBreakBody', [String(pomodoro.focusMinutes)]),
+            chrome.i18n.getMessage('bannerPomodoroBreak', [String(pomodoro.focusMinutes)])
+          );
+        } else {
+          st.phase = 'idle';
+          st.remainingMs = 0;
+          notifyAndBanner(
+            'he-pomodoro-round-over',
+            chrome.i18n.getMessage('notifyPomodoroRoundOverTitle'),
+            chrome.i18n.getMessage('notifyPomodoroRoundOverBody')
+          );
+        }
+      }
     }
   }
+  st.anchorAt = now;
   return crossed;
+}
+
+async function handleClosedPomodoro() {
+  try {
+    const data = await HE.storage.load();
+    const st = data.pomodoroState;
+    const pomodoro = data.settings.pomodoro;
+    if (!pomodoro.enabled || st.phase === 'idle') return;
+    if (st.anchorAt && Date.now() - st.anchorAt > POMODORO_CLOSED_THRESHOLD_MS) {
+      st.phase = 'idle';
+      st.remainingMs = 0;
+      st.anchorAt = Date.now();
+      await HE.storage.save(data);
+      notifyAndBanner(
+        'he-pomodoro-cancelled',
+        chrome.i18n.getMessage('notifyPomodoroCancelledTitle'),
+        chrome.i18n.getMessage('notifyPomodoroCancelledBody')
+      );
+    }
+  } catch (e) {
+    /* ignore */
+  }
 }
 
 async function startSession(host) {
@@ -584,6 +648,7 @@ async function handleMessage(msg, sender) {
       if (!data.settings.pomodoro.enabled) {
         data.pomodoroState.phase = 'idle';
         data.pomodoroState.remainingMs = 0;
+        data.pomodoroState.anchorAt = 0;
       } else if (data.pomodoroState.phase !== 'idle') {
         // keep a running timer, apply new durations to the current phase
         if (data.pomodoroState.phase === 'focus') {
@@ -591,6 +656,7 @@ async function handleMessage(msg, sender) {
         } else {
           data.pomodoroState.remainingMs = data.settings.pomodoro.breakMinutes * 60000;
         }
+        data.pomodoroState.anchorAt = Date.now();
       }
       // if enabled and phase is idle, stay idle: the user starts focus from the popup
       await HE.storage.save(data);
@@ -604,6 +670,7 @@ async function handleMessage(msg, sender) {
       if (!data.settings.pomodoro.enabled) return { error: 'pomodoroDisabled' };
       data.pomodoroState.phase = 'focus';
       data.pomodoroState.remainingMs = data.settings.pomodoro.focusMinutes * 60000;
+      data.pomodoroState.anchorAt = Date.now();
       await HE.storage.save(data);
       await updateBadge();
       await enforceBlocks(data);
@@ -614,6 +681,7 @@ async function handleMessage(msg, sender) {
       const data = await HE.storage.load();
       data.pomodoroState.phase = 'idle';
       data.pomodoroState.remainingMs = 0;
+      data.pomodoroState.anchorAt = 0;
       await HE.storage.save(data);
       await updateBadge();
       await enforceBlocks(data);
@@ -643,16 +711,19 @@ async function handleMessage(msg, sender) {
       const tab = sender && sender.tab;
       if (tab && tab.id) {
         const data = await HE.storage.load();
+        const crossed = await advancePomodoro(data);
+        if (crossed) await HE.storage.save(data);
         const cd = data.settings.countdown;
         const host = tab.url ? HE.hostname.getRegistrableDomain(tab.url) : null;
-        const chips = cd.enabled ? computeCountdown(data, host) : null;
+        const chips = cd.enabled ? computeCountdown(data, host, state.counting, data.settings.paused) : null;
         sendCountdown(tab.id, chips, data.settings.theme, data.settings.paused, cd.position, cd.size, state.counting);
       }
       return {};
     }
     case 'GET_POMODORO': {
-      await commitTime();
       const data = await HE.storage.load();
+      const crossed = await advancePomodoro(data);
+      if (crossed) await HE.storage.save(data);
       return {
         phase: data.pomodoroState.phase,
         remainingMs: data.pomodoroState.remainingMs,
@@ -849,6 +920,7 @@ function init() {
   registerCountdownScript();
   serialized(async () => {
     await HE.storage.load();
+    await handleClosedPomodoro();
     await syncActiveTab();
     await enforceBlocks();
     await updateBadge();

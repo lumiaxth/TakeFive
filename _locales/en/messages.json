@@ -628,5 +628,21 @@
   "saveCountdown": {
     "message": "Save countdown",
     "description": "Save countdown button"
+  },
+  "notifyPomodoroRoundOverTitle": {
+    "message": "This pomodoro round is over",
+    "description": "Notification title when the round stops after being away"
+  },
+  "notifyPomodoroRoundOverBody": {
+    "message": "Take a break; start a new round anytime.",
+    "description": "Notification body when the round stops after being away"
+  },
+  "notifyPomodoroCancelledTitle": {
+    "message": "Pomodoro closed unfinished",
+    "description": "Notification title when reopening the browser"
+  },
+  "notifyPomodoroCancelledBody": {
+    "message": "The previous pomodoro could not finish and was closed. Start again when ready.",
+    "description": "Notification body when reopening the browser"
   }
 }

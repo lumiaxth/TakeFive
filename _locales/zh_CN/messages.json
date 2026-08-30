@@ -628,5 +628,21 @@
   "saveCountdown": {
     "message": "保存倒计时设置",
     "description": "保存倒计时设置按钮"
+  },
+  "notifyPomodoroRoundOverTitle": {
+    "message": "本轮番茄钟已结束",
+    "description": "离开后休息结束不再开启新一轮的通知标题"
+  },
+  "notifyPomodoroRoundOverBody": {
+    "message": "休息一下吧，随时可以开始新一轮。",
+    "description": "离开后休息结束不再开启新一轮的通知正文"
+  },
+  "notifyPomodoroCancelledTitle": {
+    "message": "番茄钟未完成，已自动关闭",
+    "description": "浏览器关闭后重新打开的通知标题"
+  },
+  "notifyPomodoroCancelledBody": {
+    "message": "上次的番茄钟没能结束，现已关闭。重新开始吧。",
+    "description": "浏览器关闭后重新打开的通知正文"
   }
 }

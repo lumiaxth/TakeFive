@@ -8,7 +8,7 @@
     notifications: {},
     tracking: { host: null, since: 0 },
     usage: { accumulatedMs: 0, lastStopAt: 0 },
-    pomodoroState: { phase: 'idle', remainingMs: 0 },
+    pomodoroState: { phase: 'idle', remainingMs: 0, anchorAt: 0 },
     settings: {
       limits: {},
       blacklist: [],
@@ -53,7 +53,8 @@
     data.usage = data.usage && typeof data.usage === 'object' ? data.usage : { accumulatedMs: 0, lastStopAt: 0 };
     data.pomodoroState = data.pomodoroState && typeof data.pomodoroState === 'object'
       ? data.pomodoroState
-      : { phase: 'idle', remainingMs: 0 };
+      : { phase: 'idle', remainingMs: 0, anchorAt: 0 };
+    data.pomodoroState.anchorAt = typeof data.pomodoroState.anchorAt === 'number' ? data.pomodoroState.anchorAt : 0;
     data.settings = Object.assign({}, base.settings, data.settings || {});
     const legacyPaused =
       typeof data.settings.pauseUntil === 'number' && data.settings.pauseUntil > Date.now();

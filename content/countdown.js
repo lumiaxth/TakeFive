@@ -69,15 +69,19 @@
 
   function startTimer() {
     stopTimer();
-    if (!state || state.paused || !state.ticking) return;
+    if (!state || !hasTickingChip()) return;
     timer = setInterval(() => {
-      if (!state || state.paused || !state.ticking) return;
+      if (!state || !hasTickingChip()) return;
       let changed = false;
       (state.chips || []).forEach((c) => {
-        if (c.remainingMs > 0) { c.remainingMs -= 1000; changed = true; }
+        if (c.ticking && c.remainingMs > 0) { c.remainingMs -= 1000; changed = true; }
       });
       if (changed) update();
     }, 1000);
+  }
+
+  function hasTickingChip() {
+    return (state && state.chips && state.chips.some((c) => c.ticking)) || false;
   }
 
   function stopTimer() {
@@ -88,8 +92,8 @@
     state = next;
     if (!next) { render(); return; }
     render();
-    if (next.paused || !next.ticking) stopTimer();
-    else startTimer();
+    if (hasTickingChip()) startTimer();
+    else stopTimer();
   }
 
   function buildStyles() {
