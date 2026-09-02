@@ -105,9 +105,24 @@ function blockedUrl(reason, host, url) {
   );
 }
 
+async function countBlock() {
+  try {
+    const data = await HE.storage.load();
+    const today = HE.storage.getTodayKey();
+    if (data.blocksToday.date !== today) {
+      data.blocksToday = { date: today, count: 0 };
+    }
+    data.blocksToday.count += 1;
+    await HE.storage.save(data);
+  } catch (e) {
+    /* ignore */
+  }
+}
+
 async function redirectTab(tabId, reason, host, url) {
   try {
     await chrome.tabs.update(tabId, { url: blockedUrl(reason, host, url) });
+    await countBlock();
   } catch (e) {
     /* tab closed concurrently */
   }
@@ -165,6 +180,41 @@ function notifyAndBanner(id, title, message, bannerText) {
     message: message
   });
   if (bannerText) showBanner(bannerText);
+}
+
+let soundDocCreating = false;
+async function ensureSoundDocument() {
+  try {
+    const contexts = await chrome.runtime.getContexts({
+      contextTypes: ['OFFSCREEN_DOCUMENT']
+    });
+    if (contexts && contexts.length > 0) return true;
+    if (soundDocCreating) return false;
+    soundDocCreating = true;
+    try {
+      await chrome.offscreen.createDocument({
+        url: 'offscreen/sound.html',
+        reasons: ['AUDIO_PLAYBACK'],
+        justification: 'Play pomodoro timer notification sounds'
+      });
+      return true;
+    } finally {
+      soundDocCreating = false;
+    }
+  } catch (e) {
+    return false;
+  }
+}
+
+async function playSound(pattern) {
+  try {
+    const ok = await ensureSoundDocument();
+    if (!ok) return;
+    const p = chrome.runtime.sendMessage({ type: 'PLAY_SOUND', pattern });
+    if (p && p.catch) p.catch(() => {});
+  } catch (e) {
+    /* ignore */
+  }
 }
 
 function fmtHm(ms) {
@@ -262,7 +312,32 @@ function computeCountdown(data, host, counting, paused) {
   return chips;
 }
 
-function sendCountdown(tabId, chips, theme, paused, position, size, ticking, clock) {
+function buildWidgetInfo(data, host) {
+  const todayKey = HE.storage.getTodayKey();
+  const pt = data.pomodoroToday && data.pomodoroToday.date === todayKey
+    ? data.pomodoroToday
+    : { date: todayKey, rounds: 0, focusMs: 0 };
+  const blocks = data.blocksToday && data.blocksToday.date === todayKey ? data.blocksToday.count : 0;
+  const sorted = HE.storage.sortedDomains(data.domains);
+  const top = sorted.length > 0 ? sorted[0] : null;
+  const siteMs = host && data.domains[host] ? data.domains[host].timeMs : 0;
+  return {
+    totalMs: HE.storage.totalForDomains(data.domains),
+    siteHost: host || null,
+    siteMs,
+    paused: HE.storage.isPaused(data),
+    continuousMs: data.usage.accumulatedMs || 0,
+    continuousTargetMin: data.settings.usageReminder.minutes || 0,
+    pomodoroRounds: pt.rounds,
+    pomodoroFocusMin: Math.round(pt.focusMs / 60000),
+    blocks,
+    topHost: top ? top.host : null,
+    topMs: top ? top.timeMs : 0,
+    hasAnyData: sorted.length > 0
+  };
+}
+
+function sendCountdown(tabId, chips, theme, paused, position, size, ticking, clock, info) {
   let msg;
   if ((chips && chips.length) || clock) {
     msg = {
@@ -273,7 +348,8 @@ function sendCountdown(tabId, chips, theme, paused, position, size, ticking, clo
       ticking: !!ticking,
       clock: !!clock,
       position: position || 'middle-right',
-      size: size || 'medium'
+      size: size || 'medium',
+      info: info || null
     };
   } else {
     msg = { type: 'HE_COUNTDOWN_HIDE' };
@@ -300,7 +376,8 @@ async function pushCountdown() {
     const cd = data.settings.countdown;
     const host = state.activeHost || (await currentHost());
     const chips = cd.enabled ? computeCountdown(data, host, state.counting, data.settings.paused) : null;
-    sendCountdown(state.activeTabId, chips, data.settings.theme, data.settings.paused, cd.position, cd.size, state.counting, cd.clock);
+    const info = buildWidgetInfo(data, host);
+    sendCountdown(state.activeTabId, chips, data.settings.theme, data.settings.paused, cd.position, cd.size, state.counting, cd.clock, info);
   } catch (e) {
     /* ignore */
   }
@@ -421,10 +498,18 @@ async function advancePomodoro(data) {
       elapsed -= st.remainingMs;
       crossed = true;
       if (st.phase === 'focus') {
-        // focus ended -> break starts
+        // focus ended -> break starts; count the completed round
+        st.completedRounds = (st.completedRounds || 0) + 1;
+        const todayKey = HE.storage.getTodayKey();
+        if (data.pomodoroToday.date !== todayKey) {
+          data.pomodoroToday = { date: todayKey, rounds: 0, focusMs: 0 };
+        }
+        data.pomodoroToday.rounds += 1;
+        data.pomodoroToday.focusMs += pomodoro.focusMinutes * 60000;
         st.phase = 'break';
         st.remainingMs = pomodoro.breakMinutes * 60000;
         if (await isUserActive()) {
+          playSound('focus');
           notifyAndBanner(
             'he-pomodoro-focus-end',
             chrome.i18n.getMessage('notifyPomodoroFocusTitle'),
@@ -435,14 +520,29 @@ async function advancePomodoro(data) {
       } else {
         // break ended -> start focus, or stop the round if the user is away
         if (await isUserActive()) {
-          st.phase = 'focus';
-          st.remainingMs = pomodoro.focusMinutes * 60000;
-          notifyAndBanner(
-            'he-pomodoro-break-end',
-            chrome.i18n.getMessage('notifyPomodoroBreakTitle'),
-            chrome.i18n.getMessage('notifyPomodoroBreakBody', [String(pomodoro.focusMinutes)]),
-            chrome.i18n.getMessage('bannerPomodoroBreak', [String(pomodoro.focusMinutes)])
-          );
+          const rounds = pomodoro.rounds || 0;
+          if (rounds > 0 && st.completedRounds >= rounds) {
+            st.phase = 'idle';
+            st.remainingMs = 0;
+            st.anchorAt = Date.now();
+            notifyAndBanner(
+              'he-pomodoro-all-done',
+              chrome.i18n.getMessage('notifyPomodoroAllDoneTitle'),
+              chrome.i18n.getMessage('notifyPomodoroAllDoneBody', [String(st.completedRounds)])
+            );
+            await HE.storage.save(data);
+            playSound('complete');
+          } else {
+            st.phase = 'focus';
+            st.remainingMs = pomodoro.focusMinutes * 60000;
+            notifyAndBanner(
+              'he-pomodoro-break-end',
+              chrome.i18n.getMessage('notifyPomodoroBreakTitle'),
+              chrome.i18n.getMessage('notifyPomodoroBreakBody', [String(pomodoro.focusMinutes)]),
+              chrome.i18n.getMessage('bannerPomodoroBreak', [String(pomodoro.focusMinutes)])
+            );
+            playSound('break');
+          }
         } else {
           st.phase = 'idle';
           st.remainingMs = 0;
@@ -664,6 +764,10 @@ async function handleMessage(msg, sender) {
       data.settings.pomodoro.enabled = !!msg.enabled;
       data.settings.pomodoro.focusMinutes = Math.max(1, Math.floor(Number(msg.focusMinutes) || 0));
       data.settings.pomodoro.breakMinutes = Math.max(1, Math.floor(Number(msg.breakMinutes) || 0));
+      data.settings.pomodoro.rounds = msg.rounds === undefined
+        ? (data.settings.pomodoro.rounds || 0)
+        : Math.max(0, Math.min(99, Math.floor(Number(msg.rounds) || 0)));
+      data.settings.pomodoro.sound = msg.sound === undefined ? data.settings.pomodoro.sound : !!msg.sound;
       if (!data.settings.pomodoro.enabled) {
         data.pomodoroState.phase = 'idle';
         data.pomodoroState.remainingMs = 0;
@@ -690,6 +794,7 @@ async function handleMessage(msg, sender) {
       data.pomodoroState.phase = 'focus';
       data.pomodoroState.remainingMs = data.settings.pomodoro.focusMinutes * 60000;
       data.pomodoroState.anchorAt = Date.now();
+      data.pomodoroState.completedRounds = 0;
       await HE.storage.save(data);
       await updateBadge();
       await enforceBlocks(data);
@@ -700,6 +805,7 @@ async function handleMessage(msg, sender) {
       const data = await HE.storage.load();
       data.pomodoroState.phase = 'idle';
       data.pomodoroState.remainingMs = 0;
+      data.pomodoroState.completedRounds = 0;
       data.pomodoroState.anchorAt = 0;
       await HE.storage.save(data);
       await updateBadge();
@@ -734,7 +840,8 @@ async function handleMessage(msg, sender) {
       const cd = data.settings.countdown;
       const host = state.activeHost || (await currentHost());
       const chips = cd.enabled ? computeCountdown(data, host, state.counting, data.settings.paused) : null;
-sendCountdown(state.activeTabId, chips, data.settings.theme, data.settings.paused, cd.position, cd.size, state.counting, cd.clock);
+      const info = buildWidgetInfo(data, host);
+      sendCountdown(state.activeTabId, chips, data.settings.theme, data.settings.paused, cd.position, cd.size, state.counting, cd.clock, info);
       return {};
     }
     case 'GET_POMODORO': {
@@ -905,6 +1012,7 @@ chrome.webNavigation.onBeforeNavigate.addListener((details) => {
     if (!reason) return;
     try {
       await chrome.tabs.update(details.tabId, { url: blockedUrl(reason, host, details.url) });
+      await countBlock();
     } catch (e) {
       /* tab may already be gone */
     }

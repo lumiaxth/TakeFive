@@ -648,5 +648,88 @@
   "floatingClock": {
     "message": "启用浮动时钟",
     "description": "浮动时钟开关标签"
+  },
+  "panelToday": {
+    "message": "今日"
+  },
+  "panelCurrentSite": {
+    "message": "当前站点"
+  },
+  "panelNoSite": {
+    "message": "当前页面不在统计范围"
+  },
+  "panelPaused": {
+    "message": "计时已暂停"
+  },
+  "panelContinuous": {
+    "message": "已连续使用 $TIME$",
+    "description": "悬停面板-连续使用提示",
+    "placeholders": {
+      "TIME": {
+        "content": "$1"
+      }
+    }
+  },
+  "panelRounds": {
+    "message": "今日已完成 $ROUNDS$ 轮（专注 $MIN$ 分钟）",
+    "description": "悬停面板-番茄轮次",
+    "placeholders": {
+      "ROUNDS": {
+        "content": "$1"
+      },
+      "MIN": {
+        "content": "$2"
+      }
+    }
+  },
+  "panelBlocks": {
+    "message": "今日已拦截 $COUNT$ 次访问",
+    "description": "悬停面板-拦截次数",
+    "placeholders": {
+      "COUNT": {
+        "content": "$1"
+      }
+    }
+  },
+  "panelTop": {
+    "message": "今日榜首：$HOST$（$TIME$）",
+    "description": "悬停面板-今日榜首",
+    "placeholders": {
+      "HOST": {
+        "content": "$1"
+      },
+      "TIME": {
+        "content": "$2"
+      }
+    }
+  },
+  "panelNoRecords": {
+    "message": "今天还没有使用记录，开始浏览吧",
+    "description": "悬停面板-无记录"
+  },
+  "pomodoroFocusShort": {
+    "message": "专注",
+    "description": "弹窗番茄钟-专注时长短标签"
+  },
+  "pomodoroRoundsShort": {
+    "message": "轮次",
+    "description": "弹窗番茄钟-轮次短标签（0 为不限）"
+  },
+  "pomodoroSound": {
+    "message": "提示音",
+    "description": "番茄钟提示音开关标签"
+  },
+  "notifyPomodoroAllDoneTitle": {
+    "message": "全部轮次已完成",
+    "description": "完成全部轮次的通知标题"
+  },
+  "notifyPomodoroAllDoneBody": {
+    "message": "你已完成 $ROUNDS$ 轮番茄钟，好好休息吧。",
+    "description": "完成全部轮次的通知正文",
+    "placeholders": {
+      "ROUNDS": {
+        "content": "$1"
+      }
+    }
   }
 }

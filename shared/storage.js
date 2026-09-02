@@ -26,7 +26,9 @@
     notifications: {},
     tracking: { host: null, since: 0 },
     usage: { accumulatedMs: 0, lastStopAt: 0 },
-    pomodoroState: { phase: 'idle', remainingMs: 0, anchorAt: 0 },
+    pomodoroState: { phase: 'idle', remainingMs: 0, anchorAt: 0, completedRounds: 0 },
+    pomodoroToday: { date: '', rounds: 0, focusMs: 0 },
+    blocksToday: { date: '', count: 0 },
     settings: {
       limits: {},
       blacklist: [],
@@ -41,7 +43,7 @@
         clock: true
       },
       usageReminder: { enabled: false, minutes: 45 },
-      pomodoro: { enabled: true, focusMinutes: 25, breakMinutes: 5, whitelist: [] }
+      pomodoro: { enabled: true, focusMinutes: 25, breakMinutes: 5, rounds: 4, sound: true, whitelist: [] }
     },
     history: []
   };
@@ -72,8 +74,15 @@
     data.usage = data.usage && typeof data.usage === 'object' ? data.usage : { accumulatedMs: 0, lastStopAt: 0 };
     data.pomodoroState = data.pomodoroState && typeof data.pomodoroState === 'object'
       ? data.pomodoroState
-      : { phase: 'idle', remainingMs: 0, anchorAt: 0 };
+      : { phase: 'idle', remainingMs: 0, anchorAt: 0, completedRounds: 0 };
     data.pomodoroState.anchorAt = typeof data.pomodoroState.anchorAt === 'number' ? data.pomodoroState.anchorAt : 0;
+    data.pomodoroState.completedRounds = typeof data.pomodoroState.completedRounds === 'number' ? data.pomodoroState.completedRounds : 0;
+    data.pomodoroToday = data.pomodoroToday && typeof data.pomodoroToday === 'object'
+      ? data.pomodoroToday
+      : { date: '', rounds: 0, focusMs: 0 };
+    data.blocksToday = data.blocksToday && typeof data.blocksToday === 'object'
+      ? data.blocksToday
+      : { date: '', count: 0 };
     data.settings = Object.assign({}, base.settings, data.settings || {});
     const legacyPaused =
       typeof data.settings.pauseUntil === 'number' && data.settings.pauseUntil > Date.now();
@@ -86,7 +95,7 @@
       data.settings.countdown || {}
     );
     data.settings.pomodoro = Object.assign(
-      { enabled: true, focusMinutes: 25, breakMinutes: 5, whitelist: [] },
+      { enabled: true, focusMinutes: 25, breakMinutes: 5, rounds: 4, sound: true, whitelist: [] },
       data.settings.pomodoro || {}
     );
     data.settings.pomodoro.whitelist = Array.isArray(data.settings.pomodoro.whitelist)
@@ -133,6 +142,8 @@
     data.date = today;
     data.domains = {};
     data.notifications = {};
+    data.pomodoroToday = { date: today, rounds: 0, focusMs: 0 };
+    data.blocksToday = { date: today, count: 0 };
     return true;
   }
 

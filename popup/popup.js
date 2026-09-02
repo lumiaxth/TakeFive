@@ -110,6 +110,8 @@
     const btn = $('btnPomodoro');
     const p = data.settings.pomodoro;
     const st = data.pomodoroState;
+    $('pomoFocusMin').value = p.focusMinutes || 25;
+    $('pomoRounds').value = p.rounds === undefined ? 4 : p.rounds;
     if (p.enabled) {
       if (st.phase === 'idle') {
         info.textContent = '\uD83C\uDF45 ' + t('pomodoroReady');
@@ -286,6 +288,30 @@
       await send({ type: 'STOP_POMODORO' });
     }
     await refresh();
+  });
+
+  // inline pomodoro settings (focus minutes + round count), applied immediately
+  async function applyPomodoroSettings() {
+    if (!data) return;
+    const focus = Math.max(1, Math.min(180, Math.floor(Number($('pomoFocusMin').value) || 25)));
+    const rounds = Math.max(0, Math.min(99, Math.floor(Number($('pomoRounds').value) || 0)));
+    $('pomoFocusMin').value = focus;
+    $('pomoRounds').value = rounds;
+    await send({
+      type: 'SET_POMODORO',
+      enabled: true,
+      focusMinutes: focus,
+      breakMinutes: (data.settings.pomodoro && data.settings.pomodoro.breakMinutes) || 5,
+      rounds
+    });
+  }
+
+  $('pomoFocusMin').addEventListener('change', () => {
+    applyPomodoroSettings().then(() => refresh());
+  });
+
+  $('pomoRounds').addEventListener('change', () => {
+    applyPomodoroSettings().then(() => refresh());
   });
 
   $('btnSettings').addEventListener('click', () => {

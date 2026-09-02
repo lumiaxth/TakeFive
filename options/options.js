@@ -58,7 +58,6 @@
     renderAppearance();
     renderCountdown();
     renderUsageReminder();
-    renderUsageReminder();
     renderPomodoro();
     renderLimits();
     renderBlacklist();
@@ -89,6 +88,7 @@
     $('pomodoroEnabled').checked = !!p.enabled;
     $('pomodoroFocusMinutes').value = p.focusMinutes || 25;
     $('pomodoroBreakMinutes').value = p.breakMinutes || 5;
+    $('pomodoroSound').checked = p.sound !== false;
 
     const st = data.pomodoroState;
     if (p.enabled) {
@@ -301,7 +301,9 @@
       type: 'SET_POMODORO',
       enabled: $('pomodoroEnabled').checked,
       focusMinutes: focus,
-      breakMinutes: brk
+      breakMinutes: brk,
+      rounds: data.settings.pomodoro.rounds || 0,
+      sound: $('pomodoroSound').checked
     });
     await refresh();
   });

@@ -648,5 +648,88 @@
   "floatingClock": {
     "message": "Enable floating clock",
     "description": "Floating clock toggle label"
+  },
+  "panelToday": {
+    "message": "Today"
+  },
+  "panelCurrentSite": {
+    "message": "Current site"
+  },
+  "panelNoSite": {
+    "message": "This page is not tracked"
+  },
+  "panelPaused": {
+    "message": "Tracking paused"
+  },
+  "panelContinuous": {
+    "message": "Continuous for $TIME$",
+    "description": "Hover panel - continuous use",
+    "placeholders": {
+      "TIME": {
+        "content": "$1"
+      }
+    }
+  },
+  "panelRounds": {
+    "message": "$ROUNDS$ rounds done today (focus $MIN$ min)",
+    "description": "Hover panel - pomodoro rounds",
+    "placeholders": {
+      "ROUNDS": {
+        "content": "$1"
+      },
+      "MIN": {
+        "content": "$2"
+      }
+    }
+  },
+  "panelBlocks": {
+    "message": "$COUNT$ visits blocked today",
+    "description": "Hover panel - blocks",
+    "placeholders": {
+      "COUNT": {
+        "content": "$1"
+      }
+    }
+  },
+  "panelTop": {
+    "message": "Today's top: $HOST$ ($TIME$)",
+    "description": "Hover panel - top site",
+    "placeholders": {
+      "HOST": {
+        "content": "$1"
+      },
+      "TIME": {
+        "content": "$2"
+      }
+    }
+  },
+  "panelNoRecords": {
+    "message": "No records yet — start browsing",
+    "description": "Hover panel - no records"
+  },
+  "pomodoroFocusShort": {
+    "message": "Focus",
+    "description": "Popup Pomodoro - focus minutes label"
+  },
+  "pomodoroRoundsShort": {
+    "message": "Rounds",
+    "description": "Popup Pomodoro - rounds label (0 = unlimited)"
+  },
+  "pomodoroSound": {
+    "message": "Sound",
+    "description": "Pomodoro sound toggle label"
+  },
+  "notifyPomodoroAllDoneTitle": {
+    "message": "All rounds completed",
+    "description": "Notification title when all rounds finish"
+  },
+  "notifyPomodoroAllDoneBody": {
+    "message": "You completed $ROUNDS$ pomodoro rounds. Take a good rest.",
+    "description": "Notification body when all rounds finish",
+    "placeholders": {
+      "ROUNDS": {
+        "content": "$1"
+      }
+    }
   }
 }
