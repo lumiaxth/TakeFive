@@ -668,13 +668,13 @@
     }
   },
   "panelRounds": {
-    "message": "$ROUNDS$ rounds · $MIN$ min",
+    "message": "$ROUNDS$ rounds · focus $TIME$",
     "description": "Hover panel - pomodoro rounds",
     "placeholders": {
       "ROUNDS": {
         "content": "$1"
       },
-      "MIN": {
+      "TIME": {
         "content": "$2"
       }
     }

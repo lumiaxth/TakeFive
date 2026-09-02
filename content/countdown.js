@@ -78,6 +78,25 @@
     return h > 0 ? h + 'h ' + rm + 'm' : rm + 'm';
   }
 
+  function uiIsZh() {
+    try {
+      return (chrome.i18n.getUILanguage() || '').indexOf('zh') === 0;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // unified panel time format: "h时m分钟" in zh, "Xh Ym" in en; hours omitted under 1 hour
+  function fmtTime(min) {
+    const m = Math.max(0, Math.floor(min));
+    const h = Math.floor(m / 60);
+    const rm = m % 60;
+    if (uiIsZh()) {
+      return h > 0 ? h + '时' + rm + '分钟' : rm + '分钟';
+    }
+    return h > 0 ? h + 'h ' + rm + 'm' : rm + 'm';
+  }
+
   function truncHost(h) {
     return h.length > 18 ? h.slice(0, 15) + '\u2026' : h;
   }
@@ -86,25 +105,25 @@
     const info = state && state.info;
     if (!info) return [];
     const lines = [];
-    lines.push({ icon: '\uD83D\uDCC5', text: t('panelToday') + ' ' + fmtMinutes(info.totalMs / 60000) });
+    lines.push({ icon: '\uD83D\uDCC5', text: t('panelToday') + ' ' + fmtTime(info.totalMs / 60000) });
     if (info.siteHost) {
-      lines.push({ icon: '\uD83C\uDF10', text: truncHost(info.siteHost) + ' \u00B7 ' + fmtMinutes(info.siteMs / 60000) });
+      lines.push({ icon: '\uD83C\uDF10', text: truncHost(info.siteHost) + ' \u00B7 ' + fmtTime(info.siteMs / 60000) });
     } else {
       lines.push({ icon: '\uD83C\uDF10', text: t('panelNoSite') });
     }
     if (info.paused) {
       lines.push({ icon: '\u23F8\uFE0F', text: t('panelPaused') });
     } else if (info.continuousTargetMin > 0 && info.continuousMs >= (info.continuousTargetMin / 2) * 60000) {
-      lines.push({ icon: '\u23F0', text: t('panelContinuous', [fmtMinutes(info.continuousMs / 60000)]) });
+      lines.push({ icon: '\u23F0', text: t('panelContinuous', [fmtTime(info.continuousMs / 60000)]) });
     } else if (info.pomodoroRounds > 0) {
       lines.push({
         icon: '\uD83C\uDF45',
-        text: t('panelRounds', [String(info.pomodoroRounds), String(Math.round(info.pomodoroFocusMin))])
+        text: t('panelRounds', [String(info.pomodoroRounds), fmtTime(info.pomodoroFocusMin / 60000)])
       });
     } else if (info.blocks > 0) {
       lines.push({ icon: '\uD83D\uDEAB', text: t('panelBlocks', [String(info.blocks)]) });
     } else if (info.topHost) {
-      lines.push({ icon: '\uD83C\uDFC6', text: truncHost(info.topHost) + ' \u00B7 ' + fmtMinutes(info.topMs / 60000) });
+      lines.push({ icon: '\uD83C\uDFC6', text: truncHost(info.topHost) + ' \u00B7 ' + fmtTime(info.topMs / 60000) });
     } else {
       lines.push({ icon: '\uD83D\uDC4B', text: t('panelNoRecords') });
     }

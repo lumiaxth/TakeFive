@@ -668,13 +668,13 @@
     }
   },
   "panelRounds": {
-    "message": "已完成 $ROUNDS$ 轮 · $MIN$min",
+    "message": "已完成 $ROUNDS$ 轮 · 专注 $TIME$",
     "description": "悬停面板-番茄轮次",
     "placeholders": {
       "ROUNDS": {
         "content": "$1"
       },
-      "MIN": {
+      "TIME": {
         "content": "$2"
       }
     }

@@ -75,20 +75,24 @@
         <button id="btnPomodoro" class="btn small" type="button" data-i18n="pomodoroStartFocus"></button>
       </div>
       <div class="pomodoro-line settings">
-        <span class="plabel" data-i18n="pomodoroFocusName"></span>
-        <span class="stepper">
-          <button type="button" data-step="-1" data-field="focus">&#8722;</button>
-          <input id="pomoFocusMin" type="text" readonly value="25" />
-          <button type="button" data-step="1" data-field="focus">&#65291;</button>
+        <span class="pgroup">
+          <span class="plabel" data-i18n="pomodoroFocusName"></span>
+          <span class="stepper">
+            <button type="button" data-step="-1" data-field="focus">&#8722;</button>
+            <input id="pomoFocusMin" type="text" readonly value="25" />
+            <button type="button" data-step="1" data-field="focus">&#65291;</button>
+          </span>
+          <span class="plabel" data-i18n="minutesUnit"></span>
         </span>
-        <span class="plabel" data-i18n="minutesUnit"></span>
-        <span class="plabel" data-i18n="pomodoroRoundsName"></span>
-        <span class="stepper">
-          <button type="button" data-step="-1" data-field="rounds">&#8722;</button>
-          <input id="pomoRounds" type="text" readonly value="4" />
-          <button type="button" data-step="1" data-field="rounds">&#65291;</button>
+        <span class="pgroup">
+          <span class="plabel" data-i18n="pomodoroRoundsName"></span>
+          <span class="stepper">
+            <button type="button" data-step="-1" data-field="rounds">&#8722;</button>
+            <input id="pomoRounds" type="text" readonly value="4" />
+            <button type="button" data-step="1" data-field="rounds">&#65291;</button>
+          </span>
+          <span class="plabel" data-i18n="pomodoroRoundsUnit"></span>
         </span>
-        <span class="plabel" data-i18n="pomodoroRoundsUnit"></span>
       </div>
     </div>
 

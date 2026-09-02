@@ -150,7 +150,12 @@ header {
 
 .pomodoro-bar .pomodoro-line.settings {
   font-weight: 500;
-  justify-content: flex-start;
+  justify-content: space-between;
+}
+
+.pomodoro-bar .pgroup {
+  display: flex;
+  align-items: center;
   gap: 4px;
 }
 
