@@ -78,13 +78,17 @@
     return h > 0 ? h + 'h ' + rm + 'm' : rm + 'm';
   }
 
+  function truncHost(h) {
+    return h.length > 18 ? h.slice(0, 15) + '\u2026' : h;
+  }
+
   function buildInfoLines() {
     const info = state && state.info;
     if (!info) return [];
     const lines = [];
     lines.push({ icon: '\uD83D\uDCC5', text: t('panelToday') + ' ' + fmtMinutes(info.totalMs / 60000) });
     if (info.siteHost) {
-      lines.push({ icon: '\uD83C\uDF10', text: t('panelCurrentSite') + ' ' + info.siteHost + ' \u00B7 ' + fmtMinutes(info.siteMs / 60000) });
+      lines.push({ icon: '\uD83C\uDF10', text: truncHost(info.siteHost) + ' \u00B7 ' + fmtMinutes(info.siteMs / 60000) });
     } else {
       lines.push({ icon: '\uD83C\uDF10', text: t('panelNoSite') });
     }
@@ -93,13 +97,16 @@
     } else if (info.continuousTargetMin > 0 && info.continuousMs >= (info.continuousTargetMin / 2) * 60000) {
       lines.push({ icon: '\u23F0', text: t('panelContinuous', [fmtMinutes(info.continuousMs / 60000)]) });
     } else if (info.pomodoroRounds > 0) {
-      lines.push({ icon: '\uD83C\uDF45', text: t('panelRounds', [String(info.pomodoroRounds), String(Math.round(info.pomodoroFocusMin))]) });
+      lines.push({
+        icon: '\uD83C\uDF45',
+        text: t('panelRounds', [String(info.pomodoroRounds), String(Math.round(info.pomodoroFocusMin))])
+      });
     } else if (info.blocks > 0) {
       lines.push({ icon: '\uD83D\uDEAB', text: t('panelBlocks', [String(info.blocks)]) });
     } else if (info.topHost) {
-      lines.push({ icon: '\uD83D\uDD25', text: t('panelTop', [info.topHost, fmtMinutes(info.topMs / 60000)]) });
+      lines.push({ icon: '\uD83C\uDFC6', text: truncHost(info.topHost) + ' \u00B7 ' + fmtMinutes(info.topMs / 60000) });
     } else {
-      lines.push({ icon: '\uD83C\uDF31', text: t('panelNoRecords') });
+      lines.push({ icon: '\uD83D\uDC4B', text: t('panelNoRecords') });
     }
     return lines;
   }

@@ -104,18 +104,25 @@
     return h > 0 ? h + ':' + mm + ':' + ss : mm + ':' + ss;
   }
 
+  const FOCUS_STEPS = [5, 10, 15, 20, 25, 30, 45, 60];
+
+  function stepFocus(current, dir) {
+    if (FOCUS_STEPS.indexOf(current) !== -1) {
+      const idx = FOCUS_STEPS.indexOf(current) + dir;
+      return FOCUS_STEPS[Math.max(0, Math.min(FOCUS_STEPS.length - 1, idx))];
+    }
+    // current value is not a standard step: snap to the nearest step in the direction
+    const next = FOCUS_STEPS.filter((v) => (dir > 0 ? v > current : v < current));
+    if (!next.length) return dir > 0 ? FOCUS_STEPS[FOCUS_STEPS.length - 1] : FOCUS_STEPS[0];
+    return dir > 0 ? Math.min.apply(null, next) : Math.max.apply(null, next);
+  }
+
   function renderPomodoro() {
     const bar = $('pomodoroBar');
     const info = $('pomodoroInfo');
     const btn = $('btnPomodoro');
     const p = data.settings.pomodoro;
     const st = data.pomodoroState;
-    const focusInline = t('pomodoroFocusInline').split('$N$');
-    const roundsInline = t('pomodoroRoundsInline').split('$N$');
-    $('pomoFocusBefore').textContent = focusInline[0] || '';
-    $('pomoFocusAfter').textContent = focusInline[1] || '';
-    $('pomoRoundsBefore').textContent = roundsInline[0] || '';
-    $('pomoRoundsAfter').textContent = roundsInline[1] || '';
     $('pomoFocusMin').value = p.focusMinutes || 25;
     $('pomoRounds').value = p.rounds === undefined ? 4 : p.rounds;
     if (p.enabled) {
@@ -296,11 +303,11 @@
     await refresh();
   });
 
-  // inline pomodoro settings (focus minutes + round count), applied immediately
+  // pomodoro steppers: focus snaps to [5..60] steps, rounds 1..8, applied immediately
   async function applyPomodoroSettings() {
     if (!data) return;
-    const focus = Math.max(1, Math.min(180, Math.floor(Number($('pomoFocusMin').value) || 25)));
-    const rounds = Math.max(0, Math.min(99, Math.floor(Number($('pomoRounds').value) || 0)));
+    const focus = Math.max(5, Math.min(60, Math.floor(Number($('pomoFocusMin').value) || 25)));
+    const rounds = Math.max(1, Math.min(8, Math.floor(Number($('pomoRounds').value) || 4)));
     $('pomoFocusMin').value = focus;
     $('pomoRounds').value = rounds;
     await send({
@@ -310,14 +317,22 @@
       breakMinutes: (data.settings.pomodoro && data.settings.pomodoro.breakMinutes) || 5,
       rounds
     });
+    await refresh();
   }
 
-  $('pomoFocusMin').addEventListener('change', () => {
-    applyPomodoroSettings().then(() => refresh());
-  });
-
-  $('pomoRounds').addEventListener('change', () => {
-    applyPomodoroSettings().then(() => refresh());
+  document.querySelectorAll('.pomodoro-bar .stepper button').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const dir = Number(btn.dataset.step);
+      const field = btn.dataset.field;
+      const input = field === 'focus' ? $('pomoFocusMin') : $('pomoRounds');
+      if (field === 'focus') {
+        input.value = stepFocus(Math.floor(Number(input.value) || 25), dir);
+      } else {
+        input.value = Math.max(1, Math.min(8, (Math.floor(Number(input.value) || 4) + dir)));
+      }
+      await applyPomodoroSettings();
+      await refresh();
+    });
   });
 
   $('btnSettings').addEventListener('click', () => {

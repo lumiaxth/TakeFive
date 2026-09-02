@@ -652,9 +652,6 @@
   "panelToday": {
     "message": "Today"
   },
-  "panelCurrentSite": {
-    "message": "Current site"
-  },
   "panelNoSite": {
     "message": "This page is not tracked"
   },
@@ -671,7 +668,7 @@
     }
   },
   "panelRounds": {
-    "message": "$ROUNDS$ rounds done today (focus $MIN$ min)",
+    "message": "$ROUNDS$ rounds · $MIN$ min",
     "description": "Hover panel - pomodoro rounds",
     "placeholders": {
       "ROUNDS": {
@@ -683,7 +680,7 @@
     }
   },
   "panelBlocks": {
-    "message": "$COUNT$ visits blocked today",
+    "message": "Blocked $COUNT$×",
     "description": "Hover panel - blocks",
     "placeholders": {
       "COUNT": {
@@ -692,7 +689,7 @@
     }
   },
   "panelTop": {
-    "message": "Today's top: $HOST$ ($TIME$)",
+    "message": "$HOST$ · $TIME$",
     "description": "Hover panel - top site",
     "placeholders": {
       "HOST": {
@@ -704,16 +701,8 @@
     }
   },
   "panelNoRecords": {
-    "message": "No records yet — start browsing",
+    "message": "👋 Start browsing",
     "description": "Hover panel - no records"
-  },
-  "pomodoroFocusShort": {
-    "message": "Focus",
-    "description": "Popup Pomodoro - focus minutes label"
-  },
-  "pomodoroRoundsShort": {
-    "message": "Rounds",
-    "description": "Popup Pomodoro - rounds label (0 = unlimited)"
   },
   "pomodoroSound": {
     "message": "Sound",
@@ -732,22 +721,16 @@
       }
     }
   },
-  "pomodoroFocusInline": {
-    "message": "Focus ($N$ min)",
-    "description": "Popup Pomodoro - inline focus minutes setting",
-    "placeholders": {
-      "N": {
-        "content": "$1"
-      }
-    }
+  "pomodoroFocusName": {
+    "message": "Focus",
+    "description": "Popup Pomodoro - focus duration name"
   },
-  "pomodoroRoundsInline": {
-    "message": "Rounds ($N$)",
-    "description": "Popup Pomodoro - inline round count setting",
-    "placeholders": {
-      "N": {
-        "content": "$1"
-      }
-    }
+  "pomodoroRoundsName": {
+    "message": "Rounds",
+    "description": "Popup Pomodoro - round count name"
+  },
+  "pomodoroRoundsUnit": {
+    "message": "rounds",
+    "description": "Popup Pomodoro - rounds unit"
   }
 }

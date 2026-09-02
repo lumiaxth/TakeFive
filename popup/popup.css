@@ -150,6 +150,50 @@ header {
 
 .pomodoro-bar .pomodoro-line.settings {
   font-weight: 500;
+  justify-content: flex-start;
+}
+
+.pomodoro-bar .plabel {
+  white-space: nowrap;
+}
+
+.pomodoro-bar .stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.pomodoro-bar .stepper button {
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--card);
+  color: var(--green-dark);
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pomodoro-bar .stepper button:hover {
+  background: var(--hover);
+}
+
+.pomodoro-bar .stepper input {
+  width: 30px;
+  padding: 2px 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+  cursor: default;
+  font-variant-numeric: tabular-nums;
 }
 
 .pomodoro-bar label {
