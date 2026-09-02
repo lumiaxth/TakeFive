@@ -110,6 +110,12 @@
     const btn = $('btnPomodoro');
     const p = data.settings.pomodoro;
     const st = data.pomodoroState;
+    const focusInline = t('pomodoroFocusInline').split('$N$');
+    const roundsInline = t('pomodoroRoundsInline').split('$N$');
+    $('pomoFocusBefore').textContent = focusInline[0] || '';
+    $('pomoFocusAfter').textContent = focusInline[1] || '';
+    $('pomoRoundsBefore').textContent = roundsInline[0] || '';
+    $('pomoRoundsAfter').textContent = roundsInline[1] || '';
     $('pomoFocusMin').value = p.focusMinutes || 25;
     $('pomoRounds').value = p.rounds === undefined ? 4 : p.rounds;
     if (p.enabled) {

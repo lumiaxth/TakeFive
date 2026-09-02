@@ -731,5 +731,23 @@
         "content": "$1"
       }
     }
+  },
+  "pomodoroFocusInline": {
+    "message": "Focus ($N$ min)",
+    "description": "Popup Pomodoro - inline focus minutes setting",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "pomodoroRoundsInline": {
+    "message": "Rounds ($N$)",
+    "description": "Popup Pomodoro - inline round count setting",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
   }
 }

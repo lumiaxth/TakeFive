@@ -20,7 +20,9 @@
   let host = null;
   let shadow = null;
   let timer = null;
-  let state = null; // { chips, clock, paused, theme, position, size }
+  let state = null; // { chips, clock, paused, theme, position, size, info }
+  let panelVisible = false;
+  let hideTimer = null;
 
   function fmtCountdown(ms) {
     const totalSec = Math.max(0, Math.floor(ms / 1000));

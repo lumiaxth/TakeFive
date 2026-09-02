@@ -731,5 +731,23 @@
         "content": "$1"
       }
     }
+  },
+  "pomodoroFocusInline": {
+    "message": "专注时长（$N$ 分钟）",
+    "description": "弹窗番茄钟-专注时长内嵌设置",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
+  },
+  "pomodoroRoundsInline": {
+    "message": "循环（$N$ 轮）",
+    "description": "弹窗番茄钟-循环轮次内嵌设置",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      }
+    }
   }
 }
