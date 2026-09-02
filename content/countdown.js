@@ -276,7 +276,7 @@
       '.medium .chip{padding:8px 12px;font-size:14px;}' +
       '.large .chip{padding:12px 16px;font-size:17px;}' +
       '.large .chip .emoji{font-size:26px;}' +
-      '.info-panel{position:absolute;right:0;min-width:190px;max-width:240px;' +
+      '.info-panel{position:absolute;right:0;width:max-content;min-width:150px;max-width:260px;' +
       'display:flex;flex-direction:column;gap:6px;padding:12px 14px;border-radius:12px;' +
       'box-shadow:0 6px 20px rgba(0,0,0,.22);pointer-events:auto;' +
       'font-family:system-ui,-apple-system,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;}' +
