@@ -61,6 +61,8 @@
   function renderToday() {
     const todayTotal = HE.storage.totalForDomains(data.domains);
     $('todayTotal').textContent = fmt(todayTotal);
+    renderTodayInsight(todayTotal);
+    renderTodayPomodoro();
     const all = HE.storage.sortedDomains(data.domains);
     const list = todayExpanded ? all : all.slice(0, 5);
     $('todayList').innerHTML =
@@ -80,6 +82,39 @@
       more.hidden = true;
       more.textContent = '';
     }
+  }
+
+  // 今日 vs 昨日洞察：昨日无记录时给出提示，否则显示同比涨跌
+  function renderTodayInsight(todayTotal) {
+    const el = $('todayInsight');
+    const y = new Date();
+    y.setHours(0, 0, 0, 0);
+    y.setDate(y.getDate() - 1);
+    const yesterdayKey = HE.storage.getDateStr(y.getTime());
+    const entry = data.history.find((h) => h.date === yesterdayKey);
+    const yesterdayTotal = entry ? HE.storage.totalForDomains(entry.domains) : 0;
+    let text = '';
+    if (yesterdayTotal > 0 && todayTotal > 0) {
+      const pct = Math.round(((todayTotal - yesterdayTotal) / yesterdayTotal) * 100);
+      if (pct > 0) text = t('insightVsYesterdayMore', [String(pct)]);
+      else if (pct < 0) text = t('insightVsYesterdayLess', [String(-pct)]);
+      else text = t('insightFlat');
+    } else if (yesterdayTotal > 0 && todayTotal === 0) {
+      text = t('insightVsYesterdayLess', ['100']);
+    } else if (todayTotal > 0) {
+      text = t('insightNoYesterday');
+    }
+    el.textContent = text;
+    el.hidden = !text;
+  }
+
+  // 今日番茄钟成果：完成轮次与累计专注时长（无记录或文案缺失时隐藏）
+  function renderTodayPomodoro() {
+    const el = $('todayPomodoro');
+    const pt = data.pomodoroToday && data.pomodoroToday.date === data.date ? data.pomodoroToday : null;
+    const text = pt && pt.rounds > 0 ? t('todayPomodoroSummary', [String(pt.rounds), fmt(pt.focusMs)]) : '';
+    el.textContent = text;
+    el.hidden = !text;
   }
 
   function buildDays() {
@@ -105,6 +140,11 @@
     const totals = days.map((d) => d.total);
     const max = Math.max(1, ...totals);
     chartEl.textContent = '';
+
+    const weekTotal = totals.reduce((a, b) => a + b, 0);
+    const weekEl = $('weekInsight');
+    weekEl.textContent = weekTotal > 0 ? t('last7Total', [fmt(weekTotal)]) : '';
+    weekEl.hidden = !(weekTotal > 0);
 
     const grid = document.createElement('div');
     grid.className = 'chart-grid';

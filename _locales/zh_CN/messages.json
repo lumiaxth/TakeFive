@@ -11,6 +11,50 @@
     "message": "统计各网站使用时长，设置每日限额与黑名单，番茄钟专注计时，锁屏/睡眠自动暂停，助你科学上网、及时休息。",
     "description": "扩展描述"
   },
+  "welcomeTitle": {
+    "message": "歇会儿！👋",
+    "description": "欢迎页标题"
+  },
+  "welcomeSubtitle": {
+    "message": "花更多时间在重要的事上，别让网页偷走你的时间。",
+    "description": "欢迎页副标题"
+  },
+  "welcomeFeature1Title": {
+    "message": "时长统计",
+    "description": "欢迎页功能一标题"
+  },
+  "welcomeFeature1Body": {
+    "message": "自动记录每个网站的使用时长，近 7 天一目了然。",
+    "description": "欢迎页功能一说明"
+  },
+  "welcomeFeature2Title": {
+    "message": "限额与屏蔽",
+    "description": "欢迎页功能二标题"
+  },
+  "welcomeFeature2Body": {
+    "message": "为易上瘾的网站设置每日限额，或直接加入黑名单。",
+    "description": "欢迎页功能二说明"
+  },
+  "welcomeFeature3Title": {
+    "message": "番茄钟",
+    "description": "欢迎页功能三标题"
+  },
+  "welcomeFeature3Body": {
+    "message": "专注 25 分钟、休息 5 分钟，白名单网站不受限制。",
+    "description": "欢迎页功能三说明"
+  },
+  "welcomeOpenSettings": {
+    "message": "打开设置",
+    "description": "欢迎页跳转设置页按钮"
+  },
+  "welcomeStart": {
+    "message": "开始使用",
+    "description": "欢迎页关闭引导按钮"
+  },
+  "openWelcome": {
+    "message": "功能介绍",
+    "description": "设置页打开欢迎页的图标标题"
+  },
   "todayTotal": {
     "message": "今日",
     "description": "弹窗今日概览标题"
@@ -109,6 +153,10 @@
     "message": "暂停记录并继续",
     "description": "阻断页暂停计时并继续访问的按钮"
   },
+  "grantGrace": {
+    "message": "宽限 5 分钟",
+    "description": "限额阻断页的宽限放行按钮"
+  },
   "goBack": {
     "message": "返回",
     "description": "阻断页返回按钮"
@@ -190,7 +238,7 @@
     "description": "选项页图标角标分区标题"
   },
   "badgeHint": {
-    "message": "选择插件图标显示的内容。自动：开启番茄钟时显示剩余时长，否则普通网页显示当前域名时长，空白/系统页面显示今日总时长。",
+    "message": "选择插件图标显示的内容。自动：开启番茄钟时显示剩余时长，否则普通网页显示当前域名时长，空白/系统页面显示今日总时长。修改后立即生效。",
     "description": "图标角标分区的说明文字"
   },
   "badgeModeAuto": {
@@ -204,14 +252,6 @@
   "badgeModeDomain": {
     "message": "当前域名时长",
     "description": "角标模式选项"
-  },
-  "badgeModePomodoro": {
-    "message": "番茄钟剩余时长",
-    "description": "角标模式选项"
-  },
-  "saveBadgeMode": {
-    "message": "保存",
-    "description": "保存角标模式的按钮"
   },
   "currentPaused": {
     "message": "当前处于暂停状态，恢复后可继续计时。",
@@ -367,10 +407,6 @@
     "message": "提醒间隔（分钟）",
     "description": "提醒间隔输入标签"
   },
-  "saveUsageReminder": {
-    "message": "保存提醒设置",
-    "description": "保存连续使用提醒设置的按钮"
-  },
   "pomodoroSection": {
     "message": "🍅 番茄钟",
     "description": "选项页分区标题"
@@ -390,10 +426,6 @@
   "pomodoroBreakMinutes": {
     "message": "休息时长（分钟）",
     "description": "休息时长输入标签"
-  },
-  "savePomodoro": {
-    "message": "保存番茄钟设置",
-    "description": "保存番茄钟设置的按钮"
   },
   "pomodoroWhitelistSection": {
     "message": "番茄钟白名单",
@@ -465,6 +497,30 @@
       }
     }
   },
+  "pomodoroRoundProgress": {
+    "message": "第 $N$/$M$ 轮",
+    "description": "弹窗番茄钟运行时的轮次进度",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      },
+      "M": {
+        "content": "$2"
+      }
+    }
+  },
+  "todayPomodoroSummary": {
+    "message": "🍅 完成 $ROUNDS$ 轮番茄钟 · 专注 $TIME$",
+    "description": "数据页今日番茄钟成果",
+    "placeholders": {
+      "ROUNDS": {
+        "content": "$1"
+      },
+      "TIME": {
+        "content": "$2"
+      }
+    }
+  },
   "blockedTitleLimit": {
     "message": "今日额度已用完，歇会儿吧~",
     "description": "限额阻断页标题"
@@ -529,6 +585,41 @@
     "message": "日均",
     "description": "图表日均值标签（第一行）"
   },
+  "insightVsYesterdayMore": {
+    "message": "比昨日 +$PCT$%",
+    "description": "今日比昨日增长的洞察文案",
+    "placeholders": {
+      "PCT": {
+        "content": "$1"
+      }
+    }
+  },
+  "insightVsYesterdayLess": {
+    "message": "比昨日 -$PCT$%",
+    "description": "今日比昨日减少的洞察文案",
+    "placeholders": {
+      "PCT": {
+        "content": "$1"
+      }
+    }
+  },
+  "insightFlat": {
+    "message": "与昨日持平",
+    "description": "今日与昨日持平的洞察文案"
+  },
+  "insightNoYesterday": {
+    "message": "昨日无使用记录",
+    "description": "昨日没有数据时的洞察文案"
+  },
+  "last7Total": {
+    "message": "近 7 天合计 $TIME$",
+    "description": "近 7 天使用总时长",
+    "placeholders": {
+      "TIME": {
+        "content": "$1"
+      }
+    }
+  },
   "noDataForDay": {
     "message": "该日没有使用记录",
     "description": "无数据日期的详情提示"
@@ -560,10 +651,6 @@
   "themeDark": {
     "message": "深色",
     "description": "主题选项"
-  },
-  "saveTheme": {
-    "message": "保存主题",
-    "description": "保存主题按钮"
   },
   "countdownSection": {
     "message": "浮动倒计时",
@@ -625,10 +712,6 @@
     "message": "大",
     "description": "大小选项"
   },
-  "saveCountdown": {
-    "message": "保存倒计时设置",
-    "description": "保存倒计时设置按钮"
-  },
   "notifyPomodoroRoundOverTitle": {
     "message": "本轮番茄钟已结束",
     "description": "离开后休息结束不再开启新一轮的通知标题"
@@ -648,6 +731,10 @@
   "floatingClock": {
     "message": "启用浮动时钟",
     "description": "浮动时钟开关标签"
+  },
+  "hideFullscreenLabel": {
+    "message": "全屏时隐藏浮窗",
+    "description": "网页全屏时隐藏浮动倒计时/时钟的开关标签"
   },
   "panelToday": {
     "message": "今日"
@@ -703,10 +790,6 @@
   "panelNoRecords": {
     "message": "👋 开始浏览吧",
     "description": "悬停面板-无记录"
-  },
-  "pomodoroSound": {
-    "message": "提示音",
-    "description": "番茄钟提示音开关标签"
   },
   "notifyPomodoroAllDoneTitle": {
     "message": "全部轮次已完成",

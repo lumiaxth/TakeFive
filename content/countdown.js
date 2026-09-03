@@ -28,7 +28,7 @@
   let host = null;
   let shadow = null;
   let timer = null;
-  let state = null; // { chips, clock, paused, theme, position, size, info }
+  let state = null; // { chips, clock, paused, theme, position, size, info, hideFullscreen, anchorAt }
   let panelVisible = false;
   let hideTimer = null;
 
@@ -43,6 +43,13 @@
       return h + ':' + mm + ':' + ss;
     }
     return mm + ':' + ss;
+  }
+
+  // 锚点走秒：以最近一次推送时刻为基准换算剩余，避免 interval 累减漂移
+  function chipRemainingMs(c) {
+    const anchor = state.anchorAt || Date.now();
+    const elapsed = Math.max(0, Date.now() - anchor);
+    return Math.max(0, c.remainingMs - elapsed);
   }
 
   function fmtClock() {
@@ -152,7 +159,7 @@
       shadow.appendChild(style);
       bindHover();
     }
-    host.style.display = state && !document.hidden ? 'block' : 'none';
+    host.style.display = state && !document.hidden && !(state.hideFullscreen && document.fullscreenElement) ? 'block' : 'none';
     if (!state) return;
 
     const dark = state.theme === 'dark' || (state.theme === 'system' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
@@ -194,6 +201,14 @@
     }
     const dark = state.theme === 'dark' || (state.theme === 'system' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
     panel.className = 'info-panel ' + (dark ? 'dark' : 'light');
+    // 面板随位置水平对齐：左侧位置向右展开，右侧位置向左展开，避免溢出屏幕
+    if (state.position.indexOf('left') !== -1) {
+      panel.style.left = '0';
+      panel.style.right = 'auto';
+    } else {
+      panel.style.right = '0';
+      panel.style.left = 'auto';
+    }
     if (state.position.indexOf('bottom') === 0 || state.position.indexOf('top') === 0) {
       panel.style.top = state.position.indexOf('bottom') === 0 ? 'auto' : 'calc(100% + 10px)';
       panel.style.bottom = state.position.indexOf('bottom') === 0 ? 'calc(100% + 10px)' : 'auto';
@@ -230,12 +245,13 @@
   }
 
   function bindHover() {
+    // 悬停任意 chip 均可唤起统计面板（时钟关闭时番茄钟/站点 chip 仍是入口）
     shadow.addEventListener('mouseover', (e) => {
-      const chip = e.target.closest && e.target.closest('.chip[data-id="clock"]');
+      const chip = e.target.closest && e.target.closest('.chip');
       if (chip) showPanel();
     });
     shadow.addEventListener('mouseout', (e) => {
-      const chip = e.target.closest && e.target.closest('.chip[data-id="clock"]');
+      const chip = e.target.closest && e.target.closest('.chip');
       if (chip) hidePanelSoon();
     });
   }
@@ -243,7 +259,7 @@
   function chipHtml(c) {
     return (
       '<div class="chip" data-id="' + c.id + '"><span class="emoji">' + c.emoji + '</span>' +
-      '<span class="time">' + (c.id === 'clock' ? fmtClock() : fmtCountdown(c.remainingMs)) + '</span></div>'
+      '<span class="time">' + (c.id === 'clock' ? fmtClock() : fmtCountdown(chipRemainingMs(c))) + '</span></div>'
     );
   }
 
@@ -251,7 +267,7 @@
     if (!state) return;
     displayChips().forEach((c) => {
       const el = shadow.querySelector('.chip[data-id="' + c.id + '"] .time');
-      if (el) el.textContent = c.id === 'clock' ? fmtClock() : fmtCountdown(c.remainingMs);
+      if (el) el.textContent = c.id === 'clock' ? fmtClock() : fmtCountdown(chipRemainingMs(c));
     });
   }
 
@@ -260,11 +276,7 @@
     if (!state || !hasTickingChip()) return;
     timer = setInterval(() => {
       if (!state || !hasTickingChip()) return;
-      let changed = false;
-      (state.chips || []).forEach((c) => {
-        if (c.ticking && c.remainingMs > 0) { c.remainingMs -= 1000; changed = true; }
-      });
-      if (changed || state.clock) update();
+      update();
     }, 1000);
   }
 
@@ -280,6 +292,7 @@
 
   function apply(next) {
     state = next;
+    if (next) state.anchorAt = Date.now();
     if (!next) { render(); return; }
     render();
     if (hasTickingChip()) startTimer();
@@ -333,6 +346,38 @@
       } catch (e) { /* ignore */ }
     }
   });
+
+  // 设置变更（含主题）时实时拉取最新状态
+  try {
+    if (chrome.storage && chrome.storage.onChanged) {
+      chrome.storage.onChanged.addListener((changes, area) => {
+        if (area === 'local' && changes && changes.settings && state) {
+          try {
+            chrome.runtime.sendMessage({ type: 'COUNTDOWN_REQUEST' });
+          } catch (e) { /* ignore */ }
+        }
+      });
+    }
+  } catch (e) { /* ignore */ }
+
+  // 系统深浅色切换实时生效（仅跟随系统主题时）
+  try {
+    if (window.matchMedia) {
+      const mq = window.matchMedia('(prefers-color-scheme: dark)');
+      const onSchemeChange = () => {
+        if (state && state.theme === 'system') render();
+      };
+      if (mq.addEventListener) mq.addEventListener('change', onSchemeChange);
+      else if (mq.addListener) mq.addListener(onSchemeChange);
+    }
+  } catch (e) { /* ignore */ }
+
+  // 进入/退出网页全屏时按设置隐藏/恢复浮窗
+  try {
+    document.addEventListener('fullscreenchange', () => {
+      if (state && state.hideFullscreen) render();
+    });
+  } catch (e) { /* ignore */ }
 
   // initialize on injection so the widget appears without waiting for a push
   try {

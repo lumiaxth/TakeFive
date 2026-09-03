@@ -11,6 +11,50 @@
     "message": "Track time spent on websites, set daily limits, block distracting sites, and stay focused with a pomodoro timer. Auto-pauses when you lock your PC or it sleeps.",
     "description": "Extension description"
   },
+  "welcomeTitle": {
+    "message": "Welcome to TakeFive! 👋",
+    "description": "Welcome page title"
+  },
+  "welcomeSubtitle": {
+    "message": "Spend more time on what matters — don't let the web steal your hours.",
+    "description": "Welcome page subtitle"
+  },
+  "welcomeFeature1Title": {
+    "message": "Time tracking",
+    "description": "Welcome feature one title"
+  },
+  "welcomeFeature1Body": {
+    "message": "Automatically tracks time per website, with the last 7 days at a glance.",
+    "description": "Welcome feature one body"
+  },
+  "welcomeFeature2Title": {
+    "message": "Limits & blocking",
+    "description": "Welcome feature two title"
+  },
+  "welcomeFeature2Body": {
+    "message": "Set daily limits for distracting sites, or add them to the blacklist.",
+    "description": "Welcome feature two body"
+  },
+  "welcomeFeature3Title": {
+    "message": "Pomodoro",
+    "description": "Welcome feature three title"
+  },
+  "welcomeFeature3Body": {
+    "message": "Focus 25 minutes, break 5 — whitelisted sites stay available.",
+    "description": "Welcome feature three body"
+  },
+  "welcomeOpenSettings": {
+    "message": "Open settings",
+    "description": "Welcome page settings button"
+  },
+  "welcomeStart": {
+    "message": "Get started",
+    "description": "Welcome page dismiss button"
+  },
+  "openWelcome": {
+    "message": "Feature tour",
+    "description": "Welcome page entry icon title in settings"
+  },
   "todayTotal": {
     "message": "Today",
     "description": "Popup section header for today's usage"
@@ -109,9 +153,13 @@
     "message": "Pause tracking and continue",
     "description": "Button on blocked page to pause tracking and continue"
   },
+  "grantGrace": {
+    "message": "5-minute grace",
+    "description": "Grace-passthrough button on the limit blocked page"
+  },
   "goBack": {
     "message": "Go back",
-    "description": "Button to navigate back on blocked page"
+    "description": "Blocked page back button"
   },
   "optionsTitle": {
     "message": "TakeFive · Settings",
@@ -190,7 +238,7 @@
     "description": "Options section header for icon badge"
   },
   "badgeHint": {
-    "message": "Choose what the extension icon shows. Auto: pomodoro remaining while it runs, otherwise the current domain's usage, or today's total on blank/system pages.",
+    "message": "Choose what the extension icon shows. Auto: pomodoro remaining while it runs, otherwise the current domain's usage, or today's total on blank/system pages. Changes apply instantly.",
     "description": "Helper text for badge section"
   },
   "badgeModeAuto": {
@@ -204,14 +252,6 @@
   "badgeModeDomain": {
     "message": "Current domain",
     "description": "Badge mode option"
-  },
-  "badgeModePomodoro": {
-    "message": "Pomodoro remaining",
-    "description": "Badge mode option"
-  },
-  "saveBadgeMode": {
-    "message": "Save",
-    "description": "Button to save badge mode"
   },
   "currentPaused": {
     "message": "Tracking is currently paused. Resume to start tracking again.",
@@ -367,10 +407,6 @@
     "message": "Remind every (minutes)",
     "description": "Input label for reminder interval"
   },
-  "saveUsageReminder": {
-    "message": "Save reminder",
-    "description": "Button to save usage reminder settings"
-  },
   "pomodoroSection": {
     "message": "🍅 Pomodoro",
     "description": "Options section header"
@@ -390,10 +426,6 @@
   "pomodoroBreakMinutes": {
     "message": "Break (minutes)",
     "description": "Input label for break duration"
-  },
-  "savePomodoro": {
-    "message": "Save pomodoro",
-    "description": "Button to save pomodoro settings"
   },
   "pomodoroWhitelistSection": {
     "message": "Pomodoro whitelist",
@@ -457,11 +489,35 @@
     "description": "Pomodoro idle state"
   },
   "pomodoroRemaining": {
-    "message": "Left $TIME$",
+    "message": "$TIME$ left",
     "description": "Pomodoro countdown (to the second)",
     "placeholders": {
       "TIME": {
         "content": "$1"
+      }
+    }
+  },
+  "pomodoroRoundProgress": {
+    "message": "Round $N$ of $M$",
+    "description": "Round progress in the popup while the pomodoro runs",
+    "placeholders": {
+      "N": {
+        "content": "$1"
+      },
+      "M": {
+        "content": "$2"
+      }
+    }
+  },
+  "todayPomodoroSummary": {
+    "message": "🍅 $ROUNDS$ pomodoro rounds · $TIME$ focused",
+    "description": "Today's pomodoro summary on the dashboard",
+    "placeholders": {
+      "ROUNDS": {
+        "content": "$1"
+      },
+      "TIME": {
+        "content": "$2"
       }
     }
   },
@@ -526,8 +582,43 @@
     "description": "Chart module subtitle"
   },
   "chartAvg": {
-    "message": "Daily avg",
-    "description": "Chart daily-average label (first line)"
+    "message": "Avg/day",
+    "description": "Chart average label (first row)"
+  },
+  "insightVsYesterdayMore": {
+    "message": "Up $PCT$% vs yesterday",
+    "description": "Insight line when today exceeds yesterday",
+    "placeholders": {
+      "PCT": {
+        "content": "$1"
+      }
+    }
+  },
+  "insightVsYesterdayLess": {
+    "message": "Down $PCT$% vs yesterday",
+    "description": "Insight line when today is below yesterday",
+    "placeholders": {
+      "PCT": {
+        "content": "$1"
+      }
+    }
+  },
+  "insightFlat": {
+    "message": "Same as yesterday",
+    "description": "Insight line when today equals yesterday"
+  },
+  "insightNoYesterday": {
+    "message": "No data for yesterday",
+    "description": "Insight line when yesterday has no data"
+  },
+  "last7Total": {
+    "message": "Last 7 days total: $TIME$",
+    "description": "Total usage over the last 7 days",
+    "placeholders": {
+      "TIME": {
+        "content": "$1"
+      }
+    }
   },
   "noDataForDay": {
     "message": "No usage recorded on this day",
@@ -560,10 +651,6 @@
   "themeDark": {
     "message": "Dark",
     "description": "Theme option"
-  },
-  "saveTheme": {
-    "message": "Save theme",
-    "description": "Save theme button"
   },
   "countdownSection": {
     "message": "Floating countdown",
@@ -625,10 +712,6 @@
     "message": "Large",
     "description": "Size option"
   },
-  "saveCountdown": {
-    "message": "Save countdown",
-    "description": "Save countdown button"
-  },
   "notifyPomodoroRoundOverTitle": {
     "message": "This pomodoro round is over",
     "description": "Notification title when the round stops after being away"
@@ -648,6 +731,10 @@
   "floatingClock": {
     "message": "Enable floating clock",
     "description": "Floating clock toggle label"
+  },
+  "hideFullscreenLabel": {
+    "message": "Hide widget in fullscreen",
+    "description": "Toggle label for hiding the floating widget while a page is fullscreen"
   },
   "panelToday": {
     "message": "Today"
@@ -703,10 +790,6 @@
   "panelNoRecords": {
     "message": "Start browsing",
     "description": "Hover panel - no records"
-  },
-  "pomodoroSound": {
-    "message": "Sound",
-    "description": "Pomodoro sound toggle label"
   },
   "notifyPomodoroAllDoneTitle": {
     "message": "All rounds completed",

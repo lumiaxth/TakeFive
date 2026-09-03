@@ -78,6 +78,7 @@
     const cd = data.settings.countdown;
     $('countdownEnabled').checked = !!cd.enabled;
     $('floatingClockEnabled').checked = !!cd.clock;
+    $('hideFullscreen').checked = !!cd.hideFullscreen;
     $('countdownThreshold').value = cd.thresholdMin || 15;
     $('countdownPosition').value = cd.position || 'middle-right';
     $('countdownSize').value = cd.size || 'medium';
@@ -94,7 +95,6 @@
     $('pomodoroEnabled').checked = !!p.enabled;
     $('pomodoroFocusMinutes').value = p.focusMinutes || 25;
     $('pomodoroBreakMinutes').value = p.breakMinutes || 5;
-    $('pomodoroSound').checked = p.sound !== false;
 
     const st = data.pomodoroState;
     if (p.enabled) {
@@ -226,6 +226,10 @@
     location.href = chrome.runtime.getURL('dashboard/dashboard.html');
   });
 
+  $('btnWelcome').addEventListener('click', () => {
+    location.href = chrome.runtime.getURL('welcome/welcome.html');
+  });
+
   $('limitForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const host = HE.hostname.normalizeDomain($('limitDomain').value);
@@ -258,61 +262,68 @@
     await refresh();
   });
 
-  $('btnSaveBadgeMode').addEventListener('click', async () => {
-    await send({ type: 'SET_BADGE_MODE', mode: $('badgeMode').value });
-    await refresh();
-  });
-
-  $('btnSaveTheme').addEventListener('click', async () => {
-    await send({ type: 'SET_THEME', theme: $('themeMode').value });
-    HE.theme.apply($('themeMode').value);
-    await refresh();
-  });
-
-  $('btnSaveCountdown').addEventListener('click', async () => {
+  // 即改即存：字段变更直接保存，无需单独的保存按钮
+  function saveCountdown() {
     const threshold = Number($('countdownThreshold').value);
     if (!threshold || threshold < 1) {
       alert(t('invalidNumber'));
       return;
     }
-    await send({
+    send({
       type: 'SET_COUNTDOWN',
       enabled: $('countdownEnabled').checked,
       clock: $('floatingClockEnabled').checked,
+      hideFullscreen: $('hideFullscreen').checked,
       thresholdMin: threshold,
       position: $('countdownPosition').value,
       size: $('countdownSize').value
     });
-    await refresh();
-  });
+  }
 
-  $('btnSaveUsageReminder').addEventListener('click', async () => {
+  function saveUsageReminder() {
     const minutes = Number($('usageReminderMinutes').value);
     if (!minutes || minutes < 1) {
       alert(t('invalidNumber'));
       return;
     }
-    await send({ type: 'SET_USAGE_REMINDER', enabled: $('usageReminderEnabled').checked, minutes });
-    await refresh();
-  });
+    send({ type: 'SET_USAGE_REMINDER', enabled: $('usageReminderEnabled').checked, minutes });
+  }
 
-  $('btnSavePomodoro').addEventListener('click', async () => {
+  function savePomodoro() {
     const focus = Number($('pomodoroFocusMinutes').value);
     const brk = Number($('pomodoroBreakMinutes').value);
     if (!focus || focus < 1 || !brk || brk < 1) {
       alert(t('invalidNumber'));
       return;
     }
-    await send({
+    send({
       type: 'SET_POMODORO',
       enabled: $('pomodoroEnabled').checked,
       focusMinutes: focus,
       breakMinutes: brk,
-      rounds: data.settings.pomodoro.rounds || 0,
-      sound: $('pomodoroSound').checked
+      rounds: data.settings.pomodoro.rounds || 0
     });
-    await refresh();
+  }
+
+  $('themeMode').addEventListener('change', async () => {
+    await send({ type: 'SET_THEME', theme: $('themeMode').value });
+    HE.theme.apply($('themeMode').value);
   });
+
+  $('badgeMode').addEventListener('change', () => {
+    send({ type: 'SET_BADGE_MODE', mode: $('badgeMode').value });
+  });
+
+  ['countdownEnabled', 'floatingClockEnabled', 'hideFullscreen', 'countdownPosition', 'countdownSize', 'countdownThreshold'].forEach((id) => {
+    $(id).addEventListener('change', saveCountdown);
+  });
+
+  $('usageReminderEnabled').addEventListener('change', saveUsageReminder);
+  $('usageReminderMinutes').addEventListener('change', saveUsageReminder);
+
+  $('pomodoroEnabled').addEventListener('change', savePomodoro);
+  $('pomodoroFocusMinutes').addEventListener('change', savePomodoro);
+  $('pomodoroBreakMinutes').addEventListener('change', savePomodoro);
 
   $('pomodoroWhitelistForm').addEventListener('submit', async (e) => {
     e.preventDefault();

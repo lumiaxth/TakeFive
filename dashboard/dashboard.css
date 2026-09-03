@@ -133,7 +133,13 @@ h1 {
   font-size: 28px;
   font-weight: 800;
   color: var(--green-dark);
-  margin-bottom: 12px;
+  margin-bottom: 4px;
+}
+
+.insight {
+  color: var(--muted);
+  font-size: 13px;
+  margin: 0 0 12px;
 }
 
 .day-rows {

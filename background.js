@@ -31,6 +31,7 @@ const MAX_COMMIT_DELTA_MS = 3 * 60 * 1000;
 const POMODORO_CLOSED_THRESHOLD_MS = 2 * 60 * 1000;
 const IDLE_DETECT_SECONDS = 60;
 const PAUSED_BADGE_CHAR = '\u2014';
+const GRACE_MS = 5 * 60 * 1000;
 
 async function queryIdleState() {
   try {
@@ -88,6 +89,16 @@ function limitReached(data, host) {
   return t >= limit.dailyMs;
 }
 
+// 域名是否处于限额宽限期（阻断页一键放行，当日有效）
+function graceActive(data, host) {
+  return !!(data.grace && data.grace[host] && data.grace[host] > Date.now());
+}
+
+// 限额阻断判定（唯一收口）：宽限期内放行；黑名单与番茄钟不适用宽限
+function limitBlocked(data, host) {
+  return limitReached(data, host) && !graceActive(data, host);
+}
+
 function pomodoroBlockReason(data, host) {
   const pomodoro = data.settings.pomodoro;
   if (!pomodoro.enabled || data.pomodoroState.phase !== 'focus') return null;
@@ -99,7 +110,7 @@ function pomodoroBlockReason(data, host) {
 function blockedReasonFor(data, host) {
   if (data.settings.blacklist.indexOf(host) !== -1) return 'blacklist';
   if (HE.storage.isPaused(data)) return null;
-  if (limitReached(data, host)) return 'limit';
+  if (limitBlocked(data, host)) return 'limit';
   return pomodoroBlockReason(data, host);
 }
 
@@ -147,7 +158,7 @@ async function enforceBlocks(data) {
   const extPrefix = chrome.runtime.getURL('');
   const blockAllReason = (host) => {
     if (data.settings.blacklist.indexOf(host) !== -1) return 'blacklist';
-    if (!paused && limitReached(data, host)) return 'limit';
+    if (!paused && limitBlocked(data, host)) return 'limit';
     return null;
   };
 
@@ -196,43 +207,6 @@ function notifyAndBanner(id, title, message, bannerText) {
   if (bannerText) showBanner(bannerText);
 }
 
-let soundDocCreating = false;
-// 确保 offscreen 音频页存在（幂等）
-async function ensureSoundDocument() {
-  try {
-    const contexts = await chrome.runtime.getContexts({
-      contextTypes: ['OFFSCREEN_DOCUMENT']
-    });
-    if (contexts && contexts.length > 0) return true;
-    if (soundDocCreating) return false;
-    soundDocCreating = true;
-    try {
-      await chrome.offscreen.createDocument({
-        url: 'offscreen/sound.html',
-        reasons: ['AUDIO_PLAYBACK'],
-        justification: 'Play pomodoro timer notification sounds'
-      });
-      return true;
-    } finally {
-      soundDocCreating = false;
-    }
-  } catch (e) {
-    return false;
-  }
-}
-
-// 触发 offscreen 提示音播放
-async function playSound(pattern) {
-  try {
-    const ok = await ensureSoundDocument();
-    if (!ok) return;
-    const p = chrome.runtime.sendMessage({ type: 'PLAY_SOUND', pattern });
-    if (p && p.catch) p.catch(() => {});
-  } catch (e) {
-    /* ignore */
-  }
-}
-
 // 角标时长 h:mm；≥10h 输出紧凑 10h（角标仅约 4 字符可见宽度）
 function fmtHm(ms) {
   const totalMin = Math.max(0, Math.floor((ms || 0) / 60000));
@@ -278,8 +252,6 @@ async function updateBadge() {
       text = host
         ? fmtHm((data.domains[host] && data.domains[host].timeMs) || 0)
         : fmtHm(total);
-    } else if (mode === 'pomodoro') {
-      text = pomodoroActive ? fmtHm(Math.max(0, data.pomodoroState.remainingMs)) : fmtHm(total);
     } else {
       // auto: pomodoro > current domain > total
       if (pomodoroActive) {
@@ -536,7 +508,6 @@ async function advancePomodoro(data) {
         st.phase = 'break';
         st.remainingMs = pomodoro.breakMinutes * 60000;
         if (await isUserActive()) {
-          playSound('focus');
           notifyAndBanner(
             'he-pomodoro-focus-end',
             chrome.i18n.getMessage('notifyPomodoroFocusTitle'),
@@ -558,7 +529,6 @@ async function advancePomodoro(data) {
               chrome.i18n.getMessage('notifyPomodoroAllDoneBody', [String(st.completedRounds)])
             );
             await HE.storage.save(data);
-            playSound('complete');
           } else {
             st.phase = 'focus';
             st.remainingMs = pomodoro.focusMinutes * 60000;
@@ -566,10 +536,9 @@ async function advancePomodoro(data) {
               'he-pomodoro-break-end',
               chrome.i18n.getMessage('notifyPomodoroBreakTitle'),
               chrome.i18n.getMessage('notifyPomodoroBreakBody', [String(pomodoro.focusMinutes)]),
-              chrome.i18n.getMessage('bannerPomodoroBreak', [String(pomodoro.focusMinutes)])
-            );
-            playSound('break');
-          }
+            chrome.i18n.getMessage('bannerPomodoroBreak', [String(pomodoro.focusMinutes)])
+          );
+        }
         } else {
           st.phase = 'idle';
           st.remainingMs = 0;
@@ -760,7 +729,17 @@ async function handleMessage(msg, sender) {
       const data = await HE.storage.load();
       if (host) delete data.settings.limits[host];
       if (host) delete data.notifications[host];
+      delete data.grace[host];
       await HE.storage.save(data);
+      return {};
+    }
+    case 'GRANT_LIMIT_GRACE': {
+      const host = HE.hostname.normalizeDomain(msg.host);
+      if (!host) return { error: 'invalidDomain' };
+      const data = await HE.storage.load();
+      data.grace[host] = Date.now() + GRACE_MS;
+      await HE.storage.save(data);
+      await enforceBlocks(data);
       return {};
     }
     case 'ADD_BLACKLIST': {
@@ -801,21 +780,12 @@ async function handleMessage(msg, sender) {
       data.settings.pomodoro.rounds = msg.rounds === undefined
         ? (data.settings.pomodoro.rounds || 0)
         : Math.max(0, Math.min(99, Math.floor(Number(msg.rounds) || 0)));
-      data.settings.pomodoro.sound = msg.sound === undefined ? data.settings.pomodoro.sound : !!msg.sound;
       if (!data.settings.pomodoro.enabled) {
         data.pomodoroState.phase = 'idle';
         data.pomodoroState.remainingMs = 0;
         data.pomodoroState.anchorAt = 0;
-      } else if (data.pomodoroState.phase !== 'idle') {
-        // keep a running timer, apply new durations to the current phase
-        if (data.pomodoroState.phase === 'focus') {
-          data.pomodoroState.remainingMs = data.settings.pomodoro.focusMinutes * 60000;
-        } else {
-          data.pomodoroState.remainingMs = data.settings.pomodoro.breakMinutes * 60000;
-        }
-        data.pomodoroState.anchorAt = Date.now();
       }
-      // if enabled and phase is idle, stay idle: the user starts focus from the popup
+      // 运行中调整不影响当前阶段倒计时：改动自下一阶段生效（advancePomodoro 跨阶段时读最新设置）
       await HE.storage.save(data);
       await updateBadge();
       await enforceBlocks(data);
@@ -863,6 +833,7 @@ async function handleMessage(msg, sender) {
       const sizes = ['small', 'medium', 'large'];
       data.settings.countdown.size = sizes.indexOf(msg.size) !== -1 ? msg.size : 'medium';
       data.settings.countdown.clock = !!msg.clock;
+      data.settings.countdown.hideFullscreen = !!msg.hideFullscreen;
       await HE.storage.save(data);
       await pushCountdown();
       return {};
@@ -890,7 +861,7 @@ async function handleMessage(msg, sender) {
       };
     }
     case 'SET_BADGE_MODE': {
-      const mode = ['auto', 'total', 'domain', 'pomodoro'].indexOf(msg.mode) !== -1 ? msg.mode : 'auto';
+      const mode = ['auto', 'total', 'domain'].indexOf(msg.mode) !== -1 ? msg.mode : 'auto';
       const data = await HE.storage.load();
       data.settings.badgeMode = mode;
       await HE.storage.save(data);
@@ -1054,7 +1025,7 @@ chrome.webNavigation.onBeforeNavigate.addListener((details) => {
 });
 
 chrome.notifications.onClicked.addListener((id) => {
-  chrome.tabs.create({ url: chrome.runtime.getURL('options/options.html') });
+  chrome.tabs.create({ url: chrome.runtime.getURL('dashboard/dashboard.html') });
   chrome.notifications.clear(id);
 });
 
@@ -1089,5 +1060,14 @@ function init() {
   });
 }
 
-chrome.runtime.onInstalled.addListener(init);
+chrome.runtime.onInstalled.addListener((details) => {
+  init();
+  if (details && details.reason === 'install') {
+    try {
+      chrome.tabs.create({ url: chrome.runtime.getURL('welcome/welcome.html') });
+    } catch (e) {
+      /* ignore */
+    }
+  }
+});
 init();

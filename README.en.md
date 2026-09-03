@@ -5,7 +5,7 @@ A Manifest V3 browser extension (Chrome / Edge) that tracks daily website usage,
 ## Features
 
 - **Usage Tracking** — Automatically records today's time per registered domain (e.g., `mail.google.com` and `www.google.com` are merged into `google.com`), archived daily with the last 7 days retained.
-- **Daily Limits** — Set a daily limit and reminder threshold for any domain. Get notified as you approach the limit, and have the site automatically blocked once reached (including already-open pages, which are redirected to a block page).
+- **Daily Limits** — Set a daily limit and reminder threshold for any domain. Get notified as you approach the limit, and have the site automatically blocked once reached (including already-open pages, which are redirected to a block page). The block page offers a one-click "5-minute grace" that lets you through while time keeps counting, then blocking resumes automatically.
 - **Site Blocking** — Add any domain to the blacklist to block access entirely, even when tracking is paused. Newly added blacklist entries and limits take effect immediately on already-open tabs.
 - **Pause Mechanism** — Manual toggle: when paused, the extension icon shows a red badge with a white dash, and tracking/limits are suspended (except blacklist). Resume anytime.
 - **Icon Badge** — The toolbar icon displays real-time duration (format `h:mm`, compact `10h` above 10 hours). In auto mode, it shows the current site's time on regular pages, today's total on blank/system tabs, and Pomodoro remaining during focus. Fixed display modes are also available in settings.
@@ -14,11 +14,22 @@ A Manifest V3 browser extension (Chrome / Edge) that tracks daily website usage,
 - **Floating Clock** — Shows the current time (HH:MM) reusing the floating widget style; hover it for an at-a-glance panel (today's total, current site, rounds/blocks and more); toggle on/off independently.
 - **Continuous-Use Reminder** — Get a desktop notification + page banner after continuous browsing reaches a set duration (default 45 minutes). Leaving the browser for more than 2 minutes resets the timer.
 - **Pomodoro** — Enable in Settings (default: on). Once enabled, the Pomodoro module appears at the bottom of the popup with two lines: the live countdown (to the second) and inline settings for focus minutes & round count (default 4 rounds, applied immediately). The Pomodoro runs by **wall-clock time** (it keeps counting while away, unfocused or paused); if a break ends while you are away it stops the round and notifies, and if the browser is closed it auto-stops and notifies on the next open. When all configured rounds finish it stops and notifies. During focus, non-whitelisted sites are blocked (only the active tab is intercepted). The whitelist supports manual addition or one-click import of currently open tabs.
-- **Sounds** — Short tones on focus end, break end and when all rounds complete (can be disabled in settings).
 - **Notifications** — Desktop notifications + page-top banners (via content script, auto-hide).
 - **Multi-language** — Automatically switches between Chinese and English based on browser system language.
 
 ## Changelog
+
+### 1.4.0
+#### New Features
+1. **Limit grace** — The limit block page now offers a "5-minute grace" button: a one-time passthrough while time keeps counting; blocking resumes automatically afterwards (no grace for blacklist or Pomodoro blocks).
+2. **Data insights** — The Dashboard today card shows "±x% vs yesterday", and the 7-day card shows the total for the last 7 days.
+3. **First-run welcome page** — Opens automatically after installation for a quick tour of tracking, limits and the Pomodoro; also reachable anytime from the top-right of Settings.
+#### Improvements & Fixes
+1. Settings are now **saved instantly**: theme, badge, floating countdown, continuous-use reminder and Pomodoro settings apply on change — no per-section Save buttons.
+2. **Removed Pomodoro sounds** — phase changes and completion are signaled by desktop notifications / page banners; the offscreen permission is no longer required.
+3. Badge settings simplified: removed the fixed "Pomodoro remaining" mode (auto mode already covers it).
+4. Floating countdown / hover panel polish: ticking is now anchor-based (no drift), theme changes (settings or OS) apply instantly, hovering any chip opens the stats panel, fixed the panel overflowing the screen edge on left positions, and added a "Hide widget in fullscreen" toggle (off by default).
+5. Pomodoro polish: adjusting durations/rounds while running **no longer resets the current countdown** (applies from the next phase), the popup shows round progress ("Round 1 of 4"), the dashboard shows today's pomodoro summary, and all notifications now open the dashboard when clicked.
 
 ### 1.3.0
 #### New Features
@@ -68,7 +79,7 @@ A Manifest V3 browser extension (Chrome / Edge) that tracks daily website usage,
 - **View Stats** — Click the toolbar icon to open the popup, showing today's total time and time per domain. Each domain row supports adding to blacklist or setting a limit (if not yet set). If Pomodoro is enabled, the Pomodoro module appears at the bottom — click "Start Focus" / "End Focus" to control it. The top‑right icons provide access to Settings and Dashboard.
 - **Dashboard** — Shows today's total time, domain breakdown, and a 7‑day bar chart. Tap any bar to view that day's total and the top 5 domains. Supports resetting today's data or clearing all data.
 - **Settings & Rules** — Right‑click the extension icon → "Options" (or via the Settings page). Manage daily limits, blacklist, badge display modes, continuous-use reminder, and Pomodoro (duration & whitelist; the whitelist supports one‑click import of currently open tabs).
-- **When Blocked** — Domains that hit their daily limit are redirected to a block page, where you can click "Pause Tracking & Continue" to bypass. Blacklist and Pomodoro (focus phase) block pages do not provide a bypass option; for Pomodoro whitelist blocks, you need to pause or adjust the whitelist via the popup.
+- **When Blocked** — Domains that hit their daily limit are redirected to a block page, where you can click "5-minute grace" for a temporary passthrough (time keeps counting) or "Pause Tracking & Continue" to bypass. Blacklist and Pomodoro (focus phase) block pages do not provide a bypass option; for Pomodoro whitelist blocks, you need to pause or adjust the whitelist via the popup.
 
 ## Project Structure
 
@@ -83,6 +94,7 @@ healthy_explorer/
 ├── options/            # Settings page: Appearance (theme/badge) / countdown / limits / blacklist / reminders / Pomodoro
 ├── dashboard/          # Dashboard page: today's overview + 7-day bar chart + details
 ├── blocked/            # Block page
+├── welcome/            # First-install welcome page
 ├── shared/
 │ ├── storage.js        # Data read/write, daily reset, limit evaluation
 │ ├── hostname.js       # Registered domain parsing (based on tldts)
@@ -126,6 +138,7 @@ healthy_explorer/
   "notifications": { "youtube.com": { "near": true, "reached": true } },
   "tracking": { "host": "google.com", "since": 1787232000000 },
   "usage": { "accumulatedMs": 2400000, "lastStopAt": 1787232000000 },
+  "grace": { "youtube.com": 1787235600000 },
   "pomodoroState": { "phase": "focus", "remainingMs": 900000, "anchorAt": 1787232000000 },
   "settings": {
     "limits": { "youtube.com": { "dailyMs": 3600000, "remindAtMs": 3000000 } },

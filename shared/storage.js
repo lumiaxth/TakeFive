@@ -35,6 +35,7 @@
     pomodoroState: { phase: 'idle', remainingMs: 0, anchorAt: 0, completedRounds: 0 },
     pomodoroToday: { date: '', rounds: 0, focusMs: 0 },
     blocksToday: { date: '', count: 0 },
+    grace: {},
     settings: {
       limits: {},
       blacklist: [],
@@ -46,10 +47,11 @@
         thresholdMin: 15,
         position: 'middle-right',
         size: 'medium',
-        clock: true
+        clock: true,
+        hideFullscreen: false
       },
       usageReminder: { enabled: false, minutes: 45 },
-      pomodoro: { enabled: true, focusMinutes: 25, breakMinutes: 5, rounds: 4, sound: true, whitelist: [] }
+      pomodoro: { enabled: true, focusMinutes: 25, breakMinutes: 5, rounds: 4, whitelist: [] }
     },
     history: []
   };
@@ -89,21 +91,27 @@
     data.blocksToday = data.blocksToday && typeof data.blocksToday === 'object'
       ? data.blocksToday
       : { date: '', count: 0 };
+    data.grace = data.grace && typeof data.grace === 'object' ? data.grace : {};
     data.settings = Object.assign({}, base.settings, data.settings || {});
     const legacyPaused =
       typeof data.settings.pauseUntil === 'number' && data.settings.pauseUntil > Date.now();
     data.settings.paused = !!data.settings.paused || legacyPaused;
     delete data.settings.pauseUntil;
     delete data.settings.breakMinutes;
+    if (data.settings.badgeMode === 'pomodoro') {
+      // 1.4.0 移除角标 pomodoro 固定档（auto 模式已含番茄剩余显示）
+      data.settings.badgeMode = 'auto';
+    }
     data.settings.usageReminder = Object.assign({ enabled: false, minutes: 45 }, data.settings.usageReminder || {});
     data.settings.countdown = Object.assign(
-      { enabled: true, thresholdMin: 15, position: 'middle-right', size: 'medium', clock: true },
+      { enabled: true, thresholdMin: 15, position: 'middle-right', size: 'medium', clock: true, hideFullscreen: false },
       data.settings.countdown || {}
     );
     data.settings.pomodoro = Object.assign(
-      { enabled: true, focusMinutes: 25, breakMinutes: 5, rounds: 4, sound: true, whitelist: [] },
+      { enabled: true, focusMinutes: 25, breakMinutes: 5, rounds: 4, whitelist: [] },
       data.settings.pomodoro || {}
     );
+    delete data.settings.pomodoro.sound; // 1.4.0 移除提示音，仅保留通知
     data.settings.pomodoro.whitelist = Array.isArray(data.settings.pomodoro.whitelist)
       ? data.settings.pomodoro.whitelist
       : [];
@@ -150,6 +158,7 @@
     data.notifications = {};
     data.pomodoroToday = { date: today, rounds: 0, focusMs: 0 };
     data.blocksToday = { date: today, count: 0 };
+    data.grace = {};
     return true;
   }
 

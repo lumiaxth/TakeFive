@@ -138,7 +138,15 @@
         bar.classList.remove('break');
       } else {
         const phase = st.phase === 'break' ? t('pomodoroPhaseBreak') : t('pomodoroPhaseFocus');
-        info.textContent = '\uD83C\uDF45 ' + phase + ' \u00B7 ' + t('pomodoroRemaining', [fmtCountdown(st.remainingMs)]);
+        let infoText = '\uD83C\uDF45 ' + phase + ' \u00B7 ' + t('pomodoroRemaining', [fmtCountdown(st.remainingMs)]);
+        // 轮次进度：专注期显示当前轮（已完成数 + 1），rounds 无效或文案缺失时不追加
+        const totalRounds = p.rounds || 0;
+        if (totalRounds > 0) {
+          const curRound = Math.min((st.completedRounds || 0) + 1, totalRounds);
+          const roundText = t('pomodoroRoundProgress', [String(curRound), String(totalRounds)]);
+          if (roundText) infoText += ' \u00B7 ' + roundText;
+        }
+        info.textContent = infoText;
         btn.textContent = t('pomodoroEndFocus');
         bar.classList.toggle('break', st.phase === 'break');
       }

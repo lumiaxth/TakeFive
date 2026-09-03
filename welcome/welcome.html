@@ -1,0 +1,69 @@
+<!--
+    TakeFive - Website Time Tracker & Blocker
+    Copyright (C) 2026  Xue Tianhao (GitHub: @lumiaxth)
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="welcome.css" />
+    <title data-i18n="extNameShort"></title>
+  </head>
+  <body>
+    <div class="card">
+      <img class="logo" src="../icons/icon128.png" alt="" />
+      <h1 data-i18n="welcomeTitle"></h1>
+      <p class="subtitle" data-i18n="welcomeSubtitle"></p>
+
+      <ul class="features">
+        <li>
+          <span class="f-icon">&#9201;&#65039;</span>
+          <span class="f-text">
+            <strong data-i18n="welcomeFeature1Title"></strong>
+            <span data-i18n="welcomeFeature1Body"></span>
+          </span>
+        </li>
+        <li>
+          <span class="f-icon">&#128274;</span>
+          <span class="f-text">
+            <strong data-i18n="welcomeFeature2Title"></strong>
+            <span data-i18n="welcomeFeature2Body"></span>
+          </span>
+        </li>
+        <li>
+          <span class="f-icon">&#127813;</span>
+          <span class="f-text">
+            <strong data-i18n="welcomeFeature3Title"></strong>
+            <span data-i18n="welcomeFeature3Body"></span>
+          </span>
+        </li>
+      </ul>
+
+      <div class="buttons">
+        <button id="btnOpenSettings" class="btn primary" type="button" data-i18n="welcomeOpenSettings"></button>
+        <button id="btnStart" class="btn" type="button" data-i18n="welcomeStart"></button>
+      </div>
+
+      <p class="brand" data-i18n="extNameShort"></p>
+    </div>
+
+    <script src="../shared/i18n.js"></script>
+    <script src="../shared/theme.js"></script>
+    <script src="welcome.js"></script>
+  </body>
+</html>

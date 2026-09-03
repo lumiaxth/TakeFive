@@ -34,10 +34,10 @@
   const url = params.get('url') || '';
 
   const CONFIG = {
-    limit: { emoji: '\uD83C\uDF3F', titleKey: 'blockedTitleLimit', bodyKey: 'blockedReasonLimit', showBreak: true },
-    blacklist: { emoji: '\uD83D\uDEAB', titleKey: 'blockedTitleBlacklist', bodyKey: 'blockedReasonBlacklist', showBreak: false },
-    pomodoro: { emoji: '\uD83C\uDF45', titleKey: 'blockedTitlePomodoro', bodyKey: 'blockedReasonPomodoro', showBreak: false },
-    generic: { emoji: '\u2615', titleKey: 'blockedTitleGeneric', bodyKey: 'blockedReasonGeneric', showBreak: true }
+    limit: { emoji: '\uD83C\uDF3F', titleKey: 'blockedTitleLimit', bodyKey: 'blockedReasonLimit', showBreak: true, showGrace: true },
+    blacklist: { emoji: '\uD83D\uDEAB', titleKey: 'blockedTitleBlacklist', bodyKey: 'blockedReasonBlacklist', showBreak: false, showGrace: false },
+    pomodoro: { emoji: '\uD83C\uDF45', titleKey: 'blockedTitlePomodoro', bodyKey: 'blockedReasonPomodoro', showBreak: false, showGrace: false },
+    generic: { emoji: '\u2615', titleKey: 'blockedTitleGeneric', bodyKey: 'blockedReasonGeneric', showBreak: true, showGrace: false }
   };
   const cfg = CONFIG[rawReason] || CONFIG.generic;
 
@@ -59,6 +59,7 @@
   const iconEl = document.getElementById('icon');
   const titleEl = document.getElementById('title');
   const reasonEl = document.getElementById('reason');
+  const btnGrace = document.getElementById('btnGrace');
   const btnBreak = document.getElementById('btnBreak');
   const btnBack = document.getElementById('btnBack');
 
@@ -66,6 +67,8 @@
   titleEl.textContent = t(cfg.titleKey);
   document.title = t(cfg.titleKey);
   btnBreak.hidden = !cfg.showBreak;
+  // 宽限放行需要可识别的目标域名，异常时隐藏
+  btnGrace.hidden = !cfg.showGrace || !domain;
 
   if (cfg.bodyKey === 'blockedReasonLimit' && domain) {
     HE.storage.load().then((data) => {
@@ -77,6 +80,15 @@
   } else {
     reasonEl.textContent = t('blockedReasonGeneric');
   }
+
+  btnGrace.addEventListener('click', async () => {
+    await chrome.runtime.sendMessage({ type: 'GRANT_LIMIT_GRACE', host: domain });
+    if (url && /^https?:/i.test(url)) {
+      location.href = url;
+    } else if (history.length > 1) {
+      history.back();
+    }
+  });
 
   btnBreak.addEventListener('click', async () => {
     await chrome.runtime.sendMessage({ type: 'PAUSE' });
