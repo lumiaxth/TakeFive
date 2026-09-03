@@ -15,6 +15,14 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+/*
+ * countdown.js — 浮动倒计时/时钟内容脚本。
+ * 接收 HE_COUNTDOWN / HE_COUNTDOWN_HIDE 渲染浮动模块：时钟 chip（🕐 HH:MM）、
+ * 番茄钟 chip（🍅/☕）与站点限额 chip（⏳）。支持 6 位置/3 大小/深浅主题、
+ * chip 级走秒（番茄钟恒走，站点按实际计数）、悬停时钟显示统计面板、
+ * 插件内页面自动过滤站点 chip、页面隐藏时自动隐藏。
+ */
+
 
 (function () {
   let host = null;

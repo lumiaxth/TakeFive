@@ -701,7 +701,7 @@
     }
   },
   "panelNoRecords": {
-    "message": "👋 Start browsing",
+    "message": "Start browsing",
     "description": "Hover panel - no records"
   },
   "pomodoroSound": {

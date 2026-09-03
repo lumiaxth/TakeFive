@@ -15,6 +15,12 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+/*
+ * theme.js — 主题解析与应用。
+ * settings.theme（system/light/dark）→ <html data-theme>；system 跟随
+ * prefers-color-scheme，并监听存储变化跨页面实时生效。
+ */
+
 
 (function () {
   const HE = (globalThis.HE = globalThis.HE || {});

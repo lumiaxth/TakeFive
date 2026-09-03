@@ -15,6 +15,12 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+/*
+ * storage.js — 存储模型与读写层（所有上下文共用）。
+ * DEFAULTS + mergeDefaults（默认值与旧数据迁移）、rolloverIfNeeded（跨天归档）、
+ * load/save（chrome.storage.local）与统计/格式化工具。结构详见 TECHNICAL.md §7。
+ */
+
 
 (function () {
   const HE = (globalThis.HE = globalThis.HE || {});

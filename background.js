@@ -15,6 +15,13 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+/*
+ * background.js — Service Worker 核心调度。
+ * 职责：前台计时结算与每日归档、限额/黑名单/番茄钟阻断、番茄钟墙钟推进、
+ *       浮动倒计时与时钟推送、深浅主题角标渲染、扩展消息路由。
+ * 架构与消息协议详见 TECHNICAL.md。
+ */
+
 
 importScripts('shared/tldts.min.js', 'shared/hostname.js', 'shared/storage.js');
 
@@ -36,6 +43,7 @@ async function queryIdleState() {
 const DEFAULT_ICONS = { 16: 'icons/icon16.png', 32: 'icons/icon32.png', 48: 'icons/icon48.png', 128: 'icons/icon128.png' };
 const TOMATO_ICONS = { 16: 'icons/tomato16.png', 32: 'icons/tomato32.png', 48: 'icons/tomato48.png', 128: 'icons/tomato128.png' };
 
+// 创建 30s 周期闹钟（旧内核回退 60s），驱动计时结算与状态推进
 function createTickAlarm() {
   try {
     chrome.alarms.create('he-tick', { periodInMinutes: 0.5 });
@@ -49,6 +57,7 @@ function createTickAlarm() {
 }
 
 let commitChain = Promise.resolve();
+// 串行队列：所有涉及存储读写的异步任务依次执行，避免并发交错
 function serialized(fn) {
   const p = commitChain.then(fn, fn);
   commitChain = p.catch(() => {});
@@ -71,6 +80,7 @@ function i18nUnits() {
   };
 }
 
+// 该域名今日是否已达每日限额
 function limitReached(data, host) {
   const limit = data.settings.limits[host];
   if (!limit || !limit.dailyMs) return false;
@@ -105,6 +115,7 @@ function blockedUrl(reason, host, url) {
   );
 }
 
+// 今日拦截计数 +1（跨天自动重置）
 async function countBlock() {
   try {
     const data = await HE.storage.load();
@@ -119,6 +130,7 @@ async function countBlock() {
   }
 }
 
+// 重定向标签页到阻断页并累计拦截数
 async function redirectTab(tabId, reason, host, url) {
   try {
     await chrome.tabs.update(tabId, { url: blockedUrl(reason, host, url) });
@@ -128,6 +140,7 @@ async function redirectTab(tabId, reason, host, url) {
   }
 }
 
+// 阻断扫描：活动标签页按全原因，后台标签页仅黑名单/限额
 async function enforceBlocks(data) {
   data = data || (await HE.storage.load());
   const paused = HE.storage.isPaused(data);
@@ -163,6 +176,7 @@ async function enforceBlocks(data) {
   }
 }
 
+// 向活动标签页投递页面顶部横幅
 async function showBanner(text) {
   if (!text || !state.activeTabId) return;
   try {
@@ -183,6 +197,7 @@ function notifyAndBanner(id, title, message, bannerText) {
 }
 
 let soundDocCreating = false;
+// 确保 offscreen 音频页存在（幂等）
 async function ensureSoundDocument() {
   try {
     const contexts = await chrome.runtime.getContexts({
@@ -206,6 +221,7 @@ async function ensureSoundDocument() {
   }
 }
 
+// 触发 offscreen 提示音播放
 async function playSound(pattern) {
   try {
     const ok = await ensureSoundDocument();
@@ -217,6 +233,7 @@ async function playSound(pattern) {
   }
 }
 
+// 角标时长 h:mm；≥10h 输出紧凑 10h（角标仅约 4 字符可见宽度）
 function fmtHm(ms) {
   const totalMin = Math.max(0, Math.floor((ms || 0) / 60000));
   const h = Math.floor(totalMin / 60);
@@ -226,6 +243,7 @@ function fmtHm(ms) {
   return h + ':' + (m < 10 ? '0' + m : m);
 }
 
+// 当前活动标签页域名：优先实时查询，回退内存态
 async function currentHost() {
   try {
     const tabs = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
@@ -238,6 +256,7 @@ async function currentHost() {
   return state.activeHost || null;
 }
 
+// 角标与图标渲染：暂停角标 / 按 badgeMode 显示时长 / 番茄运行时切换番茄图标
 async function updateBadge() {
   try {
     const data = await HE.storage.load();
@@ -280,6 +299,7 @@ async function updateBadge() {
   }
 }
 
+// 组装浮窗 chips：番茄钟（墙钟剩余，恒走秒）+ 站点限额（临近阈值，按实际计数）
 function computeCountdown(data, host, counting, paused) {
   const chips = [];
   const pomodoro = data.settings.pomodoro;
@@ -312,6 +332,7 @@ function computeCountdown(data, host, counting, paused) {
   return chips;
 }
 
+// 组装悬停面板 info 对象：今日总量/当前站点/连续使用/轮次/拦截/榜首
 function buildWidgetInfo(data, host) {
   const todayKey = HE.storage.getTodayKey();
   const pt = data.pomodoroToday && data.pomodoroToday.date === todayKey
@@ -337,6 +358,7 @@ function buildWidgetInfo(data, host) {
   };
 }
 
+// 双路投递：定向活动标签页（网页内容脚本）+ 广播（插件内页面）
 function sendCountdown(tabId, chips, theme, paused, position, size, ticking, clock, info) {
   let msg;
   if ((chips && chips.length) || clock) {
@@ -368,6 +390,7 @@ function sendCountdown(tabId, chips, theme, paused, position, size, ticking, clo
   } catch (e) { /* no receivers */ }
 }
 
+// 推送总入口：推进番茄钟 → 组装 chips/info → 广播
 async function pushCountdown() {
   try {
     const data = await HE.storage.load();
@@ -383,6 +406,7 @@ async function pushCountdown() {
   }
 }
 
+// 计时结算：累计前台停留到域名与连续使用，推进番茄钟，检查限额
 async function commitTime() {
   if (!state.activeHost || !state.counting) {
     state.sessionStart = Date.now();
@@ -432,6 +456,7 @@ async function commitTime() {
   }
 }
 
+// 限额通知（接近/达成，每站点每日一次）；返回是否首次达成
 async function checkLimits(data, host) {
   const limit = data.settings.limits[host];
   if (!limit) return false;
@@ -472,6 +497,7 @@ async function checkLimits(data, host) {
   return reachedFirstTime;
 }
 
+// 用户是否在场（系统 idle 60s 内有操作）
 async function isUserActive() {
   try {
     const state = await chrome.idle.queryState(60);
@@ -481,6 +507,7 @@ async function isUserActive() {
   }
 }
 
+// 番茄钟墙钟推进：按锚点推进，循环处理一次跨多阶段；离开时静默或停止本轮
 async function advancePomodoro(data) {
   const pomodoro = data.settings.pomodoro;
   const st = data.pomodoroState;
@@ -559,6 +586,7 @@ async function advancePomodoro(data) {
   return crossed;
 }
 
+// 浏览器关闭检测：锚点超阈值则停止番茄钟并通知「未完成」
 async function handleClosedPomodoro() {
   try {
     const data = await HE.storage.load();
@@ -581,6 +609,7 @@ async function handleClosedPomodoro() {
   }
 }
 
+// 开始/恢复计时会话：锁屏拒绝、连续使用重置、存储锚点恢复
 async function startSession(host) {
   if (state.activeHost === host && state.counting) return;
   if ((await queryIdleState()) === 'locked') {
@@ -620,6 +649,7 @@ async function startSession(host) {
   await HE.storage.save(data);
 }
 
+// 结束计时会话：清锚点、记录连续使用中断点
 async function stopSession() {
   if (!state.activeHost) {
     state.counting = false;
@@ -636,6 +666,7 @@ async function stopSession() {
   await pushCountdown();
 }
 
+// 将活动标签页同步为当前会话；失焦/不可统计页面时停止
 async function syncActiveTab() {
   try {
     const win = await chrome.windows.getLastFocused({ populate: false });
@@ -667,6 +698,7 @@ async function syncActiveTab() {
   }
 }
 
+// 手动暂停/恢复统计（番茄钟按墙钟不受影响）
 async function setPaused(paused) {
   await commitTime();
   state.counting = !paused && !!state.activeHost;
@@ -679,6 +711,7 @@ async function setPaused(paused) {
   await pushCountdown();
 }
 
+// 闹钟主循环：结算 → 锁屏检查 → 同步活动页 → 阻断 → 角标
 async function onTick() {
   await commitTime();
   if ((await queryIdleState()) === 'locked') {
@@ -690,6 +723,7 @@ async function onTick() {
   await pushCountdown();
 }
 
+// 消息路由：处理 UI 与内容脚本的全部消息类型（协议见 TECHNICAL.md §5）
 async function handleMessage(msg, sender) {
   switch (msg && msg.type) {
     case 'GET_DATA': {
@@ -1024,6 +1058,7 @@ chrome.notifications.onClicked.addListener((id) => {
   chrome.notifications.clear(id);
 });
 
+// 注册浮动倒计时内容脚本（覆盖已打开标签页，重复注册忽略）
 function registerCountdownScript() {
   try {
     chrome.scripting.registerContentScripts([
@@ -1040,6 +1075,7 @@ function registerCountdownScript() {
   }
 }
 
+// SW 启动初始化：闹钟、内容脚本注册、关闭检测、状态同步与推送
 function init() {
   createTickAlarm();
   registerCountdownScript();

@@ -15,6 +15,12 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+/*
+ * blocked.js — 阻断落地页逻辑。
+ * 按 reason（limit/blacklist/pomodoro/generic）渲染对应图标、标题、说明
+ * 与可用操作（限额场景提供「暂停并继续」）。
+ */
+
 
 (function () {
   HE.i18n.apply();

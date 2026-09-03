@@ -16,6 +16,9 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+// sound.js — 屏幕外音频播放页。
+// 接收 PLAY_SOUND 用 WebAudio 合成提示音（MV3 的 SW 无法直接发声，见 TECHNICAL.md §9）。
+
 let audioCtx = null;
 
 function getContext() {

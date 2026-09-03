@@ -15,6 +15,11 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+/*
+ * hostname.js — URL → 注册级域名解析。
+ * 基于 tldts 解析注册级域名；IPv4/IPv6 完整保留；非 http(s) 协议返回 null。
+ */
+
 
 (function () {
   const HE = (globalThis.HE = globalThis.HE || {});

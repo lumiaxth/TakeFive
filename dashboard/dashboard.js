@@ -15,6 +15,11 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+/*
+ * dashboard.js — 数据页（仪表盘）逻辑。
+ * 今日概览、近 7 天柱状图（点击柱子查看当日详情前五/更多）、数据清理。
+ */
+
 
 (function () {
   HE.i18n.apply();

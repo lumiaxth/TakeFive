@@ -15,6 +15,12 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+/*
+ * banner.js — 页面顶部横幅内容脚本。
+ * 接收 HE_BANNER 在页面顶部展示提醒横幅（8 秒自动隐藏，Shadow DOM 隔离，
+ * 深浅色跟随扩展主题设置）。
+ */
+
 
 (function () {
   let currentBanner = null;

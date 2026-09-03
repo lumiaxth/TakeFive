@@ -15,6 +15,12 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+/*
+ * i18n.js — 声明式多语言辅助。
+ * 将 data-i18n / data-i18n-title / data-i18n-placeholder 标记的元素
+ * 批量替换为 chrome.i18n 对应文案。
+ */
+
 
 (function () {
   const HE = (globalThis.HE = globalThis.HE || {});

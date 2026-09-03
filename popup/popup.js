@@ -15,6 +15,12 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+/*
+ * popup.js — 工具栏弹窗逻辑。
+ * 今日概览与域名列表（前 10 + 更多）、番茄钟模块（秒级倒计时 + 专注/轮次
+ * 步进设置）、暂停/恢复，以及设置/数据页入口。
+ */
+
 
 (function () {
   HE.i18n.apply();

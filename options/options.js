@@ -15,6 +15,12 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+/*
+ * options.js — 设置页逻辑。
+ * 外观（主题/角标）、浮动倒计时/时钟、连续使用提醒、番茄钟（时长/轮次/提示音/
+ * 白名单）、每日限额与黑名单的渲染与保存。
+ */
+
 
 (function () {
   HE.i18n.apply();
