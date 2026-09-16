@@ -149,21 +149,13 @@
       }
     }
   },
-  "breakFor": {
-    "message": "暂停记录并继续",
-    "description": "阻断页暂停计时并继续访问的按钮"
-  },
   "grantGrace": {
-    "message": "宽限 5 分钟",
+    "message": "继续使用5分钟",
     "description": "限额阻断页的宽限放行按钮"
   },
-  "openPomodoroWhitelist": {
-    "message": "前往白名单设置",
-    "description": "番茄钟阻断页跳转白名单设置的链接"
-  },
   "goBack": {
-    "message": "返回",
-    "description": "阻断页返回按钮"
+    "message": "关闭标签页",
+    "description": "阻断页关闭当前标签页的按钮"
   },
   "optionsTitle": {
     "message": "歇会儿 · 设置",
@@ -326,7 +318,7 @@
     }
   },
   "notifyLimitReachedBody": {
-    "message": "该域名今天已被屏蔽，休息一下，或使用暂停功能。",
+    "message": "该域名今天已被屏蔽，休息一下。",
     "description": "达到限额时的通知正文"
   },
   "notifyUsageTitle": {

@@ -89,14 +89,18 @@ function limitReached(data, host) {
   return t >= limit.dailyMs;
 }
 
-// 域名是否处于限额宽限期（阻断页一键放行，当日有效）
+// 域名是否已授权限额宽限（grace 存放超支额度 GRACE_MS，按实际前台计时消耗）
 function graceActive(data, host) {
-  return !!(data.grace && data.grace[host] && data.grace[host] > Date.now());
+  return !!(data.grace && data.grace[host]);
 }
 
-// 限额阻断判定（唯一收口）：宽限期内放行；黑名单与番茄钟不适用宽限
+// 限额阻断判定（唯一收口）：宽限期内按实际使用超支 < 5min 放行；黑名单与番茄钟不适用宽限
 function limitBlocked(data, host) {
-  return limitReached(data, host) && !graceActive(data, host);
+  if (!limitReached(data, host)) return false;
+  if (!graceActive(data, host)) return true;
+  const used = (data.domains[host] && data.domains[host].timeMs) || 0;
+  const limit = data.settings.limits[host];
+  return used - limit.dailyMs >= GRACE_MS;
 }
 
 function pomodoroBlockReason(data, host) {
@@ -290,7 +294,11 @@ function computeCountdown(data, host, counting, paused) {
     const limit = data.settings.limits[host];
     if (limit && limit.dailyMs > 0) {
       const used = (data.domains[host] && data.domains[host].timeMs) || 0;
-      const remaining = limit.dailyMs - used;
+      let remaining = limit.dailyMs - used;
+      // 宽限期内（已授权且额度未耗尽）：与正常限额剩余同一口径，按实际前台计时消耗
+      if (remaining <= 0 && graceActive(data, host)) {
+        remaining = GRACE_MS + remaining;
+      }
       if (remaining > 0 && remaining <= cd.thresholdMin * 60000) {
         chips.push({
           id: 'site',
@@ -737,7 +745,8 @@ async function handleMessage(msg, sender) {
       const host = HE.hostname.normalizeDomain(msg.host);
       if (!host) return { error: 'invalidDomain' };
       const data = await HE.storage.load();
-      data.grace[host] = Date.now() + GRACE_MS;
+      // 授权超支额度：实际前台使用超支满 GRACE_MS 后自动恢复阻断
+      data.grace[host] = GRACE_MS;
       await HE.storage.save(data);
       await enforceBlocks(data);
       return {};

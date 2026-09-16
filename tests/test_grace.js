@@ -87,16 +87,23 @@ const navigate = async (url) => {
   // ---- grant grace -> navigation allowed ----
   await msg({ type: 'GRANT_LIMIT_GRACE', host: 'youtube.com' });
   d = await HE.storage.load();
-  check('grace anchor stored', d.grace['youtube.com'] > Date.now());
+  check('grace authorization stored', !!d.grace['youtube.com']);
   await navigate('https://youtube.com/watch');
   check('grace allows navigation', redirected.length === 0);
 
-  // ---- expired grace -> redirect again ----
+  // ---- grace allowance partially consumed -> still allowed (used spent counts, wall clock does not) ----
   d = await HE.storage.load();
-  d.grace['youtube.com'] = Date.now() - 1000;
+  d.domains['youtube.com'] = { timeMs: 60 * 60000 + 4 * 60000 }; // 60min limit, overspent 4min < 5min allowance
   await HE.storage.save(d);
   await navigate('https://youtube.com/watch');
-  check('expired grace redirects again', redirected.length === 1);
+  check('partially-consumed grace still allows navigation', redirected.length === 0);
+
+  // ---- overspent beyond grace -> redirect again ----
+  d = await HE.storage.load();
+  d.domains['youtube.com'] = { timeMs: 60 * 60000 + 5 * 60000 + 1000 }; // overspent 5min + 1s
+  await HE.storage.save(d);
+  await navigate('https://youtube.com/watch');
+  check('overspent grace redirects again', redirected.length === 1);
 
   // ---- blacklist ignores grace ----
   await msg({ type: 'GRANT_LIMIT_GRACE', host: 'youtube.com' });
@@ -114,7 +121,7 @@ const navigate = async (url) => {
   d = await HE.storage.load();
   d.settings.limits['youtube.com'] = { dailyMs: 60 * 60000, remindAtMs: 0 };
   d.domains['youtube.com'] = { timeMs: 61 * 60000 };
-  d.grace['youtube.com'] = Date.now() + 5 * 60000;
+  d.grace['youtube.com'] = 5 * 60000;
   d.date = '2000-01-01';
   await HE.storage.save(d);
   d = await HE.storage.load();

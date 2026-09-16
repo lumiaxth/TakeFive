@@ -34,8 +34,10 @@ body {
   margin: 0;
   min-height: 100vh;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 14px;
   background: linear-gradient(135deg, #f0fdf4, #ecfdf5);
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
     "PingFang SC", "Microsoft YaHei", sans-serif;
@@ -105,11 +107,29 @@ h1 {
   font-family: inherit;
 }
 
-/* a 标签形态的按钮（如白名单设置入口） */
-a.btn {
-  display: inline-flex;
-  align-items: center;
-  text-decoration: none;
+.below-card {
+  text-align: center;
+}
+
+/* 卡片下方的非强调操作链接（设置页入口） */
+.link-btn {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  padding: 4px 8px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.link-btn:hover {
+  color: var(--text);
+}
+
+[data-theme="dark"] .link-btn:hover {
+  color: #FFFFFF;
 }
 
 .btn:hover {

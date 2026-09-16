@@ -111,6 +111,32 @@ const msg = (m, sender) => new Promise((res) => listeners.onMessage(m, sender, r
   check('break phase only pomodoro chip (site above threshold)', sent2 && sent2.chips.length === 1);
   check('break chip uses coffee emoji', sent2 && sent2.chips[0].emoji === '\u2615');
 
+  // ---- inside grace: site chip shows remaining allowance, same logic as a normal limit ----
+  d = await HE.storage.load();
+  d.settings.pomodoro.enabled = true;
+  d.pomodoroState = { phase: 'idle', remainingMs: 0, anchorAt: Date.now() };
+  d.settings.limits['example.com'] = { dailyMs: 30 * 60000, remindAtMs: 0 };
+  d.domains['example.com'] = { timeMs: 32 * 60000 }; // overspent 2min of the 5min allowance
+  d.grace['example.com'] = 5 * 60000;
+  await HE.storage.save(d);
+  sentMessages.length = 0;
+  await msg({ type: 'COUNTDOWN_REQUEST' });
+  await new Promise((r) => setTimeout(r, 30));
+  const sentG = sentMessages[sentMessages.length - 1];
+  const siteG = sentG && sentG.chips && sentG.chips.find((c) => c.id === 'site');
+  check('grace: site chip shows remaining allowance (~3min)', !!siteG && Math.abs(siteG.remainingMs - 3 * 60000) < 2000);
+  check('grace: site chip ticks like a normal limit', !!siteG && siteG.ticking === true);
+
+  // ---- grace allowance exhausted: no site chip at all ----
+  d = await HE.storage.load();
+  d.domains['example.com'] = { timeMs: 30 * 60000 + 5 * 60000 + 1000 }; // overspent 5min + 1s
+  await HE.storage.save(d);
+  sentMessages.length = 0;
+  await msg({ type: 'COUNTDOWN_REQUEST' });
+  await new Promise((r) => setTimeout(r, 30));
+  const sentH = sentMessages[sentMessages.length - 1];
+  check('grace exhausted: no site chip', sentH && sentH.chips.length === 0);
+
   // countdown disabled + clock false -> HIDE
   await msg({ type: 'SET_COUNTDOWN', enabled: false, clock: false, thresholdMin: 10, position: 'middle-right', size: 'medium' });
   sentMessages.length = 0;

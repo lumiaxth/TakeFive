@@ -149,21 +149,13 @@
       }
     }
   },
-  "breakFor": {
-    "message": "Pause tracking and continue",
-    "description": "Button on blocked page to pause tracking and continue"
-  },
   "grantGrace": {
-    "message": "5-minute grace",
+    "message": "Continue for 5 minutes",
     "description": "Grace-passthrough button on the limit blocked page"
   },
-  "openPomodoroWhitelist": {
-    "message": "Open whitelist settings",
-    "description": "Link on the pomodoro blocked page to the whitelist settings"
-  },
   "goBack": {
-    "message": "Go back",
-    "description": "Blocked page back button"
+    "message": "Close this tab",
+    "description": "Blocked page button that closes the current tab"
   },
   "optionsTitle": {
     "message": "TakeFive · Settings",
@@ -326,8 +318,8 @@
     }
   },
   "notifyLimitReachedBody": {
-    "message": "The domain has been blocked for today. Take a break or use the pause feature.",
-    "description": "Notification body when limit reached"
+    "message": "This domain has been blocked for today. Take a break.",
+    "description": "Notification body when a limit is reached"
   },
   "notifyUsageTitle": {
     "message": "Continuous use reminder",

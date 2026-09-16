@@ -5,7 +5,7 @@ A Manifest V3 browser extension (Chrome / Edge) that tracks daily website usage,
 ## Features
 
 - **Usage Tracking** — Automatically records today's time per registered domain (e.g., `mail.google.com` and `www.google.com` are merged into `google.com`), archived daily with the last 7 days retained.
-- **Daily Limits** — Set a daily limit and reminder threshold for any domain. Get notified as you approach the limit, and have the site automatically blocked once reached (including already-open pages, which are redirected to a block page). The block page offers a one-click "5-minute grace" that lets you through while time keeps counting, then blocking resumes automatically.
+- **Daily Limits** — Set a daily limit and reminder threshold for any domain. Get notified as you approach the limit, and have the site automatically blocked once reached (including already-open pages, which are redirected to a block page). The block page offers a one-click "Continue for 5 minutes" that lets you through while usage-based time counts; blocking resumes after 5 minutes of actual use.
 - **Site Blocking** — Add any domain to the blacklist to block access entirely, even when tracking is paused. Newly added blacklist entries and limits take effect immediately on already-open tabs.
 - **Pause Mechanism** — Manual toggle: when paused, the extension icon shows a red badge with a white dash, and tracking/limits are suspended (except blacklist). Resume anytime.
 - **Icon Badge** — The toolbar icon displays real-time duration (format `h:mm`, compact `10h` above 10 hours). In auto mode, it shows the current site's time on regular pages, today's total on blank/system tabs, and Pomodoro remaining during focus. Fixed display modes are also available in settings.
@@ -18,6 +18,20 @@ A Manifest V3 browser extension (Chrome / Edge) that tracks daily website usage,
 - **Multi-language** — Automatically switches between Chinese and English based on browser system language.
 
 ## Changelog
+
+### 1.4.6
+#### Improvements & Fixes
+1. "Continue for 5 minutes" is now consumed by **actual foreground usage**: pausing, locking or leaving the browser doesn't count; blocking resumes only after 5 minutes of use (previously wall-clock).
+2. While continuing, the floating countdown reflects the remaining allowance exactly like a normal site limit (ticking with usage, frozen while paused).
+
+### 1.4.4
+#### Improvements & Fixes
+1. Block page wording: "5-minute grace" is now "Continue for 5 minutes"; the back button is replaced by "Close this tab", which closes the current tab directly.
+2. The limit-reached notification no longer mentions the pause feature.
+
+### 1.4.5
+#### Improvements & Fixes
+1. Block page simplified: removed the "Pause tracking and continue" and "Open whitelist settings" entries; the link below the card is now a "Settings" text link that opens the settings page. To pause tracking, use the popup.
 
 ### 1.4.3
 #### New Features
@@ -89,7 +103,7 @@ A Manifest V3 browser extension (Chrome / Edge) that tracks daily website usage,
 - **View Stats** — Click the toolbar icon to open the popup, showing today's total time and time per domain. Each domain row supports adding to blacklist or setting a limit (if not yet set). If Pomodoro is enabled, the Pomodoro module appears at the bottom — click "Start Focus" / "End Focus" to control it. The top‑right icons provide access to Settings and Dashboard.
 - **Dashboard** — Shows today's total time, domain breakdown, and a 7‑day bar chart. Tap any bar to view that day's total and the top 5 domains. Supports resetting today's data or clearing all data.
 - **Settings & Rules** — Right‑click the extension icon → "Options" (or via the Settings page). Manage daily limits, blacklist, badge display modes, continuous-use reminder, and Pomodoro (duration & whitelist; the whitelist supports one‑click import of currently open tabs).
-- **When Blocked** — Domains that hit their daily limit are redirected to a block page, where you can click "5-minute grace" for a temporary passthrough (time keeps counting) or "Pause Tracking & Continue" to bypass. Blacklist and Pomodoro (focus phase) block pages do not provide a bypass option; for Pomodoro whitelist blocks, you need to pause or adjust the whitelist via the popup.
+- **When Blocked** — Domains that hit their daily limit are redirected to a block page, where you can click "Continue for 5 minutes" for a temporary passthrough (consumed by actual use only; pausing or leaving the browser doesn't count, blocking resumes after 5 minutes of use). Blacklist and Pomodoro (focus phase) block pages do not provide a bypass option; for Pomodoro whitelist blocks, you need to pause or adjust the whitelist via the popup. Every block page offers a "Settings" text link below the card.
 
 ## Project Structure
 

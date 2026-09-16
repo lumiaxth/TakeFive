@@ -313,11 +313,11 @@ process.on('unhandledRejection', () => {});
     const doc = dom.window.document;
     check('blocked generic title', doc.querySelector('h1').textContent === en.blockedTitleGeneric.message);
     check('blocked generic icon', doc.getElementById('icon').textContent === '\u2615');
-    check('blocked generic break btn visible', doc.getElementById('btnBreak').hidden === false);
     check('blocked generic no grace btn', doc.getElementById('btnGrace').hidden === true);
-    check('blocked generic no whitelist link', doc.getElementById('btnWhitelist').hidden === true);
     check('blocked brand short', doc.querySelector('.brand').textContent === en.extNameShort.message);
-    check('blocked goBack', doc.getElementById('btnBack').textContent === en.goBack.message);
+    check('blocked goBack text (close tab)', doc.getElementById('btnBack').textContent === en.goBack.message);
+    check('blocked settings link outside the card', doc.getElementById('btnSettings').closest('.card') === null && doc.getElementById('btnSettings').classList.contains('link-btn') === true);
+    check('blocked settings link text', doc.getElementById('btnSettings').textContent === en.openSettings.message);
   }
   {
     const dom = load(
@@ -327,7 +327,6 @@ process.on('unhandledRejection', () => {});
     const doc = dom.window.document;
     check('blocked limit title', doc.querySelector('h1').textContent === en.blockedTitleLimit.message);
     check('blocked limit icon', doc.getElementById('icon').textContent === '\uD83C\uDF3F');
-    check('blocked limit break btn visible', doc.getElementById('btnBreak').hidden === false);
     check('blocked limit grace btn visible', doc.getElementById('btnGrace').hidden === false);
     check('blocked limit grace text', doc.getElementById('btnGrace').textContent === en.grantGrace.message);
     await sleep(30);
@@ -341,9 +340,7 @@ process.on('unhandledRejection', () => {});
     const doc = dom.window.document;
     check('blocked blacklist title', doc.querySelector('h1').textContent === en.blockedTitleBlacklist.message);
     check('blocked blacklist icon', doc.getElementById('icon').textContent === '\uD83D\uDEAB');
-    check('blocked blacklist no break btn', doc.getElementById('btnBreak').hidden === true);
     check('blocked blacklist no grace btn', doc.getElementById('btnGrace').hidden === true);
-    check('blocked blacklist no whitelist link', doc.getElementById('btnWhitelist').hidden === true);
     check('blocked blacklist reason has domain', doc.getElementById('reason').textContent.includes('bad.com'));
   }
   {
@@ -354,10 +351,7 @@ process.on('unhandledRejection', () => {});
     const doc = dom.window.document;
     check('blocked pomodoro title', doc.querySelector('h1').textContent === en.blockedTitlePomodoro.message);
     check('blocked pomodoro icon', doc.getElementById('icon').textContent === '\uD83C\uDF45');
-    check('blocked pomodoro no break btn', doc.getElementById('btnBreak').hidden === true);
     check('blocked pomodoro no grace btn', doc.getElementById('btnGrace').hidden === true);
-    check('blocked pomodoro whitelist link visible', doc.getElementById('btnWhitelist').hidden === false);
-    check('blocked pomodoro whitelist link text', doc.getElementById('btnWhitelist').textContent === en.openPomodoroWhitelist.message);
   }
   {
     const dom = load(

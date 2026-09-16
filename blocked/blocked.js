@@ -34,10 +34,10 @@
   const url = params.get('url') || '';
 
   const CONFIG = {
-    limit: { emoji: '\uD83C\uDF3F', titleKey: 'blockedTitleLimit', bodyKey: 'blockedReasonLimit', showBreak: true, showGrace: true, showWhitelist: false },
-    blacklist: { emoji: '\uD83D\uDEAB', titleKey: 'blockedTitleBlacklist', bodyKey: 'blockedReasonBlacklist', showBreak: false, showGrace: false, showWhitelist: false },
-    pomodoro: { emoji: '\uD83C\uDF45', titleKey: 'blockedTitlePomodoro', bodyKey: 'blockedReasonPomodoro', showBreak: false, showGrace: false, showWhitelist: true },
-    generic: { emoji: '\u2615', titleKey: 'blockedTitleGeneric', bodyKey: 'blockedReasonGeneric', showBreak: true, showGrace: false, showWhitelist: false }
+    limit: { emoji: '\uD83C\uDF3F', titleKey: 'blockedTitleLimit', bodyKey: 'blockedReasonLimit', showGrace: true },
+    blacklist: { emoji: '\uD83D\uDEAB', titleKey: 'blockedTitleBlacklist', bodyKey: 'blockedReasonBlacklist', showGrace: false },
+    pomodoro: { emoji: '\uD83C\uDF45', titleKey: 'blockedTitlePomodoro', bodyKey: 'blockedReasonPomodoro', showGrace: false },
+    generic: { emoji: '\u2615', titleKey: 'blockedTitleGeneric', bodyKey: 'blockedReasonGeneric', showGrace: false }
   };
   const cfg = CONFIG[rawReason] || CONFIG.generic;
 
@@ -60,17 +60,13 @@
   const titleEl = document.getElementById('title');
   const reasonEl = document.getElementById('reason');
   const btnGrace = document.getElementById('btnGrace');
-  const btnBreak = document.getElementById('btnBreak');
-  const btnWhitelist = document.getElementById('btnWhitelist');
   const btnBack = document.getElementById('btnBack');
 
   iconEl.textContent = cfg.emoji;
   titleEl.textContent = t(cfg.titleKey);
   document.title = t(cfg.titleKey);
-  btnBreak.hidden = !cfg.showBreak;
   // 宽限放行需要可识别的目标域名，异常时隐藏
   btnGrace.hidden = !cfg.showGrace || !domain;
-  btnWhitelist.hidden = !cfg.showWhitelist;
 
   if (cfg.bodyKey === 'blockedReasonLimit' && domain) {
     HE.storage.load().then((data) => {
@@ -92,17 +88,18 @@
     }
   });
 
-  btnBreak.addEventListener('click', async () => {
-    await chrome.runtime.sendMessage({ type: 'PAUSE' });
-    if (url && /^https?:/i.test(url)) {
-      location.href = url;
-    } else if (history.length > 1) {
-      history.back();
+  // 「关闭标签页」：优先通过 tabs API 关闭（blocked 页由导航重定向到达，
+  // Chrome 不允许 window.close() 关闭用户手动打开的标签页）
+  btnBack.addEventListener('click', async () => {
+    try {
+      const tabs = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+      if (tabs && tabs.length) {
+        await chrome.tabs.remove(tabs[0].id);
+        return;
+      }
+    } catch (e) {
+      /* fall through to window.close */
     }
-  });
-
-  btnBack.addEventListener('click', () => {
-    if (history.length > 1) history.back();
-    else window.close();
+    window.close();
   });
 })();
