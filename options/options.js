@@ -97,6 +97,8 @@
     $('pomodoroBreakMinutes').value = p.breakMinutes || 5;
 
     const st = data.pomodoroState;
+    // 番茄钟运行中：提示改动自下一阶段生效
+    $('pomodoroRunningHint').hidden = !(p.enabled && st.phase !== 'idle');
     if (p.enabled) {
       if (st.phase === 'idle') {
         pomodoroStatus.textContent = t('pomodoroStatusLabel') + ': ' + esc(t('pomodoroPhaseIdle'));
@@ -345,5 +347,21 @@
     await refresh();
   });
 
+  // 区块深链：options.html#section-xxx 滚动定位并短暂高亮（阻断页等入口使用）
+  function handleHashTarget() {
+    const hash = location.hash || '';
+    if (hash.indexOf('#section-') !== 0) return;
+    const target = document.getElementById(hash.slice(1));
+    if (!target) return;
+    try {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } catch (e) {
+      /* older engines / jsdom without scrollIntoView */
+    }
+    target.classList.add('highlight');
+    setTimeout(() => target.classList.remove('highlight'), 2000);
+  }
+
   refresh();
+  setTimeout(handleHashTarget, 100);
 })();

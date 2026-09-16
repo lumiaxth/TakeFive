@@ -1,0 +1,11 @@
+{
+  "name": "takefive",
+  "private": true,
+  "description": "Test harness for the TakeFive browser extension (not shipped in the store package).",
+  "scripts": {
+    "test": "node tests/run-all.js"
+  },
+  "devDependencies": {
+    "jsdom": "^24.1.3"
+  }
+}

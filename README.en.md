@@ -19,6 +19,16 @@ A Manifest V3 browser extension (Chrome / Edge) that tracks daily website usage,
 
 ## Changelog
 
+### 1.4.3
+#### New Features
+1. The pomodoro block page now offers an "Open whitelist settings" link that jumps to the matching settings section (settings sections support deep-link highlighting).
+#### Improvements & Fixes
+1. "Reset today's data" is now a full reset: it also clears today's pomodoro rounds/focus time, block counter and grace state.
+
+### 1.4.2
+#### Fixes
+1. The hover panel showed 0 minutes of focus time for the pomodoro summary; it now shows the actual focused duration.
+
 ### 1.4.0
 #### New Features
 1. **Limit grace** — The limit block page now offers a "5-minute grace" button: a one-time passthrough while time keeps counting; blocking resumes automatically afterwards (no grace for blacklist or Pomodoro blocks).
@@ -29,7 +39,7 @@ A Manifest V3 browser extension (Chrome / Edge) that tracks daily website usage,
 2. **Removed Pomodoro sounds** — phase changes and completion are signaled by desktop notifications / page banners; the offscreen permission is no longer required.
 3. Badge settings simplified: removed the fixed "Pomodoro remaining" mode (auto mode already covers it).
 4. Floating countdown / hover panel polish: ticking is now anchor-based (no drift), theme changes (settings or OS) apply instantly, hovering any chip opens the stats panel, fixed the panel overflowing the screen edge on left positions, and added a "Hide widget in fullscreen" toggle (off by default).
-5. Pomodoro polish: adjusting durations/rounds while running **no longer resets the current countdown** (applies from the next phase), the popup shows round progress ("Round 1 of 4"), the dashboard shows today's pomodoro summary, and all notifications now open the dashboard when clicked.
+5. Pomodoro polish: adjusting durations/rounds while running **no longer resets the current countdown** (applies from the next phase, with a running hint in Settings), the popup hides the quick-settings row while running and shows round progress ("Round 1 of 4"), the dashboard shows today's pomodoro summary, and all notifications now open the dashboard when clicked.
 
 ### 1.3.0
 #### New Features

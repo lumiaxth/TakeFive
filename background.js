@@ -908,9 +908,14 @@ async function handleMessage(msg, sender) {
       return { added };
     }
     case 'CLEAR_TODAY': {
+      // 完整重置今日：域名时长、通知标记、番茄轮次/专注时长、拦截计数、宽限锚点
       const data = await HE.storage.load();
+      const today = HE.storage.getTodayKey();
       data.domains = {};
       data.notifications = {};
+      data.pomodoroToday = { date: today, rounds: 0, focusMs: 0 };
+      data.blocksToday = { date: today, count: 0 };
+      data.grace = {};
       await HE.storage.save(data);
       await updateBadge();
       return {};

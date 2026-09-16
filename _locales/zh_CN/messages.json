@@ -157,6 +157,10 @@
     "message": "宽限 5 分钟",
     "description": "限额阻断页的宽限放行按钮"
   },
+  "openPomodoroWhitelist": {
+    "message": "前往白名单设置",
+    "description": "番茄钟阻断页跳转白名单设置的链接"
+  },
   "goBack": {
     "message": "返回",
     "description": "阻断页返回按钮"
@@ -414,6 +418,10 @@
   "pomodoroHint": {
     "message": "专注阶段将禁止访问白名单以外的网页；浏览器在前台时按专注/休息周期倒计时。关闭番茄钟后，主页面的番茄钟入口将隐藏。",
     "description": "番茄钟分区的说明文字"
+  },
+  "pomodoroRunningHint": {
+    "message": "番茄钟正在运行：改动不会影响当前阶段，将从下一阶段开始生效。",
+    "description": "番茄钟运行中时的设置页提示"
   },
   "pomodoroEnabled": {
     "message": "启用番茄钟",
@@ -788,7 +796,7 @@
     }
   },
   "panelNoRecords": {
-    "message": "👋 开始浏览吧",
+    "message": "开始浏览吧",
     "description": "悬停面板-无记录"
   },
   "notifyPomodoroAllDoneTitle": {

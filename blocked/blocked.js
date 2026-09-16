@@ -34,10 +34,10 @@
   const url = params.get('url') || '';
 
   const CONFIG = {
-    limit: { emoji: '\uD83C\uDF3F', titleKey: 'blockedTitleLimit', bodyKey: 'blockedReasonLimit', showBreak: true, showGrace: true },
-    blacklist: { emoji: '\uD83D\uDEAB', titleKey: 'blockedTitleBlacklist', bodyKey: 'blockedReasonBlacklist', showBreak: false, showGrace: false },
-    pomodoro: { emoji: '\uD83C\uDF45', titleKey: 'blockedTitlePomodoro', bodyKey: 'blockedReasonPomodoro', showBreak: false, showGrace: false },
-    generic: { emoji: '\u2615', titleKey: 'blockedTitleGeneric', bodyKey: 'blockedReasonGeneric', showBreak: true, showGrace: false }
+    limit: { emoji: '\uD83C\uDF3F', titleKey: 'blockedTitleLimit', bodyKey: 'blockedReasonLimit', showBreak: true, showGrace: true, showWhitelist: false },
+    blacklist: { emoji: '\uD83D\uDEAB', titleKey: 'blockedTitleBlacklist', bodyKey: 'blockedReasonBlacklist', showBreak: false, showGrace: false, showWhitelist: false },
+    pomodoro: { emoji: '\uD83C\uDF45', titleKey: 'blockedTitlePomodoro', bodyKey: 'blockedReasonPomodoro', showBreak: false, showGrace: false, showWhitelist: true },
+    generic: { emoji: '\u2615', titleKey: 'blockedTitleGeneric', bodyKey: 'blockedReasonGeneric', showBreak: true, showGrace: false, showWhitelist: false }
   };
   const cfg = CONFIG[rawReason] || CONFIG.generic;
 
@@ -61,6 +61,7 @@
   const reasonEl = document.getElementById('reason');
   const btnGrace = document.getElementById('btnGrace');
   const btnBreak = document.getElementById('btnBreak');
+  const btnWhitelist = document.getElementById('btnWhitelist');
   const btnBack = document.getElementById('btnBack');
 
   iconEl.textContent = cfg.emoji;
@@ -69,6 +70,7 @@
   btnBreak.hidden = !cfg.showBreak;
   // 宽限放行需要可识别的目标域名，异常时隐藏
   btnGrace.hidden = !cfg.showGrace || !domain;
+  btnWhitelist.hidden = !cfg.showWhitelist;
 
   if (cfg.bodyKey === 'blockedReasonLimit' && domain) {
     HE.storage.load().then((data) => {

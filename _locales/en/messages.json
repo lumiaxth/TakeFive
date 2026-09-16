@@ -8,7 +8,7 @@
     "description": "Short title shown in the extension UI"
   },
   "extDescription": {
-    "message": "Track time spent on websites, set daily limits, block distracting sites, and stay focused with a pomodoro timer. Auto-pauses when you lock your PC or it sleeps.",
+    "message": "Track time spent on websites, set daily limits, block distracting sites, and stay focused with a pomodoro timer.",
     "description": "Extension description"
   },
   "welcomeTitle": {
@@ -156,6 +156,10 @@
   "grantGrace": {
     "message": "5-minute grace",
     "description": "Grace-passthrough button on the limit blocked page"
+  },
+  "openPomodoroWhitelist": {
+    "message": "Open whitelist settings",
+    "description": "Link on the pomodoro blocked page to the whitelist settings"
   },
   "goBack": {
     "message": "Go back",
@@ -414,6 +418,10 @@
   "pomodoroHint": {
     "message": "During a focus session, domains outside the whitelist are blocked. A focus/break cycle runs while the browser is in the foreground. Turning pomodoro off hides its entry in the popup.",
     "description": "Helper text for pomodoro section"
+  },
+  "pomodoroRunningHint": {
+    "message": "Pomodoro is running: changes won't affect the current phase and apply from the next one.",
+    "description": "Hint shown in settings while the pomodoro is running"
   },
   "pomodoroEnabled": {
     "message": "Enable pomodoro",

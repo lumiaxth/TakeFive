@@ -112,6 +112,13 @@ h1 {
   border-radius: var(--radius);
   padding: 20px;
   margin-bottom: 20px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+/* 深链定位高亮：绿色描边短暂提示目标分区 */
+.card.highlight {
+  border-color: var(--green);
+  box-shadow: 0 0 0 2px var(--green-light);
 }
 
 .card h2 {
@@ -123,6 +130,18 @@ h1 {
   color: var(--muted);
   font-size: 13px;
   margin: 0 0 16px;
+  line-height: 1.6;
+}
+
+/* 番茄钟运行中提示：红底高亮警示（配色随深浅主题变量） */
+#pomodoroRunningHint {
+  background: var(--red-light);
+  color: var(--red);
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin: 0 0 12px;
+  font-size: 13px;
+  font-weight: 500;
   line-height: 1.6;
 }
 

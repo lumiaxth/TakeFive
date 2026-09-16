@@ -133,7 +133,8 @@
     } else if (info.pomodoroRounds > 0) {
       lines.push({
         icon: '\uD83C\uDF45',
-        text: t('panelRounds', [String(info.pomodoroRounds), fmtTime(info.pomodoroFocusMin / 60000)])
+        // pomodoroFocusMin 已经是分钟数（后台已完成 ms -> min 换算），直接传给 fmtTime
+        text: t('panelRounds', [String(info.pomodoroRounds), fmtTime(info.pomodoroFocusMin)])
       });
     } else if (info.blocks > 0) {
       lines.push({ icon: '\uD83D\uDEAB', text: t('panelBlocks', [String(info.blocks)]) });

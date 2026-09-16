@@ -105,6 +105,13 @@ h1 {
   font-family: inherit;
 }
 
+/* a 标签形态的按钮（如白名单设置入口） */
+a.btn {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+
 .btn:hover {
   background: var(--hover);
 }

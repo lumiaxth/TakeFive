@@ -44,7 +44,7 @@ background.js           Service Worker（核心，见 §4）
 content/banner.js       横幅内容脚本：HE_BANNER 消息 → 页面顶部横幅（Shadow DOM）
 content/countdown.js    浮动倒计时/时钟内容脚本：HE_COUNTDOWN/HIDE 消息 → 浮窗（Shadow DOM）
 popup/                  弹窗：今日概览、域名列表（前 10）、番茄钟模块、主题/设置/数据入口
-options/                设置页：外观（主题+角标）、浮动倒计时、提醒、番茄钟、限额、黑名单（即改即存）
+options/                设置页：外观（主题+角标）、浮动倒计时、提醒、番茄钟（运行中显示"下一阶段生效"提示）、限额、黑名单（即改即存）
 dashboard/              数据页：今日概览（含昨日对比洞察）、近 7 天柱状图（含 7 天合计）、当日详情、清空数据
 blocked/                阻断落地页：按 reason 展示四套图标/标题/说明；限额场景提供「宽限 5 分钟」
 welcome/                首次安装欢迎页：功能简介 + 设置入口（onInstalled(install) 自动打开，也可从设置页右上角进入）
@@ -55,6 +55,8 @@ shared/theme.js         主题：解析 system/light/dark → <html data-theme>�
 shared/tldts.min.js     第三方公共后缀列表库（勿改动、勿加版权头）
 _locales/               chrome.i18n 文案（zh_CN / en）
 icons/                  工具栏/商店图标 + 番茄钟运行态图标（tomato*.png）
+tests/                  专项测试（未随商店包发布，`npm test` 运行）
+build.ps1               商店包打包脚本（输出 dist/takefive-v<版本>.zip）
 ```
 
 ## 4. background.js 内部结构（按代码顺序）
@@ -107,7 +109,7 @@ icons/                  工具栏/商店图标 + 番茄钟运行态图标（toma
 | `SET_COUNTDOWN` | enabled, thresholdMin, position, size, clock, hideFullscreen | 浮动倒计时/时钟设置 |
 | `COUNTDOWN_REQUEST` | — | 内容脚本可见/注入时主动拉取（经 `sender` 广播回执） |
 | `GET_POMODORO` | — | 先推进番茄钟，返回 `{phase, remainingMs, paused, counting}`（弹窗每秒轮询） |
-| `CLEAR_TODAY` / `CLEAR_ALL` | — | 数据清理（清空后 updateBadge） |
+| `CLEAR_TODAY` / `CLEAR_ALL` | — | 数据清理（清空后 updateBadge）；`CLEAR_TODAY` 完整重置当日：域名、通知、番茄轮次/专注时长、拦截计数、宽限锚点 |
 
 ### 5.2 Background → 各上下文
 
@@ -136,7 +138,7 @@ icons/                  工具栏/商店图标 + 番茄钟运行态图标（toma
   - 休息→专注：用户在场则进入下一轮 + 通知「休息结束」；**离开则停止本轮**（phase=idle）+ 通知「本轮番茄钟已结束」。
   - 休息→专注且已完成的轮次 ≥ 设定轮次 → 停止 + 通知「全部轮次已完成」。
 - **浏览器关闭**：SW 不运行，锚点不更新；重开时 `handleClosedPomodoro`（锚点 > 2min）→ 置 idle + 通知「未完成，已关闭」。不追平关闭期间的时间。
-- 弹窗每秒 `GET_POMODORO` 拉取墙钟剩余（mm:ss 实时显示），运行态 info 行附带轮次进度（如 `第 1/4 轮`，`rounds<=0` 时不显示）。
+- 弹窗每秒 `GET_POMODORO` 拉取墙钟剩余（mm:ss 实时显示），运行态 info 行附带轮次进度（如 `第 1/4 轮`，`rounds<=0` 时不显示）；运行时自动隐藏第二行（时长/轮次快捷设置），回到 idle 恢复显示。设置页在番茄钟运行中显示提示：改动不影响当前阶段，自下一阶段生效。
 
 ### 6.3 浮动倒计时 / 时钟
 - 数据：后台在提交/切页/阶段切换/暂停等时机调用 `pushCountdown()`；内容脚本注入与重新可见时发 `COUNTDOWN_REQUEST` 拉取。
@@ -191,15 +193,17 @@ icons/                  工具栏/商店图标 + 番茄钟运行态图标（toma
 ## 9. 开发与测试
 
 - 加载：`chrome://extensions` / `edge://extensions` 开发者模式 → 加载已解压目录。
-- 专项测试（Node + mock chrome API，位于 `D:/Data/Temp/opencode/`，未入库）：
-  - `test_pomodoro.js` 番茄钟墙钟/轮次/通知
-  - `test_grace.js` 限额宽限放行/过期再阻断/跨天清空
-  - `test_countdown.js` 浮窗数据推送
-  - `test_widget.js` / `test_panel.js` 浮窗渲染与悬停面板三行规则
+- 专项测试（Node + mock chrome API，已入库 `tests/`；jsdom 由 `npm install` 安装）：
+  - 运行：仓库根目录 `npm test`（等价 `node tests/run-all.js`，逐个运行并汇总退出码）。
+  - `test_pomodoro.js` 番茄钟墙钟/轮次/通知/运行中调整不重置
+  - `test_grace.js` 限额宽限放行/过期再阻断/跨天与重置清空
+  - `test_countdown.js` 浮窗数据推送与设置往返
+  - `test_widget.js` / `test_panel.js` 浮窗渲染与悬停面板（含轮次分钟换算）
   - `test_badge.js` 角标格式
   - `test_avg.js` 图表日均计算
-  - `test_options.js` / `test_theme.js` / `test_i18n_dom.js` 设置页/主题/多语言 DOM 渲染
-- 打包上架：剔除 `.git`、`*.md` 文档、测试文件后压缩（`manifest.json` 必须在 zip 根）。
+  - `test_options.js` / `test_theme.js` / `test_i18n_dom.js` 设置页/主题/多语言 DOM 渲染（含深链高亮）
+  - 注意：测试文件保持 UTF-8 无 BOM；在 PowerShell 5.1 中复制须显式 `UTF8Encoding($false)`，否则中文断言被 GBK 解码破坏。
+- 打包上架：仓库根目录执行 `powershell -ExecutionPolicy Bypass -File build.ps1` → 输出 `dist/takefive-v<版本>.zip`（白名单打包、条目强制正斜杠、校验 `manifest.json` 位于 zip 根）。
 
 ## 10. 已知约定与注意点
 

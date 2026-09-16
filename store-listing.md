@@ -74,6 +74,24 @@ Privacy: all data stays in your browser locally (chrome.storage.local) and is ne
 - 最低版本：Chromium 110+（Manifest V3）
 - 图标：128×128（见 `icons/icon128.png`）
 
+## 1.4.0 版本更新日志
+
+### 中文
+
+- 新增限额「宽限 5 分钟」：达到限额后可一键临时放行。
+- 数据页新增洞察：比昨日增减、近 7 天合计与今日番茄成果。
+- 新增首次安装欢迎页，也可从设置页随时查看。
+- 新增悬停浮窗：鼠标悬停在浮动时钟时可查看一些使用信息。
+- 优化部分设置和番茄钟逻辑，以及其他一些已知问题。
+
+### English
+
+- New "5-minute grace" on the limit block page for a quick passthrough.
+- Dashboard insights: change vs yesterday, 7-day total, and today's pomodoro summary.
+- New first-run welcome page, also reachable from Settings.
+- Hover the floating clock to see a quick overview of your usage.
+- Improved settings and pomodoro behavior, plus other known fixes.
+
 ## 1.3 版本更新日志
 
 ### 中文

@@ -136,6 +136,7 @@
         info.textContent = '\uD83C\uDF45 ' + t('pomodoroReady');
         btn.textContent = t('pomodoroStartFocus');
         bar.classList.remove('break');
+        $('pomodoroSettingsRow').hidden = false;
       } else {
         const phase = st.phase === 'break' ? t('pomodoroPhaseBreak') : t('pomodoroPhaseFocus');
         let infoText = '\uD83C\uDF45 ' + phase + ' \u00B7 ' + t('pomodoroRemaining', [fmtCountdown(st.remainingMs)]);
@@ -149,6 +150,8 @@
         info.textContent = infoText;
         btn.textContent = t('pomodoroEndFocus');
         bar.classList.toggle('break', st.phase === 'break');
+        // 运行时隐藏时长/轮次快捷设置行，避免误改（改动自下一阶段生效）
+        $('pomodoroSettingsRow').hidden = true;
       }
       bar.hidden = false;
       document.body.classList.add('has-pomodoro');

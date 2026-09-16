@@ -11,3 +11,6 @@ Thumbs.db
 
 screenshots.md
 store-listing.md
+
+# Build output
+dist/

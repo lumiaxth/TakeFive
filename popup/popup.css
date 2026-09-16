@@ -148,6 +148,10 @@ header {
   gap: 8px;
 }
 
+.pomodoro-bar .pomodoro-line[hidden] {
+  display: none;
+}
+
 .pomodoro-bar .pomodoro-line.settings {
   font-weight: 500;
   justify-content: space-between;
