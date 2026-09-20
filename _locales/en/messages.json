@@ -109,7 +109,35 @@
   },
   "openSettings": {
     "message": "Settings",
-    "description": "Link to the options page"
+    "description": "Settings page link"
+  },
+  "supportSection": {
+    "message": "❤️ Like TakeFive?",
+    "description": "Options page support section title"
+  },
+  "supportHint": {
+    "message": "TakeFive is 100% free. If it works for you, please leave a good review or sponsor the developer.",
+    "description": "Helper text for the support section"
+  },
+  "sponsorAction": {
+    "message": "☕ Sponsor",
+    "description": "Sponsor button on the support card"
+  },
+  "rateAction": {
+    "message": "⭐ Rate & review",
+    "description": "Rate button on the support card"
+  },
+  "supportSponsorLink": {
+    "message": "❤️ Sponsor",
+    "description": "Sponsor text link in popup/welcome"
+  },
+  "supportRateLink": {
+    "message": "⭐ Rate & review",
+    "description": "Rate text link in popup/welcome"
+  },
+  "openSponsor": {
+    "message": "Sponsor the developer",
+    "description": "Title of the sponsor icon button in the options header"
   },
   "minutesUnit": {
     "message": "min",

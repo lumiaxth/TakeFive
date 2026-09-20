@@ -41,4 +41,14 @@
       window.close();
     }
   });
+
+  document.getElementById('linkSponsor').addEventListener('click', (e) => {
+    e.preventDefault();
+    HE.support.open(HE.support.sponsorUrl());
+  });
+
+  document.getElementById('linkRate').addEventListener('click', (e) => {
+    e.preventDefault();
+    HE.support.open(HE.support.storeUrl());
+  });
 })();

@@ -24,7 +24,7 @@
     "description": "欢迎页功能一标题"
   },
   "welcomeFeature1Body": {
-    "message": "自动记录每个网站的使用时长，近 7 天一目了然。",
+    "message": "自动记录每个网站的使用时长。",
     "description": "欢迎页功能一说明"
   },
   "welcomeFeature2Title": {
@@ -32,7 +32,7 @@
     "description": "欢迎页功能二标题"
   },
   "welcomeFeature2Body": {
-    "message": "为易上瘾的网站设置每日限额，或直接加入黑名单。",
+    "message": "为网站设置每日限额，或直接加入黑名单。",
     "description": "欢迎页功能二说明"
   },
   "welcomeFeature3Title": {
@@ -40,7 +40,7 @@
     "description": "欢迎页功能三标题"
   },
   "welcomeFeature3Body": {
-    "message": "专注 25 分钟、休息 5 分钟，白名单网站不受限制。",
+    "message": "专注25分钟+休息5分钟，守护你的专注力。",
     "description": "欢迎页功能三说明"
   },
   "welcomeOpenSettings": {
@@ -110,6 +110,34 @@
   "openSettings": {
     "message": "设置",
     "description": "跳转到设置页的链接"
+  },
+  "supportSection": {
+    "message": "❤️ 喜欢歇会儿？",
+    "description": "设置页-支持分区标题"
+  },
+  "supportHint": {
+    "message": "歇会儿是一款完全免费的浏览器扩展。如果它对你有所帮助，欢迎留下好评，也可以通过赞助支持开发者。谢谢！",
+    "description": "设置页-支持分区说明"
+  },
+  "sponsorAction": {
+    "message": "☕ 赞助开发者",
+    "description": "支持卡片的赞助按钮"
+  },
+  "rateAction": {
+    "message": "⭐ 好评鼓励",
+    "description": "支持卡片的好评按钮"
+  },
+  "supportSponsorLink": {
+    "message": "❤️ 赞助",
+    "description": "弹窗/欢迎页的赞助文字链接"
+  },
+  "supportRateLink": {
+    "message": "⭐ 好评鼓励",
+    "description": "弹窗/欢迎页的好评文字链接"
+  },
+  "openSponsor": {
+    "message": "赞助开发者",
+    "description": "设置页右上角赞助图标按钮的标题"
   },
   "minutesUnit": {
     "message": "分钟",

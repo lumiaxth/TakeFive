@@ -52,6 +52,7 @@ shared/storage.js       存储模型：DEFAULTS、mergeDefaults、rollover、读
 shared/hostname.js      域名解析：URL → 注册级域名（tldts）+ IPv4/IPv6 完整保留
 shared/i18n.js          UI 多语言：data-i18n / data-i18n-title / data-i18n-placeholder 批量应用
 shared/theme.js         主题：解析 system/light/dark → <html data-theme>，监听存储变化实时生效
+shared/support.js       赞助/好评入口：赞助链接按界面语言（爱发电/Ko-fi）、好评链接按浏览器 UA（AMO/Edge 商店）、open(tabs.create 优先)
 shared/tldts.min.js     第三方公共后缀列表库（勿改动、勿加版权头）
 _locales/               chrome.i18n 文案（zh_CN / en）
 icons/                  工具栏/商店图标 + 番茄钟运行态图标（tomato*.png）
@@ -202,6 +203,7 @@ build.ps1               商店包打包脚本（输出 dist/takefive-v<版本>.z
   - `test_badge.js` 角标格式
   - `test_avg.js` 图表日均计算
   - `test_options.js` / `test_theme.js` / `test_i18n_dom.js` 设置页/主题/多语言 DOM 渲染（含深链高亮）
+  - `test_support.js` 赞助链接语言分支/商店链接 UA 检测/open 适配
   - 注意：测试文件保持 UTF-8 无 BOM；在 PowerShell 5.1 中复制须显式 `UTF8Encoding($false)`，否则中文断言被 GBK 解码破坏。
 - 打包上架：仓库根目录执行 `powershell -ExecutionPolicy Bypass -File build.ps1` → 输出 `dist/takefive-v<版本>.zip`（白名单打包、条目强制正斜杠、校验 `manifest.json` 位于 zip 根）。
 

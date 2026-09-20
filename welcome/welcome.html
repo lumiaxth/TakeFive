@@ -59,11 +59,18 @@
         <button id="btnStart" class="btn" type="button" data-i18n="welcomeStart"></button>
       </div>
 
-      <p class="brand" data-i18n="extNameShort"></p>
+      <p class="brand">
+        <span data-i18n="extNameShort"></span>
+        <span class="brand-sep">·</span>
+        <a id="linkSponsor" class="brand-link" href="#" data-i18n="supportSponsorLink"></a>
+        <span class="brand-sep">·</span>
+        <a id="linkRate" class="brand-link" href="#" data-i18n="supportRateLink"></a>
+      </p>
     </div>
 
     <script src="../shared/i18n.js"></script>
     <script src="../shared/theme.js"></script>
+    <script src="../shared/support.js"></script>
     <script src="welcome.js"></script>
   </body>
 </html>

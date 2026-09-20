@@ -232,6 +232,18 @@
     location.href = chrome.runtime.getURL('welcome/welcome.html');
   });
 
+  // 赞助与好评入口
+  $('btnSponsor').addEventListener('click', () => {
+    HE.support.open(HE.support.sponsorUrl());
+  });
+  $('btnSponsorCard').addEventListener('click', () => {
+    HE.support.open(HE.support.sponsorUrl());
+  });
+  $('btnRateCard').addEventListener('click', (e) => {
+    e.preventDefault();
+    HE.support.open(HE.support.storeUrl());
+  });
+
   $('limitForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const host = HE.hostname.normalizeDomain($('limitDomain').value);

@@ -19,6 +19,10 @@ A Manifest V3 browser extension (Chrome / Edge) that tracks daily website usage,
 
 ## Changelog
 
+### 1.4.7
+#### New Features
+1. Sponsor & review entries: "❤️ Sponsor" and "⭐ Rate & review" text links in the popup and welcome page; a new lightweight "Support" card and a header sponsor icon in Settings (sponsor platform picks Afdian or Ko-fi by UI language, the store link is picked by browser).
+
 ### 1.4.6
 #### Improvements & Fixes
 1. "Continue for 5 minutes" is now consumed by **actual foreground usage**: pausing, locking or leaving the browser doesn't count; blocking resumes only after 5 minutes of use (previously wall-clock).

@@ -121,6 +121,17 @@ h1 {
   box-shadow: 0 0 0 2px var(--green-light);
 }
 
+/* 支持卡片：赞助与好评按钮行 */
+.support-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.support-actions .btn {
+  min-width: 120px;
+}
+
 .card h2 {
   font-size: 16px;
   margin: 0 0 6px;

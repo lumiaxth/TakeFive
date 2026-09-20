@@ -133,6 +133,7 @@ process.on('unhandledRejection', () => {});
     check('popup settings button exists', !!doc.getElementById('btnSettings'));
     check('popup dashboard button exists', !!doc.getElementById('btnDashboard'));
     check('popup footer settings link removed', !doc.getElementById('linkSettings'));
+    check('popup support links exist', !!doc.getElementById('linkSponsor') && !!doc.getElementById('linkRate'));
   }
 
   // ---- popup pomodoro visibility (en, with data) ----
@@ -175,6 +176,8 @@ process.on('unhandledRejection', () => {});
     check('popup renders only 10 domains', doc.querySelectorAll('.domain-item').length === 10);
     check('popup shows more link when >10 domains', !!doc.querySelector('.more-link'));
     check('popup domains sorted by time desc', doc.querySelector('.domain-item .domain-host').textContent === 'site1.com');
+    check('popup support sponsor link text', doc.getElementById('linkSponsor').textContent === en.supportSponsorLink.message);
+    check('popup support rate link text', doc.getElementById('linkRate').textContent === en.supportRateLink.message);
   }
   {
     const dom = load('popup/popup.html', 'popup/popup.js', shared, () => baseData({ enabled: false, phase: 'idle', domains: { a: { timeMs: 60000 } } }));
@@ -269,11 +272,12 @@ process.on('unhandledRejection', () => {});
     check('options importWhitelist btn', doc.getElementById('btnImportWhitelist').textContent === zh.importPomodoroWhitelist.message);
     check('options badgeMode select has 3 options', doc.getElementById('badgeMode').options.length === 3);
     check('options badgeModeAuto text', doc.querySelector('#badgeMode option[value="auto"]').textContent === zh.badgeModeAuto.message);
+    check('options support section title', doc.querySelector('#section-support h2').textContent === zh.supportSection.message);
+    check('options support buttons texts', doc.getElementById('btnSponsorCard').textContent === zh.sponsorAction.message && doc.getElementById('btnRateCard').textContent === zh['rateAction'].message);
+    check('options sponsor icon title', doc.getElementById('btnSponsor').title === zh.openSponsor.message);
     check('options no save buttons (save-on-change)', !doc.getElementById('btnSaveTheme') && !doc.getElementById('btnSaveBadgeMode') && !doc.getElementById('btnSaveCountdown') && !doc.getElementById('btnSaveUsageReminder') && !doc.getElementById('btnSavePomodoro'));
     check('options no pomodoro sound toggle', !doc.getElementById('pomodoroSound'));
   }
-
-  // ---- options running hint (pomodoro running) ----
   {
     const runData = {
       date: '2026-08-23', domains: {}, notifications: {}, tracking: { host: null, since: 0 },
@@ -303,6 +307,15 @@ process.on('unhandledRejection', () => {});
     const doc = dom.window.document;
     check('options hash deep link highlights limits section', !!doc.querySelector('#section-limits.highlight'));
     check('options hash deep link does not highlight others', !doc.querySelector('#section-pomodoro.highlight'));
+  }
+
+  // ---- welcome page support links (en) ----
+  process.env.LOCALE = 'en';
+  {
+    const dom = load('welcome/welcome.html', 'welcome/welcome.js', ['shared/theme.js', 'shared/support.js']);
+    const doc = dom.window.document;
+    check('welcome sponsor link text', doc.getElementById('linkSponsor').textContent === en.supportSponsorLink.message);
+    check('welcome rate link text', doc.getElementById('linkRate').textContent === en.supportRateLink.message);
   }
 
   // ---- blocked (en) ----

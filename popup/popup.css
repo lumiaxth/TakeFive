@@ -152,6 +152,30 @@ header {
   display: none;
 }
 
+/* 列表末尾的赞助/好评入口（低调文字链接） */
+.support-links {
+  text-align: center;
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.support-links a {
+  color: var(--muted);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.support-links a:hover {
+  color: var(--text);
+  text-decoration: underline;
+}
+
+.support-links .dot {
+  margin: 0 6px;
+  opacity: 0.5;
+}
+
 .pomodoro-bar .pomodoro-line.settings {
   font-weight: 500;
   justify-content: space-between;

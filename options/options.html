@@ -32,6 +32,11 @@
           <h1 data-i18n="optionsTitle"></h1>
         </div>
         <div class="nav-actions">
+          <button id="btnSponsor" class="icon-btn" type="button" data-i18n-title="openSponsor" aria-label="Sponsor">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.22-1.22a5.5 5.5 0 0 0-7.78 7.78l1.22 1.22L12 21.23l6.78-6.78 1.22-1.22a5.5 5.5 0 0 0 0-7.78z"></path>
+            </svg>
+          </button>
           <button id="btnWelcome" class="icon-btn" type="button" data-i18n-title="openWelcome" aria-label="Welcome">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="10"></circle>
@@ -184,6 +189,15 @@
           <button class="btn primary" type="submit" data-i18n="addBlacklist"></button>
         </form>
       </section>
+
+      <section id="section-support" class="card">
+        <h2 data-i18n="supportSection"></h2>
+        <p class="hint" data-i18n="supportHint"></p>
+        <div class="support-actions">
+          <button id="btnSponsorCard" class="btn" type="button" data-i18n="sponsorAction"></button>
+          <a id="btnRateCard" class="btn" type="button" data-i18n="rateAction"></a>
+        </div>
+      </section>
     </div>
 
     <script src="../shared/tldts.min.js"></script>
@@ -191,6 +205,7 @@
     <script src="../shared/storage.js"></script>
     <script src="../shared/i18n.js"></script>
     <script src="../shared/theme.js"></script>
+    <script src="../shared/support.js"></script>
     <script src="../content/countdown.js"></script>
     <script src="options.js"></script>
   </body>

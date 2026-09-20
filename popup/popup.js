@@ -360,6 +360,16 @@
     chrome.tabs.create({ url: chrome.runtime.getURL('dashboard/dashboard.html') });
   });
 
+  // 赞助与好评入口（popup 关闭由 tabs.create 自动触发）
+  $('linkSponsor').addEventListener('click', (e) => {
+    e.preventDefault();
+    HE.support.open(HE.support.sponsorUrl());
+  });
+  $('linkRate').addEventListener('click', (e) => {
+    e.preventDefault();
+    HE.support.open(HE.support.storeUrl());
+  });
+
   refresh();
   setInterval(refresh, 30000);
 
