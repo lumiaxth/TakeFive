@@ -23,7 +23,7 @@
  */
 
 
-importScripts('shared/tldts.min.js', 'shared/hostname.js', 'shared/storage.js');
+importScripts('shared/tldts.min.js', 'shared/hostname.js', 'shared/storage.js', 'shared/backup.js');
 
 const RESUME_TOLERANCE_MS = 2 * 60 * 1000;
 const USAGE_RESET_AFTER_MS = 2 * 60 * 1000;
@@ -89,18 +89,20 @@ function limitReached(data, host) {
   return t >= limit.dailyMs;
 }
 
-// 域名是否已授权限额宽限（grace 存放超支额度 GRACE_MS，按实际前台计时消耗）
+// 域名是否已授权限额宽限（grace[host] 存授权时刻的用量基线；基线可为 0，故用 !== undefined 判定）
 function graceActive(data, host) {
-  return !!(data.grace && data.grace[host]);
+  return !!(data.grace && data.grace[host] !== undefined);
 }
 
-// 限额阻断判定（唯一收口）：宽限期内按实际使用超支 < 5min 放行；黑名单与番茄钟不适用宽限
+// 限额阻断判定（唯一收口）：已授权域名从授权基线起按实际前台使用消耗，满 GRACE_MS 后恢复阻断；
+// 未授权则达到限额即拦。黑名单与番茄钟不适用宽限。
 function limitBlocked(data, host) {
-  if (!limitReached(data, host)) return false;
-  if (!graceActive(data, host)) return true;
-  const used = (data.domains[host] && data.domains[host].timeMs) || 0;
-  const limit = data.settings.limits[host];
-  return used - limit.dailyMs >= GRACE_MS;
+  if (graceActive(data, host)) {
+    const used = (data.domains[host] && data.domains[host].timeMs) || 0;
+    // 基线与判定解耦 dailyMs：再次授权会重置基线，避免“授权成功却被立即拉回”
+    return used - data.grace[host] >= GRACE_MS;
+  }
+  return limitReached(data, host);
 }
 
 function pomodoroBlockReason(data, host) {
@@ -118,16 +120,19 @@ function blockedReasonFor(data, host) {
   return pomodoroBlockReason(data, host);
 }
 
-function blockedUrl(reason, host, url) {
-  return (
-    chrome.runtime.getURL('blocked/blocked.html') +
+function blockedUrl(reason, host, url, data) {
+  let query =
     '?reason=' +
     encodeURIComponent(reason) +
     '&domain=' +
     encodeURIComponent(host) +
     '&url=' +
-    encodeURIComponent(url || '')
-  );
+    encodeURIComponent(url || '');
+  // 限额场景携带该域名是否已授权过宽限：已授权（含已耗尽）后拦截页不再提供继续使用按钮
+  if (reason === 'limit' && data && graceActive(data, host)) {
+    query += '&graceGranted=1';
+  }
+  return chrome.runtime.getURL('blocked/blocked.html') + query;
 }
 
 // 今日拦截计数 +1（跨天自动重置）
@@ -146,9 +151,9 @@ async function countBlock() {
 }
 
 // 重定向标签页到阻断页并累计拦截数
-async function redirectTab(tabId, reason, host, url) {
+async function redirectTab(tabId, reason, host, url, data) {
   try {
-    await chrome.tabs.update(tabId, { url: blockedUrl(reason, host, url) });
+    await chrome.tabs.update(tabId, { url: blockedUrl(reason, host, url, data) });
     await countBlock();
   } catch (e) {
     /* tab closed concurrently */
@@ -183,10 +188,10 @@ async function enforceBlocks(data) {
     if (!host) continue;
     if (activeTab && tab.id === activeTab.id) {
       const reason = blockedReasonFor(data, host);
-      if (reason) await redirectTab(tab.id, reason, host, tab.url);
+      if (reason) await redirectTab(tab.id, reason, host, tab.url, data);
     } else {
       const reason = blockAllReason(host);
-      if (reason) await redirectTab(tab.id, reason, host, tab.url);
+      if (reason) await redirectTab(tab.id, reason, host, tab.url, data);
     }
   }
 }
@@ -295,9 +300,9 @@ function computeCountdown(data, host, counting, paused) {
     if (limit && limit.dailyMs > 0) {
       const used = (data.domains[host] && data.domains[host].timeMs) || 0;
       let remaining = limit.dailyMs - used;
-      // 宽限期内（已授权且额度未耗尽）：与正常限额剩余同一口径，按实际前台计时消耗
-      if (remaining <= 0 && graceActive(data, host)) {
-        remaining = GRACE_MS + remaining;
+      // 宽限期内（已授权）：剩余额度按授权基线计算，与正常限额剩余同一口径、按实际前台计时消耗
+      if (graceActive(data, host)) {
+        remaining = data.grace[host] + GRACE_MS - used;
       }
       if (remaining > 0 && remaining <= cd.thresholdMin * 60000) {
         chips.push({
@@ -728,6 +733,7 @@ async function handleMessage(msg, sender) {
         delete data.settings.limits[host];
       }
       delete data.notifications[host];
+      delete data.grace[host];
       await HE.storage.save(data);
       await enforceBlocks(data);
       return {};
@@ -745,8 +751,8 @@ async function handleMessage(msg, sender) {
       const host = HE.hostname.normalizeDomain(msg.host);
       if (!host) return { error: 'invalidDomain' };
       const data = await HE.storage.load();
-      // 授权超支额度：实际前台使用超支满 GRACE_MS 后自动恢复阻断
-      data.grace[host] = GRACE_MS;
+      // 记录授权时刻的用量基线：实际前台使用满 GRACE_MS 后恢复阻断（重复授权即重置基线）
+      data.grace[host] = (data.domains[host] && data.domains[host].timeMs) || 0;
       await HE.storage.save(data);
       await enforceBlocks(data);
       return {};
@@ -929,6 +935,35 @@ async function handleMessage(msg, sender) {
       await updateBadge();
       return {};
     }
+    case 'IMPORT_BACKUP': {
+      // 应用备份：settings 与 data 至少其一存在，分别按 mergeDefaults / 白名单字段覆盖。
+      // 不动 pomodoroState/tracking（运行态不受导入影响）。
+      const payload = msg.payload;
+      if (!HE.backup || !HE.backup.validateBackup || !HE.backup.validateBackup(payload)) {
+        return { error: 'invalidBackup' };
+      }
+      const data = await HE.storage.load();
+      if (payload.settings && typeof payload.settings === 'object') {
+        const normalized = HE.storage.mergeDefaults({ settings: payload.settings });
+        data.settings = normalized.settings;
+      }
+      if (payload.data && typeof payload.data === 'object') {
+        const d = payload.data;
+        if (typeof d.date === 'string' && d.date) data.date = d.date;
+        if (d.domains && typeof d.domains === 'object') data.domains = d.domains;
+        if (d.notifications && typeof d.notifications === 'object') data.notifications = d.notifications;
+        if (d.usage && typeof d.usage === 'object') data.usage = d.usage;
+        if (d.pomodoroToday && typeof d.pomodoroToday === 'object') data.pomodoroToday = d.pomodoroToday;
+        if (d.blocksToday && typeof d.blocksToday === 'object') data.blocksToday = d.blocksToday;
+        if (d.grace && typeof d.grace === 'object') data.grace = d.grace;
+        if (Array.isArray(d.history)) data.history = d.history;
+      }
+      await HE.storage.save(data);
+      await enforceBlocks(data);
+      await updateBadge();
+      await pushCountdown();
+      return { ok: true };
+    }
     case 'CLEAR_ALL': {
       await chrome.storage.local.clear();
       await HE.storage.load();
@@ -1030,7 +1065,7 @@ chrome.webNavigation.onBeforeNavigate.addListener((details) => {
     const reason = blockedReasonFor(data, host);
     if (!reason) return;
     try {
-      await chrome.tabs.update(details.tabId, { url: blockedUrl(reason, host, details.url) });
+      await chrome.tabs.update(details.tabId, { url: blockedUrl(reason, host, details.url, data) });
       await countBlock();
     } catch (e) {
       /* tab may already be gone */

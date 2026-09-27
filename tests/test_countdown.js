@@ -116,20 +116,20 @@ const msg = (m, sender) => new Promise((res) => listeners.onMessage(m, sender, r
   d.settings.pomodoro.enabled = true;
   d.pomodoroState = { phase: 'idle', remainingMs: 0, anchorAt: Date.now() };
   d.settings.limits['example.com'] = { dailyMs: 30 * 60000, remindAtMs: 0 };
-  d.domains['example.com'] = { timeMs: 32 * 60000 }; // overspent 2min of the 5min allowance
-  d.grace['example.com'] = 5 * 60000;
+  d.domains['example.com'] = { timeMs: 32 * 60000 };
+  d.grace['example.com'] = 32 * 60000; // baseline captured at grant time (= used then)
   await HE.storage.save(d);
   sentMessages.length = 0;
   await msg({ type: 'COUNTDOWN_REQUEST' });
   await new Promise((r) => setTimeout(r, 30));
   const sentG = sentMessages[sentMessages.length - 1];
   const siteG = sentG && sentG.chips && sentG.chips.find((c) => c.id === 'site');
-  check('grace: site chip shows remaining allowance (~3min)', !!siteG && Math.abs(siteG.remainingMs - 3 * 60000) < 2000);
+  check('grace: site chip shows remaining allowance (~5min from baseline)', !!siteG && Math.abs(siteG.remainingMs - 5 * 60000) < 2000);
   check('grace: site chip ticks like a normal limit', !!siteG && siteG.ticking === true);
 
-  // ---- grace allowance exhausted: no site chip at all ----
+  // ---- grace allowance exhausted (used - baseline >= GRACE_MS): no site chip at all ----
   d = await HE.storage.load();
-  d.domains['example.com'] = { timeMs: 30 * 60000 + 5 * 60000 + 1000 }; // overspent 5min + 1s
+  d.domains['example.com'] = { timeMs: 32 * 60000 + 5 * 60000 + 1000 };
   await HE.storage.save(d);
   sentMessages.length = 0;
   await msg({ type: 'COUNTDOWN_REQUEST' });

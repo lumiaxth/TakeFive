@@ -284,5 +284,33 @@
     }
   });
 
+  // 备份/恢复（仅数据）：设置不含在内（全量备份在设置页）；导入经 confirm 覆盖
+  $('btnExportData').addEventListener('click', async () => {
+    HE.backup.exportFile(HE.backup.buildExport(data, 'data'), HE.backup.exportFilename('data'));
+  });
+
+  $('backupFile').addEventListener('change', async () => {
+    const file = $('backupFile').files[0];
+    if (!file) return;
+    try {
+      const payload = await HE.backup.readBackupFile(file);
+      if (!HE.backup.validateBackup(payload)) {
+        alert(t('backupInvalid'));
+        return;
+      }
+      const ok = confirm(t('backupConfirmData'));
+      if (!ok) return;
+      await send({ type: 'IMPORT_BACKUP', payload: payload });
+      await refresh();
+    } catch (e) {
+      alert(t('backupInvalid'));
+    }
+  });
+
+  $('btnImportData').addEventListener('click', () => {
+    $('backupFile').value = '';
+    $('backupFile').click();
+  });
+
   refresh();
 })();

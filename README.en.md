@@ -19,6 +19,25 @@ A Manifest V3 browser extension (Chrome / Edge) that tracks daily website usage,
 
 ## Changelog
 
+### 1.4.11
+#### Improvements
+1. Backup scope adjusted: the Settings "Backup & restore" now exports a **full** backup (settings + data); the Dashboard exports **data-only** backups (settings excluded), with matching confirmations.
+
+### 1.4.10
+#### New Features
+1. Backup & restore: a new "Backup & restore" card in Settings (export/import current settings) and "Export everything / Import data" above the danger zone on the Dashboard (full snapshot of settings + today's data + 7-day history). Backups are .json files; imports confirm before overwriting.
+
+### 1.4.9
+#### Fixes
+1. "Continue for 5 minutes" now goes **back to the page you left** (history back) instead of reloading it, keeping in-page progress (drafts, playback, etc.); it only loads the original URL directly when there is nothing to go back to.
+
+### 1.4.8
+#### Fixes
+1. Fixed the occasional "Continue for 5 minutes" button not working: granting now records the current usage as a baseline, so navigating back to the site is no longer immediately blocked by the cumulative overspend.
+#### Improvements
+2. The grace period is now a one-time grant per site per day; the block page no longer offers the continue button after it has been granted (page refreshes don't restore it).
+3. Changing a site's daily limit clears its grace state, restarting the normal reminder flow.
+
 ### 1.4.7
 #### New Features
 1. Sponsor & review entries: "❤️ Sponsor" and "⭐ Rate & review" text links in the popup and welcome page; a new lightweight "Support" card and a header sponsor icon in Settings (sponsor platform picks Afdian or Ko-fi by UI language, the store link is picked by browser).
@@ -28,14 +47,14 @@ A Manifest V3 browser extension (Chrome / Edge) that tracks daily website usage,
 1. "Continue for 5 minutes" is now consumed by **actual foreground usage**: pausing, locking or leaving the browser doesn't count; blocking resumes only after 5 minutes of use (previously wall-clock).
 2. While continuing, the floating countdown reflects the remaining allowance exactly like a normal site limit (ticking with usage, frozen while paused).
 
+### 1.4.5
+#### Improvements & Fixes
+1. Block page simplified: removed the "Pause tracking and continue" and "Open whitelist settings" entries; the link below the card is now a "Settings" text link that opens the settings page. To pause tracking, use the popup.
+
 ### 1.4.4
 #### Improvements & Fixes
 1. Block page wording: "5-minute grace" is now "Continue for 5 minutes"; the back button is replaced by "Close this tab", which closes the current tab directly.
 2. The limit-reached notification no longer mentions the pause feature.
-
-### 1.4.5
-#### Improvements & Fixes
-1. Block page simplified: removed the "Pause tracking and continue" and "Open whitelist settings" entries; the link below the card is now a "Settings" text link that opens the settings page. To pause tracking, use the popup.
 
 ### 1.4.3
 #### New Features

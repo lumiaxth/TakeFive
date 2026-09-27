@@ -111,6 +111,42 @@
     "message": "Settings",
     "description": "Settings page link"
   },
+  "backupSection": {
+    "message": "Backup & restore",
+    "description": "Options backup section title"
+  },
+  "backupHint": {
+    "message": "Export your settings and all data as a .json backup for device migration or testing. Importing will replace your settings and data.",
+    "description": "Helper text for the backup section"
+  },
+  "backupExportFull": {
+    "message": "Export backup (settings + data)",
+    "description": "Full backup export button in options"
+  },
+  "backupImportFull": {
+    "message": "Import backup",
+    "description": "Full backup import button in options"
+  },
+  "backupExportData": {
+    "message": "Export data",
+    "description": "Data-only backup export button on the dashboard"
+  },
+  "backupImportData": {
+    "message": "Import data",
+    "description": "Data-only backup import button on the dashboard"
+  },
+  "backupConfirmFull": {
+    "message": "Importing will replace your current settings and all local data. Continue?",
+    "description": "Confirmation for importing a full backup"
+  },
+  "backupConfirmData": {
+    "message": "Importing will replace all local data (settings are kept). Continue?",
+    "description": "Confirmation for importing a data backup"
+  },
+  "backupInvalid": {
+    "message": "The backup file is invalid or has an unexpected format.",
+    "description": "Validation failure message"
+  },
   "supportSection": {
     "message": "❤️ Like TakeFive?",
     "description": "Options page support section title"

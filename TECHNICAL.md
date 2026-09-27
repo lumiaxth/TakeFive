@@ -43,9 +43,9 @@ manifest.json           MV3 清单：权限、入口、默认语言
 background.js           Service Worker（核心，见 §4）
 content/banner.js       横幅内容脚本：HE_BANNER 消息 → 页面顶部横幅（Shadow DOM）
 content/countdown.js    浮动倒计时/时钟内容脚本：HE_COUNTDOWN/HIDE 消息 → 浮窗（Shadow DOM）
-popup/                  弹窗：今日概览、域名列表（前 10）、番茄钟模块、主题/设置/数据入口
+popup/                  弹窗：今日概览、域名列表（前 10）、番茄钟模块、主题/设置/数据入口、赞助/好评链接
 options/                设置页：外观（主题+角标）、浮动倒计时、提醒、番茄钟（运行中显示"下一阶段生效"提示）、限额、黑名单（即改即存）
-dashboard/              数据页：今日概览（含昨日对比洞察）、近 7 天柱状图（含 7 天合计）、当日详情、清空数据
+dashboard/              数据页：今日概览（含昨日对比洞察）、近 7 天柱状图（含 7 天合计）、当日详情、全量备份导入导出、清空数据
 blocked/                阻断落地页：按 reason 展示四套图标/标题/说明；限额场景提供「继续使用 5 分钟」；卡片下方「设置」文字链接（常显，跳设置页）；「关闭标签页」经 tabs API 关闭当前页
 welcome/                首次安装欢迎页：功能简介 + 设置入口（onInstalled(install) 自动打开，也可从设置页右上角进入）
 shared/storage.js       存储模型：DEFAULTS、mergeDefaults、rollover、读写、统计工具
@@ -53,6 +53,7 @@ shared/hostname.js      域名解析：URL → 注册级域名（tldts）+ IPv4/
 shared/i18n.js          UI 多语言：data-i18n / data-i18n-title / data-i18n-placeholder 批量应用
 shared/theme.js         主题：解析 system/light/dark → <html data-theme>，监听存储变化实时生效
 shared/support.js       赞助/好评入口：赞助链接按界面语言（爱发电/Ko-fi）、好评链接按浏览器 UA（AMO/Edge 商店）、open(tabs.create 优先)
+shared/backup.js        备份/恢复：v1 格式（options 全量 settings+data / dashboard 仅 data）、导出下载、文件读取与校验
 shared/tldts.min.js     第三方公共后缀列表库（勿改动、勿加版权头）
 _locales/               chrome.i18n 文案（zh_CN / en）
 icons/                  工具栏/商店图标 + 番茄钟运行态图标（tomato*.png）
@@ -67,7 +68,7 @@ build.ps1               商店包打包脚本（输出 dist/takefive-v<版本>.z
 | 常量 | `RESUME_TOLERANCE_MS`(2min) 会话恢复容差、`USAGE_RESET_AFTER_MS`(2min) 连续使用中断判定、`MAX_COMMIT_DELTA_MS`(3min) 单次提交上限、`POMODORO_CLOSED_THRESHOLD_MS`(2min) 浏览器关闭判定、`PAUSED_BADGE_CHAR` 暂停角标字符、`GRACE_MS`(5min) 限额宽限时长、`DEFAULT_ICONS/TOMATO_ICONS` 图标集 |
 | `createTickAlarm` | 每 30s（旧版回退 60s）闹钟，驱动提交/推进/推送 |
 | `state` | SW 内存态：activeHost、sessionStart、activeTabId/WindowId、counting。SW 可被回收，重启后从存储锚点恢复 |
-| `limitReached` / `graceActive` / `limitBlocked` / `blockedReasonFor` | 阻断原因判定：`blacklist` > 暂停放行 > `limit`（宽限授权后按实际使用超支 < `GRACE_MS` 放行，判定统一走 `limitBlocked`） > `pomodoro`（专注期白名单外） |
+| `limitReached` / `graceActive` / `limitBlocked` / `blockedReasonFor` | 阻断原因判定：`blacklist` > 暂停放行 > `limit`（已授权按 `used - 授权基线 < GRACE_MS` 放行；未授权达限即拦，判定统一走 `limitBlocked`） > `pomodoro`（专注期白名单外） |
 | `enforceBlocks` | 阻断执行：活动标签页按全原因拦截；后台标签页仅黑名单/限额 |
 | `redirectTab` | 重定向到 blocked 页并调用 `countBlock()` 计数 |
 | `computeCountdown` | 计算浮窗 chips：番茄钟（墙钟剩余，恒 ticking）+ 站点限额（剩余 ≤ 阈值，ticking=counting&&!paused） |
@@ -97,8 +98,8 @@ build.ps1               商店包打包脚本（输出 dist/takefive-v<版本>.z
 |---|---|---|
 | `GET_DATA` | — | 同步活动页 → 结算 → 返回完整 `data` + activeHost + counting |
 | `PAUSE` / `RESUME` | — | 暂停/恢复统计（番茄钟不受影响，见 §8） |
-| `SET_LIMIT` / `REMOVE_LIMIT` | host, dailyMs, remindAtMs | 设置/移除限额；变更后立即 enforceBlocks（REMOVE_LIMIT 同时清除该域名的宽限锚点） |
-| `GRANT_LIMIT_GRACE` | host | 限额阻断页宽限放行：授权 `grace[host] = GRACE_MS` 超支额度并立即 enforceBlocks |
+| `SET_LIMIT` / `REMOVE_LIMIT` | host, dailyMs, remindAtMs | 设置/移除限额；变更后立即 enforceBlocks（两者均清除该域名的宽限授权） |
+| `GRANT_LIMIT_GRACE` | host | 限额阻断页宽限放行：记录 `grace[host] = 授权时刻用量基线` 并立即 enforceBlocks |
 | `ADD_BLACKLIST` / `REMOVE_BLACKLIST` | host | 黑名单增删；增后立即 enforceBlocks |
 | `SET_USAGE_REMINDER` | enabled, minutes | 连续使用提醒设置 |
 | `SET_POMODORO` | enabled, focusMinutes, breakMinutes, rounds | 功能开关/时长/轮次；运行中调整不影响当前阶段倒计时，自下一阶段生效 |
@@ -111,6 +112,7 @@ build.ps1               商店包打包脚本（输出 dist/takefive-v<版本>.z
 | `COUNTDOWN_REQUEST` | — | 内容脚本可见/注入时主动拉取（经 `sender` 广播回执） |
 | `GET_POMODORO` | — | 先推进番茄钟，返回 `{phase, remainingMs, paused, counting}`（弹窗每秒轮询） |
 | `CLEAR_TODAY` / `CLEAR_ALL` | — | 数据清理（清空后 updateBadge）；`CLEAR_TODAY` 完整重置当日：域名、通知、番茄轮次/专注时长、拦截计数、宽限锚点 |
+| `IMPORT_BACKUP` | payload | 应用备份：`settings` 与 `data` 至少其一（详见 shared/backup.js 的 v1 校验）；`settings` 经 mergeDefaults 覆盖，`data` 白名单字段覆盖；应用后 enforceBlocks + updateBadge + pushCountdown |
 
 ### 5.2 Background → 各上下文
 
@@ -153,7 +155,7 @@ build.ps1               商店包打包脚本（输出 dist/takefive-v<版本>.z
 
 ### 6.4 阻断
 - 原因优先级：`blacklist`（最高，暂停也不放行）→ 限额（暂停放行；宽限授权且额度未耗尽时放行）→ 番茄钟专注期白名单外（暂停放行）。
-- 宽限（超支额度模型）：限额阻断页（仅限 `reason=limit` 且域名可识别）的「继续使用5分钟」发送 `GRANT_LIMIT_GRACE`，`grace[host]` 记录 `GRACE_MS` 授权；放行条件为「实际使用超支 < 5 分钟」（按前台计时消耗，暂停/锁屏/离开不消耗），超支满 5 分钟后 30s 兜底扫描自动恢复阻断。浮窗站点倒计时在宽限期内按同一口径实时显示剩余额度。黑名单与番茄钟阻断不提供宽限。
+- 宽限（授权基线模型）：限额阻断页（仅限 `reason=limit` 且域名可识别）的「继续使用5分钟」发送 `GRANT_LIMIT_GRACE`，`grace[host]` 记录**授权时刻的用量基线**；放行条件为「`used - 基线 < 5 分钟`」（按前台计时消耗，暂停/锁屏/离开不消耗；重复授权即重置基线重新计 5 分钟）。宽限为一次性授权：已授权（含额度耗尽）后拦截页经 `blockedUrl` 的 `graceGranted=1` 参数隐藏继续使用按钮；超支满 5 分钟后 30s 兜底扫描自动恢复阻断；调整每日限额（SET_LIMIT）或跨天归档时清除授权。点击「继续使用」后优先 `history.back()` 返回离开瞬间页面（命中 bfcache 不重载、保留页面状态，避免整页刷新丢失进度），后退无路（标签页第一条历史）时 250ms 兜底重载原地址。浮窗站点倒计时在宽限期内按同一口径实时显示剩余额度（`基线 + GRACE_MS - used`）。黑名单与番茄钟阻断不提供宽限。
 - 执行：`webNavigation.onBeforeNavigate`（新导航）+ `enforceBlocks`（扫描已开标签页：活动页全原因、后台页仅黑名单/限额）；限额判定统一走 `limitBlocked()`，保证三处一致。
 - 触发点：导航、切页、限额首次达成、设置变更、启用番茄钟、每 30s 兜底。
 - 计数：每次重定向 `countBlock()` 累计 `blocksToday`（宽限放行不发生重定向，不计入）。
@@ -167,7 +169,7 @@ build.ps1               商店包打包脚本（输出 dist/takefive-v<版本>.z
   "notifications": { "<域名>": { "near": true, "reached": true } },
   "tracking": { "host": null, "since": 0 },
   "usage": { "accumulatedMs": 0, "lastStopAt": 0 },
-  "grace": { "<域名>": 300000 },
+  "grace": { "<域名>": 1860000 },
   "pomodoroToday": { "date": "YYYY-MM-DD", "rounds": 0, "focusMs": 0 },
   "blocksToday": { "date": "YYYY-MM-DD", "count": 0 },
   "pomodoroState": { "phase": "idle|focus|break", "remainingMs": 0, "anchorAt": 0, "completedRounds": 0 },
@@ -197,7 +199,7 @@ build.ps1               商店包打包脚本（输出 dist/takefive-v<版本>.z
 - 专项测试（Node + mock chrome API，已入库 `tests/`；jsdom 由 `npm install` 安装）：
   - 运行：仓库根目录 `npm test`（等价 `node tests/run-all.js`，逐个运行并汇总退出码）。
   - `test_pomodoro.js` 番茄钟墙钟/轮次/通知/运行中调整不重置
-  - `test_grace.js` 限额宽限授权/额度消耗/超支满拦回/暂停不消耗/跨天与重置清空
+  - `test_grace.js` 限额宽限授权基线/额度消耗/超支满拦回（含 graceGranted 标记）/重复授权重置/暂停不消耗/跨天与重置清空
   - `test_countdown.js` 浮窗数据推送与设置往返
   - `test_widget.js` / `test_panel.js` 浮窗渲染与悬停面板（含轮次分钟换算）
   - `test_badge.js` 角标格式
@@ -213,6 +215,6 @@ build.ps1               商店包打包脚本（输出 dist/takefive-v<版本>.z
 - `manifest.json` 不支持注释，版权信息以源文件头为准。
 - 角标文本约 4 字符可见宽度，超长会被浏览器裁剪（已做紧凑格式）。
 - 阻断计数 `blocksToday` 按「重定向次数」统计，同一站点多标签页会分别计数；宽限放行不发生重定向，不计入。
-- 限额宽限为授权标记：`grace[host]` 存超支额度（`GRACE_MS`），当日有效（跨天 `rolloverIfNeeded` 清空）；判定统一走 `limitBlocked()`，勿在各调用点单独判 `limitReached()`。
+- 限额宽限为授权基线：`grace[host]` 存授权时刻的用量（基线可为 0，判定用 `!== undefined`），当日有效（跨天 `rolloverIfNeeded` 清空，调整限额即清除）；判定统一走 `limitBlocked()`，勿在各调用点单独判 `limitReached()`。
 - 设置页为即改即存：各字段 `change` 事件直接发消息保存，保存后不做全量 `render()`（避免重置正在编辑的输入框）。
 - 悬停面板的数据每 ~30s 与后台同步一次，为近似实时。

@@ -244,6 +244,35 @@
     HE.support.open(HE.support.storeUrl());
   });
 
+  // 备份/恢复（全量：设置与数据）：导出完整快照，导入覆盖并刷新
+  $('btnExportFull').addEventListener('click', async () => {
+    const resp = await send({ type: 'GET_DATA' });
+    HE.backup.exportFile(HE.backup.buildExport(resp.data, 'full'), HE.backup.exportFilename('full'));
+  });
+
+  $('btnImportFull').addEventListener('click', () => {
+    $('backupFile').value = '';
+    $('backupFile').click();
+  });
+
+  $('backupFile').addEventListener('change', async () => {
+    const file = $('backupFile').files[0];
+    if (!file) return;
+    try {
+      const payload = await HE.backup.readBackupFile(file);
+      if (!HE.backup.validateBackup(payload)) {
+        alert(t('backupInvalid'));
+        return;
+      }
+      const ok = confirm(t('backupConfirmFull'));
+      if (!ok) return;
+      await send({ type: 'IMPORT_BACKUP', payload: payload });
+      await refresh();
+    } catch (e) {
+      alert(t('backupInvalid'));
+    }
+  });
+
   $('limitForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const host = HE.hostname.normalizeDomain($('limitDomain').value);

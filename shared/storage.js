@@ -201,6 +201,7 @@
     getDateStr,
     getTodayKey,
     getTimestamp,
+    mergeDefaults,
     load,
     save,
     rolloverIfNeeded,

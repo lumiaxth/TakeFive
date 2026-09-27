@@ -74,6 +74,24 @@ Privacy: all data stays in your browser locally (chrome.storage.local) and is ne
 - 最低版本：Chromium 110+（Manifest V3）
 - 图标：128×128（见 `icons/icon128.png`）
 
+## 1.4.2 - 1.4.11 版本更新日志
+
+### 中文
+
+- 新增备份与恢复：设置页导出/导入完整备份（设置与数据），数据页可单独导出/导入运行数据，便于迁移与测试。
+- 「继续使用5分钟」按实际使用计时；用满后拦截页不再提供该按钮；点击后返回离开瞬间的原页面，不整页刷新，页面进度保留。
+- 新增赞助与好评入口：弹窗、设置页与欢迎页均可一键赞助开发者或给商店好评。
+- 阻断页更精简：「关闭标签页」、非强调的「设置」入口，文案更清晰。
+- 悬停浮窗番茄统计修复、限额达成通知文案精简、「重置今日数据」更彻底等改进。
+
+### English
+
+- Backup & restore: export/import a full backup (settings + data) in Settings, or data-only in the Dashboard, for device migration and testing.
+- "Continue for 5 minutes" counts only real use; once used up the block page no longer offers it; going back returns to the page you left without a full reload.
+- New sponsor & review links in the popup, Settings and welcome page.
+- Cleaner block pages: a "Close this tab" button and a non-emphasized "Settings" link.
+- Fixes and polish: hover-panel pomodoro time, a fuller "reset today", and clearer limit-reached notifications.
+
 ## 1.4.0 版本更新日志
 
 ### 中文

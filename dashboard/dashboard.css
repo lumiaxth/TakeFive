@@ -325,6 +325,13 @@ h1 {
   text-decoration: underline;
 }
 
+.backup-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
 .danger-actions {
   display: flex;
   gap: 10px;

@@ -132,6 +132,17 @@ h1 {
   min-width: 120px;
 }
 
+/* 备份/恢复按钮行 */
+.backup-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.backup-actions .btn {
+  min-width: 120px;
+}
+
 .card h2 {
   font-size: 16px;
   margin: 0 0 6px;

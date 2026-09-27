@@ -194,6 +194,7 @@ process.on('unhandledRejection', () => {});
     check('dashboard title', doc.querySelector('h1').textContent === en.dashboardTitle.message);
     check('dashboard page subtitle', doc.querySelector('.page-subtitle').textContent === en.dashboardSubtitle.message);
     check('dashboard settings button', !!doc.getElementById('btnSettings'));
+    check('dashboard backup buttons exist', !!doc.getElementById('btnExportData') && !!doc.getElementById('btnImportData'));
     check('dashboard today hint removed (commented out)', !doc.querySelector('#section-today .hint'));
     check('dashboard chart subtitle', doc.querySelector('#section-chart .hint').textContent === en.chartSubtitle.message);
     check('dashboard week insight hidden without 7d data or shown', typeof doc.getElementById('weekInsight').hidden === 'boolean');
@@ -273,6 +274,11 @@ process.on('unhandledRejection', () => {});
     check('options badgeMode select has 3 options', doc.getElementById('badgeMode').options.length === 3);
     check('options badgeModeAuto text', doc.querySelector('#badgeMode option[value="auto"]').textContent === zh.badgeModeAuto.message);
     check('options support section title', doc.querySelector('#section-support h2').textContent === zh.supportSection.message);
+    const supportCard = doc.getElementById('section-support');
+    const backupCard = doc.getElementById('section-backup');
+    const cards = [...doc.querySelectorAll('.card')];
+    check('options backup card directly before support card', !!backupCard && cards.indexOf(backupCard) === cards.indexOf(supportCard) - 1);
+    check('options backup buttons texts', doc.getElementById('btnExportFull').textContent === zh.backupExportFull.message && doc.getElementById('btnImportFull').textContent === zh.backupImportFull.message);
     check('options support buttons texts', doc.getElementById('btnSponsorCard').textContent === zh.sponsorAction.message && doc.getElementById('btnRateCard').textContent === zh['rateAction'].message);
     check('options sponsor icon title', doc.getElementById('btnSponsor').title === zh.openSponsor.message);
     check('options no save buttons (save-on-change)', !doc.getElementById('btnSaveTheme') && !doc.getElementById('btnSaveBadgeMode') && !doc.getElementById('btnSaveCountdown') && !doc.getElementById('btnSaveUsageReminder') && !doc.getElementById('btnSavePomodoro'));
@@ -340,10 +346,38 @@ process.on('unhandledRejection', () => {});
     const doc = dom.window.document;
     check('blocked limit title', doc.querySelector('h1').textContent === en.blockedTitleLimit.message);
     check('blocked limit icon', doc.getElementById('icon').textContent === '\uD83C\uDF3F');
-    check('blocked limit grace btn visible', doc.getElementById('btnGrace').hidden === false);
+    check('blocked limit grace btn visible (not yet granted)', doc.getElementById('btnGrace').hidden === false);
     check('blocked limit grace text', doc.getElementById('btnGrace').textContent === en.grantGrace.message);
     await sleep(30);
     check('blocked limit shows real domain', doc.getElementById('reason').textContent.includes('youtube.com'));
+  }
+  {
+    // 已授权（含额度耗尽）后的再次拦截：不再提供继续使用按钮
+    const dom = load(
+      'blocked/blocked.html', 'blocked/blocked.js', blockedShared, null,
+      'https://blocked.example/?reason=limit&domain=youtube.com&url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3Dx&graceGranted=1'
+    );
+    const doc = dom.window.document;
+    check('blocked limit grace btn hidden when already granted', doc.getElementById('btnGrace').hidden === true);
+  }
+  {
+    // 点击「继续使用」：优先 history.back 返回离开瞬间页面（避免整页刷新丢失进度）
+    const dom = load(
+      'blocked/blocked.html', 'blocked/blocked.js', blockedShared, null,
+      'https://blocked.example/?reason=limit&domain=youtube.com&url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3Dx'
+    );
+    const sent = [];
+    dom.window.chrome.runtime = { sendMessage: async (msg) => { sent.push(msg); } };
+    let backCalls = 0;
+    Object.defineProperty(dom.window.history, 'length', { get: () => 3, configurable: true });
+    dom.window.history.back = function () {
+      backCalls += 1;
+    };
+    const doc = dom.window.document;
+    doc.getElementById('btnGrace').click();
+    await sleep(80);
+    check('grace click sends grant message', sent.length === 1 && sent[0].type === 'GRANT_LIMIT_GRACE' && sent[0].host === 'youtube.com');
+    check('grace click prefers history.back (no full reload)', backCalls === 1);
   }
   {
     const dom = load(

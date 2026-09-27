@@ -65,8 +65,8 @@
   iconEl.textContent = cfg.emoji;
   titleEl.textContent = t(cfg.titleKey);
   document.title = t(cfg.titleKey);
-  // 宽限放行需要可识别的目标域名，异常时隐藏
-  btnGrace.hidden = !cfg.showGrace || !domain;
+  // 宽限为一次性授权：已授权（含额度耗尽）后再次拦截时不再提供「继续使用」按钮
+  btnGrace.hidden = !cfg.showGrace || !domain || params.get('graceGranted') === '1';
 
   if (cfg.bodyKey === 'blockedReasonLimit' && domain) {
     HE.storage.load().then((data) => {
@@ -79,12 +79,28 @@
     reasonEl.textContent = t('blockedReasonGeneric');
   }
 
+  // 「继续使用」返回原页面：优先历史后退（bfcache 命中时不重载、保留离开瞬间的页面状态）；
+  // 后退无路（blocked 为该标签页的第一条历史，如直达/书签打开）时，兜底重载原地址
   btnGrace.addEventListener('click', async () => {
     await chrome.runtime.sendMessage({ type: 'GRANT_LIMIT_GRACE', host: domain });
-    if (url && /^https?:/i.test(url)) {
-      location.href = url;
-    } else if (history.length > 1) {
+    if (history.length > 1) {
       history.back();
+      setTimeout(() => {
+        // 仍停留在拦截页（后退未生效）时才落回兜底
+        if (location.pathname.indexOf('blocked') !== -1) {
+          try {
+            if (url && /^https?:/i.test(url)) location.href = url;
+          } catch (e) {
+            /* ignore */
+          }
+        }
+      }, 250);
+    } else if (url && /^https?:/i.test(url)) {
+      try {
+        location.href = url;
+      } catch (e) {
+        /* ignore */
+      }
     }
   });
 

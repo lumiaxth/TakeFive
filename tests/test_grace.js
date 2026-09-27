@@ -84,26 +84,36 @@ const navigate = async (url) => {
   await navigate('https://youtube.com/watch');
   check('limit reached redirects', redirected.length === 1 && redirected[0].url.indexOf('blocked/blocked.html') !== -1);
 
-  // ---- grant grace -> navigation allowed ----
+  // ---- grant grace -> navigation allowed (baseline captured at grant time) ----
   await msg({ type: 'GRANT_LIMIT_GRACE', host: 'youtube.com' });
   d = await HE.storage.load();
-  check('grace authorization stored', !!d.grace['youtube.com']);
+  check('grace baseline stored (used at grant)', d.grace['youtube.com'] === 61 * 60000);
   await navigate('https://youtube.com/watch');
   check('grace allows navigation', redirected.length === 0);
 
+  // ---- REGRESSION: re-grant right after the first grant, navigation must NOT be pulled back ----
+  // (1.4.6 defect: re-granting kept the cumulative overspend and blocked immediately)
+  await msg({ type: 'GRANT_LIMIT_GRACE', host: 'youtube.com' });
+  d = await HE.storage.load();
+  check('re-grant resets baseline to current used', d.grace['youtube.com'] === 61 * 60000);
+  await navigate('https://youtube.com/watch');
+  check('re-grant then navigate stays allowed', redirected.length === 0);
+
   // ---- grace allowance partially consumed -> still allowed (used spent counts, wall clock does not) ----
   d = await HE.storage.load();
-  d.domains['youtube.com'] = { timeMs: 60 * 60000 + 4 * 60000 }; // 60min limit, overspent 4min < 5min allowance
+  d.domains['youtube.com'] = { timeMs: 61 * 60000 + 4 * 60000 }; // baseline 61min, used 4min of the 5min allowance
   await HE.storage.save(d);
   await navigate('https://youtube.com/watch');
   check('partially-consumed grace still allows navigation', redirected.length === 0);
 
-  // ---- overspent beyond grace -> redirect again ----
+  // ---- overspent beyond grace -> redirect with graceGranted=1 (no re-authorize) ----
   d = await HE.storage.load();
-  d.domains['youtube.com'] = { timeMs: 60 * 60000 + 5 * 60000 + 1000 }; // overspent 5min + 1s
+  d.domains['youtube.com'] = { timeMs: 61 * 60000 + 5 * 60000 + 1000 }; // baseline + 5min + 1s
   await HE.storage.save(d);
   await navigate('https://youtube.com/watch');
+  const grantedUrl = redirected.length === 1 && redirected[0].url.indexOf('graceGranted=1') !== -1;
   check('overspent grace redirects again', redirected.length === 1);
+  check('overspent redirect marks graceGranted=1', grantedUrl);
 
   // ---- blacklist ignores grace ----
   await msg({ type: 'GRANT_LIMIT_GRACE', host: 'youtube.com' });

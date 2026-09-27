@@ -190,6 +190,15 @@
         </form>
       </section>
 
+      <section id="section-backup" class="card">
+        <h2 data-i18n="backupSection"></h2>
+        <p class="hint" data-i18n="backupHint"></p>
+        <div class="backup-actions">
+          <button id="btnExportFull" class="btn" type="button" data-i18n="backupExportFull"></button>
+          <button id="btnImportFull" class="btn" type="button" data-i18n="backupImportFull"></button>
+        </div>
+      </section>
+
       <section id="section-support" class="card">
         <h2 data-i18n="supportSection"></h2>
         <p class="hint" data-i18n="supportHint"></p>
@@ -199,6 +208,7 @@
         </div>
       </section>
     </div>
+    <input id="backupFile" type="file" accept="application/json,.json" hidden />
 
     <script src="../shared/tldts.min.js"></script>
     <script src="../shared/hostname.js"></script>
@@ -206,6 +216,7 @@
     <script src="../shared/i18n.js"></script>
     <script src="../shared/theme.js"></script>
     <script src="../shared/support.js"></script>
+    <script src="../shared/backup.js"></script>
     <script src="../content/countdown.js"></script>
     <script src="options.js"></script>
   </body>

@@ -65,18 +65,24 @@
       <section class="card" id="section-manage">
         <!-- <h2 data-i18n="dataSection"></h2> -->
         <!-- <p class="hint" data-i18n="dataHint"></p> -->
+        <div class="backup-actions">
+          <button id="btnExportData" class="btn" type="button" data-i18n="backupExportData"></button>
+          <button id="btnImportData" class="btn" type="button" data-i18n="backupImportData"></button>
+        </div>
         <div class="danger-actions">
           <button id="btnClearToday" class="btn danger" type="button" data-i18n="clearToday"></button>
           <button id="btnClearAll" class="btn danger" type="button" data-i18n="clearAll"></button>
         </div>
       </section>
     </div>
+    <input id="backupFile" type="file" accept="application/json,.json" hidden />
 
     <script src="../shared/tldts.min.js"></script>
     <script src="../shared/hostname.js"></script>
     <script src="../shared/storage.js"></script>
     <script src="../shared/i18n.js"></script>
     <script src="../shared/theme.js"></script>
+    <script src="../shared/backup.js"></script>
     <script src="../content/countdown.js"></script>
     <script src="dashboard.js"></script>
   </body>
