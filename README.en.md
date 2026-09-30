@@ -19,6 +19,10 @@ A Manifest V3 browser extension (Chrome / Edge) that tracks daily website usage,
 
 ## Changelog
 
+### 1.4.12
+#### Improvements
+1. Copy polish for the extension description and pomodoro notifications (zh wording refresh with matching English updates).
+
 ### 1.4.11
 #### Improvements
 1. Backup scope adjusted: the Settings "Backup & restore" now exports a **full** backup (settings + data); the Dashboard exports **data-only** backups (settings excluded), with matching confirmations.

@@ -8,7 +8,7 @@
     "description": "主页面短标题"
   },
   "extDescription": {
-    "message": "统计各网站使用时长，设置每日限额与黑名单，番茄钟专注计时，锁屏/睡眠自动暂停，助你科学上网、及时休息。",
+    "message": "统计各网站使用时长，设置每日限额与黑名单，番茄钟专注计时，锁屏/睡眠自动暂停，助你健康上网、及时休息。",
     "description": "扩展描述"
   },
   "welcomeTitle": {
@@ -785,7 +785,7 @@
     "description": "离开后休息结束不再开启新一轮的通知正文"
   },
   "notifyPomodoroCancelledTitle": {
-    "message": "番茄钟未完成，已自动关闭",
+    "message": "上次的番茄钟没能结束，已自动关闭",
     "description": "浏览器关闭后重新打开的通知标题"
   },
   "notifyPomodoroCancelledBody": {
@@ -860,7 +860,7 @@
     "description": "完成全部轮次的通知标题"
   },
   "notifyPomodoroAllDoneBody": {
-    "message": "你已完成 $ROUNDS$ 轮番茄钟，好好休息吧。",
+    "message": "真厉害！你已完成 $ROUNDS$ 轮番茄钟！",
     "description": "完成全部轮次的通知正文",
     "placeholders": {
       "ROUNDS": {

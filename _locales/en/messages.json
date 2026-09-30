@@ -785,8 +785,8 @@
     "description": "Notification body when the round stops after being away"
   },
   "notifyPomodoroCancelledTitle": {
-    "message": "Pomodoro closed unfinished",
-    "description": "Notification title when reopening the browser"
+    "message": "Your last pomodoro didn't finish",
+    "description": "Notification title when the browser was closed"
   },
   "notifyPomodoroCancelledBody": {
     "message": "The previous pomodoro could not finish and was closed. Start again when ready.",
@@ -860,7 +860,7 @@
     "description": "Notification title when all rounds finish"
   },
   "notifyPomodoroAllDoneBody": {
-    "message": "You completed $ROUNDS$ pomodoro rounds. Take a good rest.",
+    "message": "Great job! You completed $ROUNDS$ pomodoro rounds.",
     "description": "Notification body when all rounds finish",
     "placeholders": {
       "ROUNDS": {
